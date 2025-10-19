@@ -1061,11 +1061,17 @@
           <RowDefinition Height="8"/>
           <!-- 6: Auto reload game save row -->
           <RowDefinition Height="Auto"/>
-          <!-- 6: Save-data statistics row -->
+          <!-- 7: Save-data statistics row -->
           <RowDefinition Height="Auto"/>
-          <!-- 7: gap -->
+          <!-- 8: gap -->
           <RowDefinition Height="8"/>
-          <!-- 8: Theme selector row -->
+          <!-- 9: Theme selector row -->
+          <RowDefinition Height="Auto"/>
+          <!-- 10: gap before update info -->
+          <RowDefinition Height="32"/>
+          <!-- 11: Update info gap -->
+          <RowDefinition Height="8"/>
+          <!-- 12: Update checker row -->
           <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -1190,6 +1196,19 @@
           <x:String>Light</x:String>
           <x:String>Dark</x:String>
         </ComboBox>
+
+        <Border Grid.Row="10" Grid.ColumnSpan="7" BorderBrush="Gray" BorderThickness="0 0 0 1" Padding="8 0 0 8"/>
+
+        <!-- 10: Update checker row -->
+        <TextBlock Grid.Row="12" Grid.Column="0" VerticalAlignment="Center" Text="Version:"/>
+        <StackPanel Grid.Row="12" Grid.Column="1" VerticalAlignment="Center" Orientation="Horizontal" Spacing="6">
+          <TextBlock Text="Current:"/>
+          <TextBlock Text="{Binding CurrentVersion}" FontWeight="Bold"/>
+          <TextBlock Text="Latest published:"/>
+          <TextBlock Text="{Binding LastCheckedRemoteVersion}" FontWeight="Bold"/>
+        </StackPanel>
+        <CheckBox Grid.Row="12" Grid.Column="4" Content="Check for updates on startup" IsChecked="{Binding CheckForUpdatesOnStartup, Mode=TwoWay}" VerticalAlignment="Center"/>
+        <Button Grid.Row="12" Grid.Column="6" VerticalAlignment="Center" Content="Check for updates" IsEnabled="{Binding CanCheckForUpdates}" Click="CheckForUpdates_Click"/>
       </Grid>
     </TabItem>
 

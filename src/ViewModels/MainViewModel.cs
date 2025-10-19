@@ -158,7 +158,7 @@ public sealed class MainViewModel : INotifyPropertyChanged
     TradesStatsShipsLoad = new StatsShipsLoadTradesModel();
     TradesStatsShipsWares = new StatsShipsWaresTradesModel();
     TradesStatsWaresShips = new StatsWaresShipsTradesModel();
-    Configuration = new ConfigurationViewModel();
+    Configuration = new ConfigurationViewModel(MainWindow.Version);
   }
 
   public void ApplyThemeOnCharts(Avalonia.Media.SolidColorBrush? foreground, Avalonia.Media.SolidColorBrush? background)

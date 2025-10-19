@@ -41,6 +41,25 @@ public partial class MainWindow : Window
   private TabItem? _configurationTab;
   private TabItem? _readmeTab;
 
+  public static string Version
+  {
+    get
+    {
+      try
+      {
+        var asm = Assembly.GetExecutingAssembly();
+        var rawInfoVersion =
+          asm.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? asm.GetName().Version?.ToString();
+        var infoVersion = SanitizeVersion(rawInfoVersion);
+        return infoVersion ?? "(unknown)";
+      }
+      catch
+      {
+        return "(unknown)";
+      }
+    }
+  }
+
   public MainWindow()
   {
     InitializeComponent();
@@ -63,12 +82,9 @@ public partial class MainWindow : Window
     {
       var asm = Assembly.GetExecutingAssembly();
       var product = asm.GetCustomAttribute<AssemblyProductAttribute>()?.Product;
-      var rawInfoVersion =
-        asm.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? asm.GetName().Version?.ToString();
-      var infoVersion = SanitizeVersion(rawInfoVersion);
       if (!string.IsNullOrWhiteSpace(product))
       {
-        Title = string.IsNullOrWhiteSpace(infoVersion) ? product : $"{product} v{infoVersion}";
+        Title = string.IsNullOrWhiteSpace(Version) ? product : $"{product} v{Version}";
       }
     }
     catch { }
@@ -142,6 +158,11 @@ public partial class MainWindow : Window
       {
         tabs.SelectedItem = _configurationTab;
       }
+    }
+
+    if (vm.Configuration is { CheckForUpdatesOnStartup: true } cfg)
+    {
+      _ = Dispatcher.UIThread.InvokeAsync(() => cfg.CheckForUpdatesAsync(this, true));
     }
   }
 
@@ -371,6 +392,14 @@ public partial class MainWindow : Window
         this.IsEnabled = true;
       });
     }
+  }
+
+  private async void CheckForUpdates_Click(object? sender, RoutedEventArgs e)
+  {
+    if (DataContext is not MainViewModel vm || vm.Configuration is null)
+      return;
+
+    await vm.Configuration.CheckForUpdatesAsync(this);
   }
 
   // React on active tab change

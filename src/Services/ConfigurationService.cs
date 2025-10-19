@@ -27,6 +27,7 @@ public sealed class ConfigurationService
   public bool LoadRemovedObjects { get; set; }
   public string AppTheme { get; set; } = "System"; // System | Light | Dark
   public AutoReloadGameSaveMode AutoReloadMode { get; set; } = AutoReloadGameSaveMode.None; // None | SelectedFile | AnyFile
+  public bool CheckForUpdatesOnStartup { get; set; }
 
   public void Save()
   {
@@ -38,6 +39,7 @@ public sealed class ConfigurationService
       LoadRemovedObjects = LoadRemovedObjects,
       AppTheme = AppTheme,
       AutoReloadMode = AutoReloadMode,
+      CheckForUpdatesOnStartup = CheckForUpdatesOnStartup,
     };
     var json = JsonSerializer.Serialize(dto, _jsonSerializerOptions);
     File.WriteAllText(_configPath, json);
@@ -57,6 +59,7 @@ public sealed class ConfigurationService
       LoadRemovedObjects = dto?.LoadRemovedObjects ?? false; // default to false
       AppTheme = string.IsNullOrWhiteSpace(dto?.AppTheme) ? "System" : dto!.AppTheme!;
       AutoReloadMode = dto?.AutoReloadMode ?? AutoReloadGameSaveMode.None; // default None
+      CheckForUpdatesOnStartup = dto?.CheckForUpdatesOnStartup ?? false;
     }
     catch
     {
@@ -72,5 +75,6 @@ public sealed class ConfigurationService
     public bool? LoadRemovedObjects { get; set; }
     public string? AppTheme { get; set; }
     public AutoReloadGameSaveMode? AutoReloadMode { get; set; }
+    public bool? CheckForUpdatesOnStartup { get; set; }
   }
 }

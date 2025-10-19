@@ -20,6 +20,14 @@
     <AssemblyVersion>$(Version)</AssemblyVersion>
     <InformationalVersion>$(Version)</InformationalVersion>
   </PropertyGroup>
+
+  <ItemGroup>
+    <AssemblyMetadata Include="RepositoryUrl" Value="https://github.com/chemodun/X4PlayerShipTradeAnalyzer" />
+    <AssemblyMetadata Include="NexusModsUrl" Value="https://www.nexusmods.com/x4foundations/mods/1801" />
+    <AssemblyMetadata Include="Author" Value="Chem O`Dun" />
+  </ItemGroup>
+
+
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="11.3.5" />
     <PackageReference Include="Avalonia.Desktop" Version="11.3.5" />

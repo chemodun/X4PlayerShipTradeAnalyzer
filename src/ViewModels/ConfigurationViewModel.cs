@@ -2,8 +2,12 @@ using System;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Threading;
+using System.Threading.Tasks;
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Styling;
 using Avalonia.Threading;
@@ -15,11 +19,21 @@ namespace X4PlayerShipTradeAnalyzer.ViewModels;
 
 public sealed class ConfigurationViewModel : INotifyPropertyChanged
 {
+  private const string NotCheckedYetLabel = "(not checked yet)";
+  private const string LastCheckFailedLabel = "(last check failed)";
+  private const string LastCheckCancelledLabel = "(cancelled)";
+  private const string MetadataMissingLabel = "(metadata missing)";
+  private const string UnknownVersionLabel = "(unknown)";
+
   private readonly ConfigurationService _cfg = ConfigurationService.Instance;
   private ResilientFileWatcher? _saveWatcher; // watcher for auto reload
   private DateTime _lastAutoLoadUtc = DateTime.MinValue; // debounce auto loads
   private string? _lastLoadedFile; // track last loaded save file
   private readonly TimeSpan _autoLoadDebounce = TimeSpan.FromSeconds(2);
+  private bool _isCheckingForUpdates;
+  private readonly string _currentVersion;
+  private string _lastCheckedRemoteVersion = NotCheckedYetLabel;
+  private bool _checkForUpdatesOnStartup;
 
   private string? _gameFolderExePath;
   public string? GameFolderExePath
@@ -117,6 +131,36 @@ public sealed class ConfigurationViewModel : INotifyPropertyChanged
   // Enable only if save path is set AND base game data is loaded (key stats > 0)
   public bool CanReloadSaveData => !string.IsNullOrWhiteSpace(GameSavePath) && GameDataStatsReady;
 
+  public bool CanCheckForUpdates => !_isCheckingForUpdates;
+
+  public string CurrentVersion => _currentVersion;
+
+  public string LastCheckedRemoteVersion
+  {
+    get => _lastCheckedRemoteVersion;
+    private set
+    {
+      if (_lastCheckedRemoteVersion == value)
+        return;
+      _lastCheckedRemoteVersion = value;
+      OnPropertyChanged();
+    }
+  }
+
+  public bool CheckForUpdatesOnStartup
+  {
+    get => _checkForUpdatesOnStartup;
+    set
+    {
+      if (_checkForUpdatesOnStartup == value)
+        return;
+      _checkForUpdatesOnStartup = value;
+      _cfg.CheckForUpdatesOnStartup = value;
+      _cfg.Save();
+      OnPropertyChanged();
+    }
+  }
+
   private bool GameDataStatsReady =>
     WaresCount > 0
     && FactionsCount > 0
@@ -126,6 +170,14 @@ public sealed class ConfigurationViewModel : INotifyPropertyChanged
     && LanguagesCount > 0
     && CurrentLanguageId > 0
     && CurrentLanguageTextCount > 0;
+
+  private void SetIsCheckingForUpdates(bool value)
+  {
+    if (_isCheckingForUpdates == value)
+      return;
+    _isCheckingForUpdates = value;
+    OnPropertyChanged(nameof(CanCheckForUpdates));
+  }
 
   // Stats
   private int _waresCount;
@@ -320,14 +372,16 @@ public sealed class ConfigurationViewModel : INotifyPropertyChanged
     }
   }
 
-  public ConfigurationViewModel()
+  public ConfigurationViewModel(string version)
   {
+    _currentVersion = version;
     GameFolderExePath = _cfg.GameFolderExePath;
     GameSavePath = _cfg.GameSavePath;
     LoadOnlyGameLanguage = _cfg.LoadOnlyGameLanguage;
     LoadRemovedObjects = _cfg.LoadRemovedObjects;
     _appTheme = _cfg.AppTheme;
     _autoReloadMode = _cfg.AutoReloadMode;
+    _checkForUpdatesOnStartup = _cfg.CheckForUpdatesOnStartup;
     // apply saved theme on startup
     ApplyTheme(_appTheme);
     // Setup watcher if needed based on loaded config
@@ -394,6 +448,36 @@ public sealed class ConfigurationViewModel : INotifyPropertyChanged
     catch
     { /* ignore */
     }
+  }
+
+  private static string ResolveCurrentVersion()
+  {
+    try
+    {
+      var assembly = Assembly.GetExecutingAssembly();
+      if (assembly == null)
+        return "unknown";
+
+      var informational = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
+      if (!string.IsNullOrWhiteSpace(informational))
+        return informational!;
+
+      var version = assembly.GetName().Version;
+      if (version != null)
+      {
+        var parts = new[] { version.Major, version.Minor, version.Build, version.Revision };
+        var length = parts.Length;
+        while (length > 2 && parts[length - 1] == 0)
+          length--;
+        return string.Join('.', parts.Take(length));
+      }
+    }
+    catch
+    {
+      // ignored - fallback below
+    }
+
+    return "unknown";
   }
 
   private static void ApplyTheme(string theme)
@@ -481,6 +565,97 @@ public sealed class ConfigurationViewModel : INotifyPropertyChanged
     {
       if (value)
         AutoReloadMode = AutoReloadGameSaveMode.AnyFile;
+    }
+  }
+
+  public async Task CheckForUpdatesAsync(Window owner, bool onStartup = false, CancellationToken cancellationToken = default)
+  {
+    if (_isCheckingForUpdates)
+      return;
+
+    SetIsCheckingForUpdates(true);
+    try
+    {
+      var assembly = Assembly.GetExecutingAssembly();
+      var metadata = assembly
+        .GetCustomAttributes<AssemblyMetadataAttribute>()
+        .ToDictionary(attr => attr.Key, attr => attr.Value ?? string.Empty, StringComparer.OrdinalIgnoreCase);
+
+      if (metadata.Count == 0)
+      {
+        LastCheckedRemoteVersion = MetadataMissingLabel;
+        if (!onStartup)
+          await DialogService.ShowErrorAsync(owner, "Update check", "No assembly metadata found.");
+        return;
+      }
+
+      var repoUrl = metadata.TryGetValue("RepositoryUrl", out var repo) ? repo : string.Empty;
+      var nexusUrl = metadata.TryGetValue("NexusModsUrl", out var nexus) ? nexus : string.Empty;
+
+      if (string.IsNullOrWhiteSpace(repoUrl))
+      {
+        LastCheckedRemoteVersion = MetadataMissingLabel;
+        if (!onStartup)
+          await DialogService.ShowErrorAsync(owner, "Update check", "No related repository metadata found.");
+        return;
+      }
+
+      using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+      linkedCts.CancelAfter(TimeSpan.FromSeconds(20));
+
+      if (onStartup)
+      {
+        try
+        {
+          await Task.Delay(2000, linkedCts.Token);
+        }
+        catch (TaskCanceledException)
+        {
+          // ignored - startup delay cancelled
+        }
+      }
+      var result = await UpdateChecker.CheckForUpdatesAsync(repoUrl, assembly, linkedCts.Token);
+      LastCheckedRemoteVersion = result.Success
+        ? (!string.IsNullOrWhiteSpace(result.LatestVersion) ? result.LatestVersion! : UnknownVersionLabel)
+        : LastCheckFailedLabel;
+      if (!result.Success)
+      {
+        if (!onStartup)
+          await DialogService.ShowErrorAsync(owner, "Update check", result.Message);
+        return;
+      }
+
+      if (result.HasUpdate)
+      {
+        var message =
+          $"A new version is available (current: {result.CurrentVersion}, latest: {result.LatestVersion}).\n\n"
+          + "Open the Nexus Mods page now?";
+        var open = await DialogService.ShowConfirmationAsync(owner, "Update available", message, "Open", "Later");
+        if (open && !string.IsNullOrWhiteSpace(nexusUrl))
+        {
+          UpdateChecker.OpenUrlInBrowser(nexusUrl);
+        }
+      }
+      else if (!onStartup)
+      {
+        var message = $"You are on the latest version ({result.CurrentVersion}).";
+        await DialogService.ShowInfoAsync(owner, "Up to date", message);
+      }
+    }
+    catch (OperationCanceledException)
+    {
+      LastCheckedRemoteVersion = LastCheckCancelledLabel;
+      // ignored - cancellation is expected when shutting down
+    }
+    catch (Exception ex)
+    {
+      LastCheckedRemoteVersion = LastCheckFailedLabel;
+      if (!onStartup)
+        await DialogService.ShowErrorAsync(owner, "Update check failed", ex.Message);
+    }
+    finally
+    {
+      SetIsCheckingForUpdates(false);
     }
   }
 
