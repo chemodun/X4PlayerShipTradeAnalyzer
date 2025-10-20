@@ -1,6 +1,6 @@
 <Project>
   <PropertyGroup>
     <!-- Centralized version for release-please to update -->
-    <Version>1.4.1</Version> <!-- x-release-please-version -->
+    <Version>1.4.2</Version> <!-- x-release-please-version -->
   </PropertyGroup>
 </Project>

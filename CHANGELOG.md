@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.4.2](https://github.com/chemodun/X4PlayerShipTradeAnalyzer/compare/v1.4.1...v1.4.2) (2025-10-20)
+
+
+### Bug Fixes
+
+* **GameData:** update database schema version and view creation ([5956890](https://github.com/chemodun/X4PlayerShipTradeAnalyzer/commit/5956890b3308da972324b11a2db3d0db717a9b5f))
+* **Transaction:** handle invalid records during transaction addition ([5956890](https://github.com/chemodun/X4PlayerShipTradeAnalyzer/commit/5956890b3308da972324b11a2db3d0db717a9b5f))
+
+
+### Documentation
+
+* **bbcode:** Update bbcode files ([e2f3a3f](https://github.com/chemodun/X4PlayerShipTradeAnalyzer/commit/e2f3a3fff406fcbe3ab05c92a1c4858f15b1fdd0))
+* **README:** update change log for version 1.4.2 ([f731bb1](https://github.com/chemodun/X4PlayerShipTradeAnalyzer/commit/f731bb1b737aeb024f5a6db34e358bfb08e7a0e9))
+* **README:** update scrap metal capacity reporting ([f731bb1](https://github.com/chemodun/X4PlayerShipTradeAnalyzer/commit/f731bb1b737aeb024f5a6db34e358bfb08e7a0e9))
+
 ## [1.4.1](https://github.com/chemodun/X4PlayerShipTradeAnalyzer/compare/v1.4.0...v1.4.1) (2025-10-20)
 
 
