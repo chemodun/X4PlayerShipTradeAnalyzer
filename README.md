@@ -41,6 +41,7 @@ The app runs locally and reads only your X4 files. Nothing is uploaded. **Nothin
   - Set Game Folder (your X4.exe location)
   - Choose a save file (.xml.gz)
   - Optional theme: System, Light, or Dark
+  - Update checker: view installed version, run a manual check, or enable automatic checks on startup
   - Quick stats to confirm data loaded (wares, factions, ships, stations, trades, language)
 - Built-in Readme: A “Readme” tab mirrors this guide inside the app
 
@@ -78,72 +79,83 @@ The app runs locally and reads only your X4 files. Nothing is uploaded. **Nothin
    - Load Only Game Language: speeds up loading by using your game language only.
    - Theme: System, Light, or Dark.
 
+5) Auto-reload
+   - Enable “Auto-reload game saves" radio button:
+   - with "No": the app will not monitor changes to your save file. You will need to manually reload data when you want to see new transactions.
+     - with "Selected Save file": the app will monitor changes to your selected save file and automatically reload data when it changes on disk. As selected save file will be used latest loaded one.
+     - with "Any Save file": the app will monitor changes to any save file in your X4 saves folder and automatically reload data when any of them changes on disk. The folder is determined based on latest loaded save file.
+
+6) Update checker
+   - Check for updates on startup: automatically runs the release check when the analyzer opens.
+   - Use the “Check for updates” button at the bottom to run the check immediately.
+
 ## Using the app
 
 - By Transactions
   - Ships transactions tab
     - Browse trades with totals and estimated profit.
-    - Toggle Container/Solid/Liquid/Gas to filter quickly.
+    - Filter by:
+      - Parent Station: Any/None or Exact one.
+      - Ship Class: All, XL, L, M, S.
+      - Cargo type: Container/Solid/Liquid/Gas
     - Can be sorted by Ship Name/Profit in a Ships List.
 
   - Ships graphs tab
     - Visualize activity and compare ships.
     - **Double-click a ship** in the list to show/hide it on the chart.
     - Toggled Ship in a List will be have colored similar to the chart.
-    - Toggle Container/Solid/Liquid/Gas to filter quickly.
+    - Filter by:
+      - Parent Station: Any/None or Exact one.
+      - Ship Class: All, XL, L, M, S.
+      - Cargo type: Container/Solid/Liquid/Gas
     - Can be sorted by Name/Profit in a Ships List.
 
-  - Wares stats tab
-    - Histogram of profit by ware with a color legend.
-    - Hover bars to see ware name and profit.
-    - Toggle Container/Solid/Liquid/Gas to filter quickly.
+  - Cargo capacity utilization distribution across all transactions tab
+    - Show histogram of cargo capacity utilization (%) for all transactions.
+    - Filter by:
+      - Parent Station: Any/None or Exact one.
+      - Ship Class: All, XL, L, M, S.
+      - Cargo type: Container/Solid/Liquid/Gas
+    - Limit Top: 10, 25, 50, 100
+    - Reverse order toggle.
 
   - Ships by Wares tab
     - Show Stacked Column chart of ships trading different wares.
     - Sorted by Profit in descending order.
     - Wares are colored.
-    - Toggle Container/Solid/Liquid/Gas to filter quickly.
+    - Filter by:
+      - Parent Station: Any/None or Exact one.
+      - Ship Class: All, XL, L, M, S.
+      - Cargo type: Container/Solid/Liquid/Gas
+    - Limit Top: 10, 25, 50, 100
+    - Reverse order toggle.
 
   - Wares by Ships tab
     - Show Stacked Column chart of wares traded by different ships.
     - Sorted by Profit in descending order.
     - Ships are colored.
-    - Toggle Container/Solid/Liquid/Gas to filter quickly.
+    - Filter by:
+      - Parent Station: Any/None or Exact one.
+      - Ship Class: All, XL, L, M, S.
+      - Cargo type: Container/Solid/Liquid/Gas
+    - Limit Top: 10, 25, 50, 100
+    - Reverse order toggle.
 
 - By Trades
   - Same as above, but profit is calculated based on actual trades (buy+sell) rather than individual transactions.
   - This method is more accurate for profit calculation, but may show fewer entries if some ships haven't completed trades yet.
-
-  - Ships Trades tab
-    - Browse trades with totals and actual profit.
-    - Toggle “With Internal Trades” to filter quickly. I.e. trades between your stations can be excluded.
-    - Can be sorted by Ship Name/Profit in a Ships List.
-    - Click a row to see related transactions on a right side.
-  - Ships graphs tab
-    - Visualize activity and compare ships.
-    - **Double-click a ship** in the list to show/hide it on the chart.
-    - Toggled Ship in a List will be have colored similar to the chart.
-    - Toggle “With Internal Trades” to filter quickly.
-    - Can be sorted by Name/Profit in a Ships List.
-  - Wares stats tab
-    - Histogram of profit by ware with a color legend.
-    - Hover bars to see ware name and profit.
-    - Toggle “With Internal Trades” to filter quickly.
-  - Ships by Wares tab
-    - Show Stacked Column chart of ships trading different wares.
-    - Sorted by Profit in descending order.
-    - Wares are colored.
-    - Toggle “With Internal Trades” to filter quickly.
-  - Wares by Ships tab
-    - Show Stacked Column chart of wares traded by different ships.
-    - Sorted by Profit in descending order.
-    - Ships are colored.
-    - Toggle “With Internal Trades” to filter quickly.
+  - For filtering is used:
+    - Parent Station: Any/None or Exact one.
+    - Ship Class: All, XL, L, M, S.
+    - With or without Internal Trades (i.e. trades between your stations can be excluded).
+  - Top limit and Reverse order options are also available.
 
 - Configuration tab
   - Change Game Folder or Save file and reload data.
   - Optional settings: Load Only Game Language/Load removed objects, Theme (System, Light, Dark).
   - Quick stats to confirm data loaded (wares, factions, ships, stations, trades, language).
+  - Auto-reload data from saves when they change on disk.
+  - Update checker section: shows the current app version, the last remote version detected, a “Check for updates” button, and a “Check for updates on startup” toggle.
 
 - Readme tab
   - Shows this guide inside the app for quick reference.
@@ -169,6 +181,14 @@ The app runs locally and reads only your X4 files. Nothing is uploaded. **Nothin
 
 ## Change log
 
+- 1.4.0 (2025-10-20)
+  - Improved:
+    - Graphs drawings
+  - Introduced:
+    - Auto-reload data from saves when they change on disk.
+    - New type of graphs: Cargo capacity utilization distribution across all transactions.
+    - Filtering by Parent Station and Ship Class in all analysis tabs.
+    - Update checker.
 - 1.3.1 (2025-09-09)
   - Improved:
     - Stats Diagrams UI: replacement for the tooltip is implemented as a custom "legend" on a left side of the charts.
