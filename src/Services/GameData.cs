@@ -278,7 +278,7 @@ public sealed class GameData
   private int _shipStoragesProcessed;
   private int _processedFiles;
   private int _clusterSectorNamesProcessed;
-  private long _dbSchemaVersion = 5;
+  private long _dbSchemaVersion = 6;
 
   public GameData()
   {
@@ -554,14 +554,14 @@ FROM (
       cp.owner  AS counterpart_faction,
       sn.name   AS sector,
       sn.macro  AS sector_macro,
-      CASE
-        WHEN cp.owner = 'player'
-          THEN cp.name || ' (' || cp.code || ')'
-        ELSE CASE
-              WHEN f.shortname IS NULL THEN ''
-              ELSE f.shortname
-            END
-            || ' ' || cp.name || cp.nameindex || ' (' || cp.code || ')'
+      CASE WHEN cp.owner = 'player'
+        THEN cp.name || ' (' || cp.code || ')'
+        ELSE
+          CASE WHEN f.shortname IS NULL
+            THEN ''
+            ELSE f.shortname
+          END
+          || ' ' || cp.name || cp.nameindex || ' (' || cp.code || ')'
       END AS station,
       t.time AS time,
       'sell' AS operation,
@@ -571,13 +571,17 @@ FROM (
       t.volume AS volume,
       t.trade_sum / 100.0 AS trade_sum,
       w.transport AS transport,
-      CASE
-        WHEN w.transport = 'container' THEN
+      CASE WHEN w.transport = 'container'
+        THEN
           (t.trade_sum - w.price_avg * t.volume) / 100.0
         ELSE
           t.trade_sum / 100.0
       END AS profit,
-      tc.total_capacity / w.volume AS cargo_volume
+      CASE WHEN t.ware = 'rawscrap' || tc.total_capacity IS NULL
+        THEN t.volume
+        ELSE
+          tc.total_capacity / w.volume
+      END AS cargo_volume
   FROM trade AS t
   JOIN component AS ship
     ON ship.id = t.seller
@@ -606,11 +610,11 @@ UNION ALL
       cp.owner  AS counterpart_faction,
       sn.name   AS sector,
       sn.macro  AS sector_macro,
-      CASE
-        WHEN cp.owner = 'player'
+      CASE WHEN cp.owner = 'player'
           THEN cp.name || ' (' || cp.code || ')'
-        ELSE CASE
-              WHEN f.shortname IS NULL THEN ''
+          ELSE
+            CASE WHEN f.shortname IS NULL
+              THEN ''
               ELSE f.shortname
             END
             || ' ' || cp.name || cp.nameindex || ' (' || cp.code || ')'
@@ -623,13 +627,17 @@ UNION ALL
       t.volume AS volume,
       -t.trade_sum/ 100.0 AS trade_sum,
       w.transport AS transport,
-      CASE
-        WHEN w.transport = 'container' THEN
+      CASE WHEN w.transport = 'container'
+        THEN
           (w.price_avg * t.volume - t.trade_sum) / 100.0
         ELSE
           -t.trade_sum / 100.0
       END AS profit,
-      tc.total_capacity / w.volume AS cargo_volume
+      CASE WHEN t.ware = 'rawscrap' || tc.total_capacity IS NULL
+        THEN t.volume
+        ELSE
+          tc.total_capacity / w.volume
+      END AS cargo_volume
   FROM trade AS t
   JOIN component AS ship
     ON ship.id = t.buyer
@@ -1180,6 +1188,146 @@ CREATE INDEX idx_subordinate_assignment   ON subordinate(assignment);
           }
           // Future updates here
           currentVersion = 5;
+        }
+        if (currentVersion == 5)
+        {
+          clearData = true;
+          ReOpenConnection();
+          using (var deleteCmd = _conn.CreateCommand())
+          {
+            deleteCmd.CommandText = @"DROP VIEW IF EXISTS player_ships_transactions_log;";
+            deleteCmd.ExecuteNonQuery();
+          }
+          using (var vacuumCmd = _conn.CreateCommand())
+          {
+            vacuumCmd.CommandText = "VACUUM;";
+            vacuumCmd.ExecuteNonQuery();
+          }
+          using (var cmd = _conn.CreateCommand())
+          {
+            cmd.CommandText =
+              @"
+-- View player_ships_transactions_log
+CREATE VIEW player_ships_transactions_log AS
+SELECT *
+FROM (
+  SELECT
+      ship.id AS id,
+      ship.code AS code,
+      ship.name AS name,
+      ship.class AS class,
+      ship.name || ' (' || ship.code || ')' AS full_name,
+      cp.code   AS counterpart_code,
+      cp.name   AS counterpart_name,
+      cp.owner  AS counterpart_faction,
+      sn.name   AS sector,
+      sn.macro  AS sector_macro,
+      CASE WHEN cp.owner = 'player'
+        THEN cp.name || ' (' || cp.code || ')'
+        ELSE
+          CASE WHEN f.shortname IS NULL
+            THEN ''
+            ELSE f.shortname
+          END
+          || ' ' || cp.name || cp.nameindex || ' (' || cp.code || ')'
+      END AS station,
+      t.time AS time,
+      'sell' AS operation,
+      t.ware AS ware,
+      w.text AS ware_name,
+      t.price / 100.0 AS price,
+      t.volume AS volume,
+      t.trade_sum / 100.0 AS trade_sum,
+      w.transport AS transport,
+      CASE WHEN w.transport = 'container'
+        THEN
+          (t.trade_sum - w.price_avg * t.volume) / 100.0
+        ELSE
+          t.trade_sum / 100.0
+      END AS profit,
+      CASE WHEN t.ware = 'rawscrap' || tc.total_capacity IS NULL
+        THEN t.volume
+        ELSE
+          tc.total_capacity / w.volume
+      END AS cargo_volume
+  FROM trade AS t
+  JOIN component AS ship
+    ON ship.id = t.seller
+  JOIN component AS cp
+    ON cp.id = t.buyer AND cp.type = 'station'
+  LEFT JOIN faction AS f
+    ON f.id = cp.owner
+  LEFT JOIN cluster_sector_name AS sn
+    ON cp.sector = sn.macro
+  JOIN ware AS w
+    ON w.id = t.ware
+  LEFT JOIN ships_macro_transport_capacity AS tc
+    ON ship.macro = tc.ship_macro AND w.transport = tc.transport
+  WHERE ship.type = 'ship'
+    AND ship.owner = 'player'
+UNION ALL
+-- Case 2: player ship is the buyer
+  SELECT
+      ship.id AS id,
+      ship.code AS code,
+      ship.name AS name,
+      ship.class AS class,
+      ship.name || ' (' || ship.code || ')' AS full_name,
+      cp.code   AS counterpart_code,
+      cp.name   AS counterpart_name,
+      cp.owner  AS counterpart_faction,
+      sn.name   AS sector,
+      sn.macro  AS sector_macro,
+      CASE WHEN cp.owner = 'player'
+          THEN cp.name || ' (' || cp.code || ')'
+          ELSE
+            CASE WHEN f.shortname IS NULL
+              THEN ''
+              ELSE f.shortname
+            END
+            || ' ' || cp.name || cp.nameindex || ' (' || cp.code || ')'
+      END AS station,
+      t.time AS time,
+      'buy' AS operation,
+      t.ware AS ware,
+      w.text AS ware_name,
+      t.price / 100.0 AS price,
+      t.volume AS volume,
+      -t.trade_sum/ 100.0 AS trade_sum,
+      w.transport AS transport,
+      CASE WHEN w.transport = 'container'
+        THEN
+          (w.price_avg * t.volume - t.trade_sum) / 100.0
+        ELSE
+          -t.trade_sum / 100.0
+      END AS profit,
+      CASE WHEN t.ware = 'rawscrap' || tc.total_capacity IS NULL
+        THEN t.volume
+        ELSE
+          tc.total_capacity / w.volume
+      END AS cargo_volume
+  FROM trade AS t
+  JOIN component AS ship
+    ON ship.id = t.buyer
+  JOIN component AS cp
+    ON cp.id = t.seller AND cp.type = 'station'
+  LEFT JOIN faction AS f
+    ON f.id = cp.owner
+  LEFT JOIN cluster_sector_name AS sn
+    ON cp.sector = sn.macro
+  JOIN ware AS w
+    ON w.id = t.ware
+  LEFT JOIN ships_macro_transport_capacity AS tc
+    ON ship.macro = tc.ship_macro AND w.transport = tc.transport
+  WHERE ship.type = 'ship'
+    AND ship.owner = 'player'
+) AS combined
+ORDER BY full_name, time;
+";
+            cmd.ExecuteNonQuery();
+          }
+          // Future updates here
+          currentVersion = 6;
         }
       }
       catch (Exception ex)

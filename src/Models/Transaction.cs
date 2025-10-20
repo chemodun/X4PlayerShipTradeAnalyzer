@@ -60,29 +60,36 @@ public class Transaction
         distance = SectorToSectorConnection.GetSectorDistance(lastSectorMacro, sectorMacro);
       }
       lastSectorMacro = sectorMacro;
-      trans.Add(
-        new Transaction
-        {
-          ShipId = shipId,
-          ShipClass = normClass,
-          RawTime = Convert.ToInt64(rdr["time"]),
-          FullName = rdr["full_name"].ToString() ?? string.Empty,
-          Sector = rdr["sector"].ToString() ?? string.Empty,
-          Station = rdr["station"].ToString() ?? string.Empty,
-          StationOwner = rdr["counterpart_faction"].ToString() ?? string.Empty,
-          StationCode = rdr["counterpart_code"].ToString() ?? string.Empty,
-          Operation = rdr["operation"].ToString() ?? string.Empty,
-          Ware = rdr["ware"].ToString() ?? string.Empty,
-          Product = rdr["ware_name"].ToString() ?? string.Empty,
-          Transport = rdr["transport"].ToString() ?? string.Empty,
-          Price = Convert.ToDecimal(rdr["price"]),
-          Quantity = Convert.ToInt32(rdr["volume"]),
-          Total = Convert.ToDecimal(rdr["trade_sum"]),
-          EstimatedProfit = Convert.ToDecimal(rdr["profit"]),
-          MaxQuantity = Convert.ToInt32(rdr["cargo_volume"]),
-          Distance = distance,
-        }
-      );
+      try
+      {
+        trans.Add(
+          new Transaction
+          {
+            ShipId = shipId,
+            ShipClass = normClass,
+            RawTime = Convert.ToInt64(rdr["time"]),
+            FullName = rdr["full_name"].ToString() ?? string.Empty,
+            Sector = rdr["sector"].ToString() ?? string.Empty,
+            Station = rdr["station"].ToString() ?? string.Empty,
+            StationOwner = rdr["counterpart_faction"].ToString() ?? string.Empty,
+            StationCode = rdr["counterpart_code"].ToString() ?? string.Empty,
+            Operation = rdr["operation"].ToString() ?? string.Empty,
+            Ware = rdr["ware"].ToString() ?? string.Empty,
+            Product = rdr["ware_name"].ToString() ?? string.Empty,
+            Transport = rdr["transport"].ToString() ?? string.Empty,
+            Price = Convert.ToDecimal(rdr["price"]),
+            Quantity = Convert.ToInt32(rdr["volume"]),
+            Total = Convert.ToDecimal(rdr["trade_sum"]),
+            EstimatedProfit = Convert.ToDecimal(rdr["profit"]),
+            MaxQuantity = Convert.ToInt32(rdr["cargo_volume"]),
+            Distance = distance,
+          }
+        );
+      }
+      catch
+      {
+        // skip invalid record
+      }
     }
   }
 }
