@@ -181,9 +181,13 @@ The app runs locally and reads only your X4 files. Nothing is uploaded. **Nothin
 
 ## Change log
 
+- 1.4.1 (2025-10-20)
+  - Fixed:
+    - Issue with initial start (wrong SQL instructions).
 - 1.4.0 (2025-10-20)
   - Introduced:
     - New type of graphs: Cargo capacity utilization distribution across all transactions.
+    - Distance in gates is shown in Ships Transactions/Trades tables.
     - Filtering by Parent Station and Ship Class in all analysis tabs.
     - Auto-reload data from saves when they change on disk.
     - Update checker.
