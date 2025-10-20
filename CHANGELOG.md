@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.4.1](https://github.com/chemodun/X4PlayerShipTradeAnalyzer/compare/v1.4.0...v1.4.1) (2025-10-20)
+
+
+### Bug Fixes
+
+* **database:** reorder index creation for ship_storage table ([667f44b](https://github.com/chemodun/X4PlayerShipTradeAnalyzer/commit/667f44b5765c7a83efd954ee49c92ffae375a57b))
+
+
+### Documentation
+
+* **bbcode:** Update bbcode files ([3a3a4e4](https://github.com/chemodun/X4PlayerShipTradeAnalyzer/commit/3a3a4e452afcaecd123a84163edd613a9db8f8ae))
+* **README:** update cargo capacity utilization section ([b6ff8fe](https://github.com/chemodun/X4PlayerShipTradeAnalyzer/commit/b6ff8fee793fab6df259bd4d584f2b1a3fe17af9))
+* **README:** update change log for version 1.4.1 ([4f0fdc1](https://github.com/chemodun/X4PlayerShipTradeAnalyzer/commit/4f0fdc1d9617d68163ae0dfe6a7ddc389d08d8d9))
+
 ## [1.4.0](https://github.com/chemodun/X4PlayerShipTradeAnalyzer/compare/v1.3.1...v1.4.0) (2025-10-20)
 
 
