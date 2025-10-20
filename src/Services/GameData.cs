@@ -481,13 +481,13 @@ CREATE TABLE IF NOT EXISTS storage (
 );
 CREATE INDEX idx_storage_transport        ON storage(transport);
 CREATE INDEX idx_storage_macro_transport  ON storage(macro, transport);
-CREATE INDEX idx_ship_storage_ship_macro  ON ship_storage(ship_macro);
 -- Table ship_storage
 CREATE TABLE IF NOT EXISTS ship_storage (
     id          INTEGER PRIMARY KEY,
     ship_macro  STRING NOT NULL,
     storage_macro STRING NOT NULL
 );
+CREATE INDEX idx_ship_storage_ship_macro  ON ship_storage(ship_macro);
 -- View lang
 CREATE VIEW lang AS
 SELECT t.page, t.id, t.text
