@@ -185,7 +185,7 @@ The app runs locally and reads only your X4 files. Nothing is uploaded. **Nothin
 
 - 1.4.2 (2025-10-21)
   - Fixed:
-    - Issue Manticore or other scrap metal collector/deliverer.
+    - Issue with Manticore or other scrap metal collector/deliverer.
 - 1.4.1 (2025-10-20)
   - Fixed:
     - Issue with initial start (wrong SQL instructions).
