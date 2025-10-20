@@ -26,9 +26,8 @@ The app runs locally and reads only your X4 files. Nothing is uploaded. **Nothin
 - Ships graphs: Compare ships visually
   - Interactive chart per ship; double-click a ship in the list to toggle it on/off
   - Same Container/Solid/Liquid/Gas filters can be applied
-- Wares stats: See what actually makes money
-  - Single-series histogram with per-ware colors and tooltips
-  - Custom legend shows color + ware name for quick scanning
+- Cargo capacity utilization distribution across all transactions tab
+  - Single-series histogram with per-ship, with capacity usage colors and tooltips
 - Ships by Wares: See which ships trade which wares
   - Stacked column chart with ships on X-axis and wares colored
   - Sorted by profit in descending order
