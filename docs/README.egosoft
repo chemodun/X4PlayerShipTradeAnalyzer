@@ -231,6 +231,7 @@ The app runs locally and reads only your X4 files. Nothing is uploaded. [b]Nothi
 [list]
 [*] There is short video available on [url=https://www.youtube.com/watch?v=z1xCXBDdpFk]YouTube[/url] demonstrating the app's features and usage.
 [*] Stats Diagrams UI improvement in version 1.3.1: [url=https://www.youtube.com/watch?v=NqAwX8Rl4Dc]YouTube[/url].
+[*] New features in version 1.4.0: [url=https://www.youtube.com/watch?v=Qxu8uV9mHsU]YouTube[/url].
 [/list]
 [size=130][u]Tips & troubleshooting[/u][/size]
 [list]
@@ -255,15 +256,11 @@ The app runs locally and reads only your X4 files. Nothing is uploaded. [b]Nothi
 [list]
 [*] 1.4.0 (2025-10-20)
 [list]
-[*] Improved:
-[list]
-[*] Graphs drawings
-[/list]
 [*] Introduced:
 [list]
-[*] Auto-reload data from saves when they change on disk.
 [*] New type of graphs: Cargo capacity utilization distribution across all transactions.
 [*] Filtering by Parent Station and Ship Class in all analysis tabs.
+[*] Auto-reload data from saves when they change on disk.
 [*] Update checker.
 [/list]
 [/list]
