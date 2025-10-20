@@ -182,12 +182,10 @@ The app runs locally and reads only your X4 files. Nothing is uploaded. **Nothin
 ## Change log
 
 - 1.4.0 (2025-10-20)
-  - Improved:
-    - Graphs drawings
   - Introduced:
-    - Auto-reload data from saves when they change on disk.
     - New type of graphs: Cargo capacity utilization distribution across all transactions.
     - Filtering by Parent Station and Ship Class in all analysis tabs.
+    - Auto-reload data from saves when they change on disk.
     - Update checker.
 - 1.3.1 (2025-09-09)
   - Improved:
