@@ -256,11 +256,19 @@ The app runs locally and reads only your X4 files. Nothing is uploaded. [b]Nothi
 [/list]
 [h2][b]Change log[/b][/h2]
 [list]
+[*] 1.4.1 (2025-10-20)
+[list]
+[*] Fixed:
+[list]
+[*] Issue with initial start (wrong SQL instructions).
+[/list]
+[/list]
 [*] 1.4.0 (2025-10-20)
 [list]
 [*] Introduced:
 [list]
 [*] New type of graphs: Cargo capacity utilization distribution across all transactions.
+[*] Distance in gates is shown in Ships Transactions/Trades tables.
 [*] Filtering by Parent Station and Ship Class in all analysis tabs.
 [*] Auto-reload data from saves when they change on disk.
 [*] Update checker.
