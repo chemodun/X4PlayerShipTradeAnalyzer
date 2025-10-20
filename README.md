@@ -179,8 +179,13 @@ The app runs locally and reads only your X4 files. Nothing is uploaded. **Nothin
 - Nothing uploads anywhere
   - The app reads your local files only and keeps all analysis on your machine.
 
+- For ships which collect/transport scrap metal (like Manticore) the used capacity always be stated as 100%.
+
 ## Change log
 
+- 1.4.2 (2025-10-21)
+  - Fixed:
+    - Issue Manticore or other scrap metal collector/deliverer.
 - 1.4.1 (2025-10-20)
   - Fixed:
     - Issue with initial start (wrong SQL instructions).
