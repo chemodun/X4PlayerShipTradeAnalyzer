@@ -164,6 +164,7 @@ The app runs locally and reads only your X4 files. Nothing is uploaded. **Nothin
 
 - There is short video available on [YouTube](https://www.youtube.com/watch?v=z1xCXBDdpFk) demonstrating the app's features and usage.
 - Stats Diagrams UI improvement in version 1.3.1: [YouTube](https://www.youtube.com/watch?v=NqAwX8Rl4Dc).
+- New features in version 1.4.0: [YouTube](https://www.youtube.com/watch?v=Qxu8uV9mHsU).
 
 ## Tips & troubleshooting
 
