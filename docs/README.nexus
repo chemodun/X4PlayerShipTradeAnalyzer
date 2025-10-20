@@ -34,10 +34,9 @@ The app runs locally and reads only your X4 files. Nothing is uploaded. [b]Nothi
 [*] Interactive chart per ship; double-click a ship in the list to toggle it on/off
 [*] Same Container/Solid/Liquid/Gas filters can be applied
 [/list]
-[*] Wares stats: See what actually makes money
+[*] Cargo capacity utilization distribution across all transactions tab
 [list]
-[*] Single-series histogram with per-ware colors and tooltips
-[*] Custom legend shows color + ware name for quick scanning
+[*] Single-series histogram with per-ship, with capacity usage colors and tooltips
 [/list]
 [*] Ships by Wares: See which ships trade which wares
 [list]
