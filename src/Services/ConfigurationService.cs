@@ -28,6 +28,9 @@ public sealed class ConfigurationService
   public string AppTheme { get; set; } = "System"; // System | Light | Dark
   public AutoReloadGameSaveMode AutoReloadMode { get; set; } = AutoReloadGameSaveMode.None; // None | SelectedFile | AnyFile
   public bool CheckForUpdatesOnStartup { get; set; }
+  public bool EnableFileLogging { get; set; }
+  public LogLevel MinimumLogLevel { get; set; } = LogLevel.Warning;
+  public bool IncludeAvaloniaLogs { get; set; }
 
   public void Save()
   {
@@ -40,6 +43,9 @@ public sealed class ConfigurationService
       AppTheme = AppTheme,
       AutoReloadMode = AutoReloadMode,
       CheckForUpdatesOnStartup = CheckForUpdatesOnStartup,
+      EnableFileLogging = EnableFileLogging,
+      MinimumLogLevel = MinimumLogLevel.ToString(),
+      IncludeAvaloniaLogs = IncludeAvaloniaLogs,
     };
     var json = JsonSerializer.Serialize(dto, _jsonSerializerOptions);
     File.WriteAllText(_configPath, json);
@@ -60,6 +66,16 @@ public sealed class ConfigurationService
       AppTheme = string.IsNullOrWhiteSpace(dto?.AppTheme) ? "System" : dto!.AppTheme!;
       AutoReloadMode = dto?.AutoReloadMode ?? AutoReloadGameSaveMode.None; // default None
       CheckForUpdatesOnStartup = dto?.CheckForUpdatesOnStartup ?? false;
+      EnableFileLogging = dto?.EnableFileLogging ?? false;
+      IncludeAvaloniaLogs = dto?.IncludeAvaloniaLogs ?? false;
+      if (dto?.MinimumLogLevel != null && Enum.TryParse<LogLevel>(dto.MinimumLogLevel, true, out var parsedLevel))
+      {
+        MinimumLogLevel = parsedLevel;
+      }
+      else
+      {
+        MinimumLogLevel = LogLevel.Warning;
+      }
     }
     catch
     {
@@ -76,5 +92,8 @@ public sealed class ConfigurationService
     public string? AppTheme { get; set; }
     public AutoReloadGameSaveMode? AutoReloadMode { get; set; }
     public bool? CheckForUpdatesOnStartup { get; set; }
+    public bool? EnableFileLogging { get; set; }
+    public string? MinimumLogLevel { get; set; }
+    public bool? IncludeAvaloniaLogs { get; set; }
   }
 }

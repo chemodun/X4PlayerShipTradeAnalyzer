@@ -34,6 +34,9 @@ public sealed class ConfigurationViewModel : INotifyPropertyChanged
   private readonly string _currentVersion;
   private string _lastCheckedRemoteVersion = NotCheckedYetLabel;
   private bool _checkForUpdatesOnStartup;
+  private bool _enableFileLogging;
+  private LogLevel _minimumLogLevel;
+  private bool _includeAvaloniaLogs;
 
   private string? _gameFolderExePath;
   public string? GameFolderExePath
@@ -117,6 +120,53 @@ public sealed class ConfigurationViewModel : INotifyPropertyChanged
       _cfg.AppTheme = value;
       _cfg.Save();
       ApplyTheme(value);
+      OnPropertyChanged();
+    }
+  }
+
+  public Array LogLevels { get; } = Enum.GetValues(typeof(LogLevel));
+
+  public bool EnableFileLogging
+  {
+    get => _enableFileLogging;
+    set
+    {
+      if (_enableFileLogging == value)
+        return;
+      _enableFileLogging = value;
+      _cfg.EnableFileLogging = value;
+      _cfg.Save();
+      UpdateLoggingConfiguration();
+      OnPropertyChanged();
+    }
+  }
+
+  public LogLevel MinimumLogLevel
+  {
+    get => _minimumLogLevel;
+    set
+    {
+      if (_minimumLogLevel == value)
+        return;
+      _minimumLogLevel = value;
+      _cfg.MinimumLogLevel = value;
+      _cfg.Save();
+      UpdateLoggingConfiguration();
+      OnPropertyChanged();
+    }
+  }
+
+  public bool IncludeAvaloniaLogs
+  {
+    get => _includeAvaloniaLogs;
+    set
+    {
+      if (_includeAvaloniaLogs == value)
+        return;
+      _includeAvaloniaLogs = value;
+      _cfg.IncludeAvaloniaLogs = value;
+      _cfg.Save();
+      UpdateLoggingConfiguration();
       OnPropertyChanged();
     }
   }
@@ -382,11 +432,20 @@ public sealed class ConfigurationViewModel : INotifyPropertyChanged
     _appTheme = _cfg.AppTheme;
     _autoReloadMode = _cfg.AutoReloadMode;
     _checkForUpdatesOnStartup = _cfg.CheckForUpdatesOnStartup;
+    _enableFileLogging = _cfg.EnableFileLogging;
+    _minimumLogLevel = _cfg.MinimumLogLevel;
+    _includeAvaloniaLogs = _cfg.IncludeAvaloniaLogs;
     // apply saved theme on startup
     ApplyTheme(_appTheme);
     // Setup watcher if needed based on loaded config
     RestartSaveWatcherIfNeeded();
+    OnPropertyChanged(nameof(EnableFileLogging));
+    OnPropertyChanged(nameof(MinimumLogLevel));
+    OnPropertyChanged(nameof(IncludeAvaloniaLogs));
   }
+
+  private void UpdateLoggingConfiguration() =>
+    LoggingService.ApplyConfiguration(_enableFileLogging, _minimumLogLevel, _includeAvaloniaLogs);
 
   // Helpers invoked from code-behind button clicks
   public void ReloadGameData(GameData gameData, Action<ProgressUpdate>? progress = null)

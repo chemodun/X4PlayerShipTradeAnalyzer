@@ -1067,11 +1067,15 @@
           <RowDefinition Height="8"/>
           <!-- 9: Theme selector row -->
           <RowDefinition Height="Auto"/>
-          <!-- 10: gap before update info -->
-          <RowDefinition Height="32"/>
-          <!-- 11: Update info gap -->
+          <!-- 10: gap before debug options -->
           <RowDefinition Height="8"/>
-          <!-- 12: Update checker row -->
+          <!-- 11: debug options row   -->
+          <RowDefinition Height="Auto"/>
+          <!-- 12: gap before update info -->
+          <RowDefinition Height="8"/>
+          <!-- 13: Update info gap -->
+          <RowDefinition Height="8"/>
+          <!-- 14: Update checker row -->
           <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -1196,19 +1200,27 @@
           <x:String>Light</x:String>
           <x:String>Dark</x:String>
         </ComboBox>
+        <StackPanel Grid.Row="11" Grid.Column="0" Grid.ColumnSpan="9" Orientation="Horizontal" Spacing="16" VerticalAlignment="Center">
+          <CheckBox Content="Write log file" IsChecked="{Binding EnableFileLogging, Mode=TwoWay}" VerticalAlignment="Center"/>
+          <CheckBox Content="Include Avalonia logs" IsChecked="{Binding IncludeAvaloniaLogs, Mode=TwoWay}" VerticalAlignment="Center"/>
+          <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+            <TextBlock Text="Minimum log level" VerticalAlignment="Center"/>
+            <ComboBox Width="150" ItemsSource="{Binding LogLevels}" SelectedItem="{Binding MinimumLogLevel, Mode=TwoWay}"/>
+          </StackPanel>
+        </StackPanel>
 
-        <Border Grid.Row="10" Grid.ColumnSpan="7" BorderBrush="Gray" BorderThickness="0 0 0 1" Padding="8 0 0 8"/>
+        <Border Grid.Row="12" Grid.ColumnSpan="7" BorderBrush="Gray" BorderThickness="0 0 0 1" Padding="8 0 0 8"/>
 
         <!-- 10: Update checker row -->
-        <TextBlock Grid.Row="12" Grid.Column="0" VerticalAlignment="Center" Text="Version:"/>
-        <StackPanel Grid.Row="12" Grid.Column="1" VerticalAlignment="Center" Orientation="Horizontal" Spacing="6">
+        <TextBlock Grid.Row="14" Grid.Column="0" VerticalAlignment="Center" Text="Version:"/>
+        <StackPanel Grid.Row="14" Grid.Column="1" VerticalAlignment="Center" Orientation="Horizontal" Spacing="6">
           <TextBlock Text="Current:"/>
           <TextBlock Text="{Binding CurrentVersion}" FontWeight="Bold"/>
           <TextBlock Text="Latest published:"/>
           <TextBlock Text="{Binding LastCheckedRemoteVersion}" FontWeight="Bold"/>
         </StackPanel>
-        <CheckBox Grid.Row="12" Grid.Column="4" Content="Check for updates on startup" IsChecked="{Binding CheckForUpdatesOnStartup, Mode=TwoWay}" VerticalAlignment="Center"/>
-        <Button Grid.Row="12" Grid.Column="6" VerticalAlignment="Center" Content="Check for updates" IsEnabled="{Binding CanCheckForUpdates}" Click="CheckForUpdates_Click"/>
+        <CheckBox Grid.Row="14" Grid.Column="4" Content="Check for updates on startup" IsChecked="{Binding CheckForUpdatesOnStartup, Mode=TwoWay}" VerticalAlignment="Center"/>
+        <Button Grid.Row="14" Grid.Column="6" VerticalAlignment="Center" Content="Check for updates" IsEnabled="{Binding CanCheckForUpdates}" Click="CheckForUpdates_Click"/>
       </Grid>
     </TabItem>
 

@@ -146,7 +146,7 @@ public sealed class MainViewModel : INotifyPropertyChanged
 
   public MainViewModel()
   {
-    Console.WriteLine($"Connection state: {MainWindow.GameData.Connection.State}");
+    LoggingService.Debug($"Connection state: {MainWindow.GameData.Connection.State}");
     LoadData();
     TransactionsData = new ShipsDataTransactionsModel();
     TransactionsGraphs = new ShipsGraphTransactionsModel();

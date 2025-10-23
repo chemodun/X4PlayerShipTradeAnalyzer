@@ -321,8 +321,9 @@ public sealed class GameData
         _conn.Open();
       }
     }
-    catch (Exception)
+    catch (Exception ex)
     {
+      LoggingService.Warning("Failed to reopen SQLite connection; creating a new instance.", ex);
       _conn = CreateConnection();
     }
   }
@@ -1332,8 +1333,7 @@ ORDER BY full_name, time;
       }
       catch (Exception ex)
       {
-        // Log or handle the exception as needed
-        Console.WriteLine($"Error updating DB schema from version {currentVersion} to {_dbSchemaVersion}: {ex.Message}");
+        LoggingService.Error($"Error updating DB schema from version {currentVersion} to {_dbSchemaVersion}.", ex);
       }
       SetDBSchemaVersion(_dbSchemaVersion);
       if (clearData)
@@ -2344,7 +2344,7 @@ ORDER BY full_name, time;
     }
     catch (Exception ex)
     {
-      Console.WriteLine("Error loading wares.xml: " + ex.Message);
+      LoggingService.Error("Error loading wares.xml.", ex);
       return;
     }
     finally
@@ -2443,7 +2443,7 @@ ORDER BY full_name, time;
     }
     catch (Exception ex)
     {
-      Console.WriteLine("Error loading factions.xml: " + ex.Message);
+      LoggingService.Error("Error loading factions.xml.", ex);
       return;
     }
     finally
@@ -2535,7 +2535,7 @@ ORDER BY full_name, time;
     }
     catch (Exception ex)
     {
-      Console.WriteLine("Error loading mapdefaults.xml: " + ex.Message);
+      LoggingService.Error("Error loading mapdefaults.xml.", ex);
       return;
     }
     finally
@@ -2723,7 +2723,7 @@ ORDER BY full_name, time;
       tradeCount = 0;
 
     DateTime startTime = DateTime.Now;
-    Console.WriteLine("Started at " + startTime);
+    LoggingService.Information($"Save import started at {startTime:O}.");
 
     using var fs = new FileStream(savePath, FileMode.Open, FileAccess.Read);
     using var gz = new GZipStream(fs, CompressionMode.Decompress);
@@ -3653,7 +3653,7 @@ ORDER BY full_name, time;
       }
     );
 
-    Console.WriteLine(
+    LoggingService.Information(
       $"Imported {shipsProcessed} ships, {stationsProcessed} stations, {tradeCount} trades. Time spent: {DateTime.Now - startTime}"
     );
     RefreshStats();
