@@ -255,6 +255,7 @@ public sealed class GameData
     " XXX",
   };
   private const int _batchSize = 1000;
+  private const string LogArea = "GameData.Load";
   private readonly string _gameDataDirectory;
   private readonly string _dbPath;
   private SQLiteConnection _conn;
@@ -1358,9 +1359,15 @@ ORDER BY full_name, time;
       throw new InvalidOperationException("Database connection is not initialized.");
     string gamePath = ConfigurationService.Instance.GameFolderExePath ?? string.Empty;
     if (string.IsNullOrWhiteSpace(gamePath) || !Directory.Exists(gamePath))
+    {
+      LoggingService.Warning("Game folder path is not configured or does not exist. Skipping game XML load.", area: LogArea);
       return;
+    }
+    var loadStart = DateTime.Now;
+    LoggingService.Information($"Starting game XML load from '{gamePath}'.", area: LogArea);
     List<string> extensionsPathList = GetExtensionsSorted();
     extensionsPathList.Insert(0, string.Empty); // base game first
+    LoggingService.Debug($"Package queue prepared with {extensionsPathList.Count} entries (including base game).", area: LogArea);
     ClearTableText();
     ClearTableWare();
     ClearTableFaction();
@@ -1382,27 +1389,40 @@ ORDER BY full_name, time;
         ? "game"
         : (extensionRelPath.Replace('\\', '/').Split('/').LastOrDefault() ?? extensionRelPath);
       progress?.Invoke(new ProgressUpdate { CurrentPackage = packageLabel });
+      LoggingService.Debug($"Processing package '{packageLabel}' from '{dlcFullPath}'.", area: LogArea);
 
       ContentExtractor contentExtractor = new(dlcFullPath);
       if (contentExtractor.FileCount == 0)
       {
+        LoggingService.Debug($"Package '{packageLabel}' contains no catalog files. Skipping.", area: LogArea);
         continue;
       }
       if (string.IsNullOrWhiteSpace(extensionRelPath))
       {
         progress?.Invoke(new ProgressUpdate { Status = "Parsing texts..." });
+        LoggingService.Debug($"Loading localisation texts for '{packageLabel}'.", area: LogArea);
         LoadTextsFromGameT(contentExtractor, progress);
       }
       progress?.Invoke(new ProgressUpdate { Status = "Parsing map defaults..." });
+      LoggingService.Debug($"Loading map defaults for '{packageLabel}'.", area: LogArea);
       LoadMapDefaultsXml(contentExtractor, progress);
       progress?.Invoke(new ProgressUpdate { Status = "Parsing wares..." });
+      LoggingService.Debug($"Loading wares for '{packageLabel}'.", area: LogArea);
       LoadWaresXml(contentExtractor, progress);
       progress?.Invoke(new ProgressUpdate { Status = "Parsing factions..." });
+      LoggingService.Debug($"Loading factions for '{packageLabel}'.", area: LogArea);
       LoadFactionsXml(contentExtractor, progress);
       progress?.Invoke(new ProgressUpdate { Status = "Parsing storages & ship storages..." });
+      LoggingService.Debug($"Loading storages for '{packageLabel}'.", area: LogArea);
       LoadStoragesAndShipStorages(contentExtractor, progress);
+      LoggingService.Debug($"Completed package '{packageLabel}'.", area: LogArea);
     }
     RefreshStats();
+    var elapsed = DateTime.Now - loadStart;
+    LoggingService.Information(
+      $"Completed game XML load in {elapsed}. Files processed: {_processedFiles}; wares: {_waresProcessed}; factions: {_factionsProcessed}; cluster names: {_clusterSectorNamesProcessed}; storages: {_storagesProcessed}; ship storages: {_shipStoragesProcessed}.",
+      area: LogArea
+    );
   }
 
   private void LoadStoragesAndShipStorages(ContentExtractor contentExtractor, Action<ProgressUpdate>? progress = null)
@@ -1412,7 +1432,15 @@ ORDER BY full_name, time;
     var entries = contentExtractor.GetFilesByMask("assets/units/size_*/macros/*.xml");
     entries = entries.Concat(contentExtractor.GetFilesByMask("assets/props/StorageModules/macros/*.xml")).ToList();
     if (entries.Count == 0)
+    {
+      LoggingService.Debug("No storage or ship storage macro files found for current package.", area: LogArea);
       return;
+    }
+
+    var storagesStart = DateTime.Now;
+    var initialStorages = _storagesProcessed;
+    var initialShipStorages = _shipStoragesProcessed;
+    LoggingService.Debug($"Scanning {entries.Count} macro files for storages and ship storage links.", area: LogArea);
 
     SQLiteTransaction txn = _conn.BeginTransaction();
     using var insertStorage = new SQLiteCommand(
@@ -1571,9 +1599,9 @@ ORDER BY full_name, time;
           }
         }
       }
-      catch
+      catch (Exception ex)
       {
-        // ignore malformed files
+        LoggingService.Debug($"Skipping storage macro '{entry.FilePath}' due to parse error.", ex, area: LogArea);
       }
       finally
       {
@@ -1583,6 +1611,14 @@ ORDER BY full_name, time;
     }
 
     txn.Commit();
+
+    var storagesDelta = _storagesProcessed - initialStorages;
+    var shipStoragesDelta = _shipStoragesProcessed - initialShipStorages;
+    var elapsed = DateTime.Now - storagesStart;
+    LoggingService.Debug(
+      $"Completed storage parsing in {elapsed}. Added {storagesDelta} storages and {shipStoragesDelta} ship-to-storage links (totals: {_storagesProcessed}/{_shipStoragesProcessed}).",
+      area: LogArea
+    );
 
     // Final report for this package
     progress?.Invoke(
@@ -1633,7 +1669,12 @@ ORDER BY full_name, time;
     // storage macros typically reside in assets/props/ or assets/components; search all macros xmls
     var entries = contentExtractor.GetFilesByMask("assets/units/size_*/macros/*.xml");
     if (entries.Count == 0)
+    {
+      LoggingService.Debug("No legacy storage macro files found.", area: LogArea);
       return;
+    }
+
+    LoggingService.Debug($"Legacy storage scan over {entries.Count} macro files.", area: LogArea);
 
     SQLiteTransaction txn = _conn.BeginTransaction();
     using var cmd = new SQLiteCommand(
@@ -1738,9 +1779,9 @@ ORDER BY full_name, time;
           }
         }
       }
-      catch
+      catch (Exception ex)
       {
-        // ignore malformed files
+        LoggingService.Debug($"Skipping legacy storage macro '{entry.FilePath}' due to parse error.", ex, area: LogArea);
       }
       finally
       {
@@ -1749,6 +1790,7 @@ ORDER BY full_name, time;
       }
     }
     txn.Commit();
+    LoggingService.Debug($"Legacy storage scan stored {stored} rows.", area: LogArea);
   }
 
   // Parse ship macros of classes ship_s/m/l/xl and map to storage macros connected via connection="ShipConnection"
@@ -1759,7 +1801,12 @@ ORDER BY full_name, time;
     var entries = new List<X4Unpack.CatEntry>();
     entries.AddRange(contentExtractor.GetFilesByMask("assets/units/size_*/macros/*.xml"));
     if (entries.Count == 0)
+    {
+      LoggingService.Debug("No ship macro files found while building legacy ship storage map.", area: LogArea);
       return;
+    }
+
+    LoggingService.Debug($"Legacy ship storage scan over {entries.Count} macro files.", area: LogArea);
 
     SQLiteTransaction txn = _conn.BeginTransaction();
     using var cmd = new SQLiteCommand("INSERT OR IGNORE INTO ship_storage(ship_macro, storage_macro) VALUES (@ship,@storage)", _conn, txn);
@@ -1841,9 +1888,9 @@ ORDER BY full_name, time;
           }
         }
       }
-      catch
+      catch (Exception ex)
       {
-        // ignore malformed files
+        LoggingService.Debug($"Skipping legacy ship macro '{entry.FilePath}' due to parse error.", ex, area: LogArea);
       }
       finally
       {
@@ -1852,6 +1899,7 @@ ORDER BY full_name, time;
       }
     }
     txn.Commit();
+    LoggingService.Debug($"Legacy ship storage scan stored {stored} rows.", area: LogArea);
   }
 
   private void ClearTableText()
@@ -1873,10 +1921,12 @@ ORDER BY full_name, time;
   private void LoadTextsFromGameT(ContentExtractor contentExtractor, Action<ProgressUpdate>? progress = null)
   {
     ReOpenConnection();
+    var textsStart = DateTime.Now;
     string mask = "t/*-l*.xml";
     int langId = 0;
     string gameFolder = ConfigurationService.Instance.GameFolderExePath ?? string.Empty;
     string langPath = Path.Combine(gameFolder, "lang.dat");
+    LoggingService.Debug("Loading localisation text resources.", area: LogArea);
     if (File.Exists(langPath))
     {
       var first = File.ReadLines(langPath).FirstOrDefault();
@@ -1888,6 +1938,11 @@ ORDER BY full_name, time;
         if (ConfigurationService.Instance.LoadOnlyGameLanguage)
         {
           mask = $"t/*-l{langId:D3}.xml";
+          LoggingService.Debug($"Detected game language {langId}; restricting localisation load to this language.", area: LogArea);
+        }
+        else
+        {
+          LoggingService.Debug($"Detected game language {langId}; loading all available languages.", area: LogArea);
         }
       }
     }
@@ -1895,8 +1950,10 @@ ORDER BY full_name, time;
     string[] files = catEntries.Select(e => e.FilePath).Distinct().ToArray();
     if (files.Length == 0)
     {
+      LoggingService.Debug("No localisation files found for current package.", area: LogArea);
       return;
     }
+    LoggingService.Debug($"Parsing {files.Length} localisation file(s) with mask '{mask}'.", area: LogArea);
     // 1) Parse all files and collect raw strings per (lang,page,id)
     //    This allows forward references during refinement.
     var raw = new Dictionary<int, Dictionary<int, Dictionary<int, string>>>(); // lang -> page -> id -> text
@@ -1904,6 +1961,7 @@ ORDER BY full_name, time;
     var seenLangs = new HashSet<int>();
     foreach (var file in files)
     {
+      LoggingService.Debug($"Parsing localisation file '{file}'.", area: LogArea);
       try
       {
         CatEntry entry = catEntries.Last(e => e.FilePath == file);
@@ -1991,9 +2049,9 @@ ORDER BY full_name, time;
           AddItem(pageId, id, value);
         }
       }
-      catch
+      catch (Exception ex)
       {
-        // Skip file on any parse error
+        LoggingService.Debug($"Skipping localisation file '{file}' due to parse error.", ex, area: LogArea);
       }
       finally
       {
@@ -2063,6 +2121,12 @@ ORDER BY full_name, time;
     // Final report and commit
     progress?.Invoke(new ProgressUpdate { StoredTItems = (int)count });
     txn.Commit();
+    var elapsed = DateTime.Now - textsStart;
+    string targetLangLabel = targetLanguage?.ToString(CultureInfo.InvariantCulture) ?? "all";
+    LoggingService.Debug(
+      $"Stored {count} localisation strings across {raw.Count} language(s) (target: {targetLangLabel}) in {elapsed}.",
+      area: LogArea
+    );
   }
 
   private static int ParseInt(string? s)
@@ -2252,8 +2316,12 @@ ORDER BY full_name, time;
     string[] files = catEntries.Select(e => e.FilePath).ToArray();
     if (files.Length == 0)
     {
+      LoggingService.Debug("No wares.xml found in current package.", area: LogArea);
       return;
     }
+    var waresStart = DateTime.Now;
+    var initialWares = _waresProcessed;
+    LoggingService.Debug($"Loading wares from '{file}' ({files.Length} file(s) discovered).", area: LogArea);
     try
     {
       CatEntry entry = catEntries.Last(e => e.FilePath == file);
@@ -2341,6 +2409,12 @@ ORDER BY full_name, time;
       // Final report
       progress?.Invoke(new ProgressUpdate { WaresProcessed = _waresProcessed });
       txn.Commit();
+      var elapsed = DateTime.Now - waresStart;
+      var waresDelta = _waresProcessed - initialWares;
+      LoggingService.Debug(
+        $"Finished loading wares in {elapsed}. Added {waresDelta} ware records (total {_waresProcessed}).",
+        area: LogArea
+      );
     }
     catch (Exception ex)
     {
@@ -2394,8 +2468,12 @@ ORDER BY full_name, time;
     string[] files = catEntries.Select(e => e.FilePath).ToArray();
     if (files.Length == 0)
     {
+      LoggingService.Debug("No factions.xml found in current package.", area: LogArea);
       return;
     }
+    var factionsStart = DateTime.Now;
+    var initialFactions = _factionsProcessed;
+    LoggingService.Debug($"Loading factions from '{file}' ({files.Length} file(s) discovered).", area: LogArea);
     try
     {
       CatEntry entry = catEntries.Last(e => e.FilePath == file);
@@ -2440,6 +2518,12 @@ ORDER BY full_name, time;
       }
       // Final report
       txn.Commit();
+      var elapsed = DateTime.Now - factionsStart;
+      var factionsDelta = _factionsProcessed - initialFactions;
+      LoggingService.Debug(
+        $"Finished loading factions in {elapsed}. Added {factionsDelta} faction records (total {_factionsProcessed}).",
+        area: LogArea
+      );
     }
     catch (Exception ex)
     {
@@ -2462,8 +2546,12 @@ ORDER BY full_name, time;
     string[] files = catEntries.Select(e => e.FilePath).ToArray();
     if (files.Length == 0)
     {
+      LoggingService.Debug("No mapdefaults.xml found in current package.", area: LogArea);
       return;
     }
+    var mapDefaultsStart = DateTime.Now;
+    var initialClusterNames = _clusterSectorNamesProcessed;
+    LoggingService.Debug($"Loading map defaults from '{file}' ({files.Length} file(s) discovered).", area: LogArea);
     try
     {
       CatEntry entry = catEntries.Last(e => e.FilePath == file);
@@ -2532,6 +2620,12 @@ ORDER BY full_name, time;
       // Final report for this file/package
       progress?.Invoke(new ProgressUpdate { ClusterSectorNamesProcessed = _clusterSectorNamesProcessed });
       txn.Commit();
+      var elapsed = DateTime.Now - mapDefaultsStart;
+      var namesDelta = _clusterSectorNamesProcessed - initialClusterNames;
+      LoggingService.Debug(
+        $"Finished loading map defaults in {elapsed}. Added {namesDelta} cluster/sector names (total {_clusterSectorNamesProcessed}).",
+        area: LogArea
+      );
     }
     catch (Exception ex)
     {
@@ -2640,14 +2734,27 @@ ORDER BY full_name, time;
   {
     // Prefer external SaveGamesFolder from configuration; fallback to local GameData copy
     string savePath = ConfigurationService.Instance.GameSavePath ?? string.Empty;
-    if (string.IsNullOrWhiteSpace(savePath) || !File.Exists(savePath))
+    if (string.IsNullOrWhiteSpace(savePath))
+    {
+      LoggingService.Warning("Save import requested but no save path is configured.", area: LogArea);
       return;
+    }
+    if (!File.Exists(savePath))
+    {
+      LoggingService.Warning($"Save import requested but file '{savePath}' was not found.", area: LogArea);
+      return;
+    }
 
     ClearTablesFromGameSave();
+    LoggingService.Debug("Cleared existing save data tables prior to import.", area: LogArea);
     ReOpenConnection();
 
     var factoryNames = GetFactoryNamesDict();
     var factionsShortNames = GetFactionsShortNamesDict();
+    LoggingService.Debug(
+      $"Loaded lookup dictionaries: factoryNames={factoryNames.Count}, factionsShortNames={factionsShortNames.Count}.",
+      area: LogArea
+    );
 
     // Begin transactional import for speed and atomicity
     SQLiteTransaction txn = _conn.BeginTransaction();
@@ -2723,7 +2830,9 @@ ORDER BY full_name, time;
       tradeCount = 0;
 
     DateTime startTime = DateTime.Now;
-    LoggingService.Information($"Save import started at {startTime:O}.");
+    LoggingService.Information($"Save import started at {startTime:O} from '{savePath}'.", area: LogArea);
+    bool traceEnabled = LoggingService.MinimumLevel <= LogLevel.Debug;
+    LoggingService.Debug($"Configuration snapshot: LoadRemovedObjects={ConfigurationService.Instance.LoadRemovedObjects}.", area: LogArea);
 
     using var fs = new FileStream(savePath, FileMode.Open, FileAccess.Read);
     using var gz = new GZipStream(fs, CompressionMode.Decompress);
@@ -2764,6 +2873,13 @@ ORDER BY full_name, time;
         if (subordinatesProcessed % 10 == 0)
         {
           progress?.Invoke(new ProgressUpdate { SubordinatesProcessed = subordinatesProcessed });
+        }
+        if (traceEnabled && subordinatesProcessed % 25 == 0)
+        {
+          LoggingService.Debug(
+            $"Subordinate links processed: {subordinatesProcessed}. Latest commander {sub.CommanderId} -> subordinate {sub.SubordinateId} ({sub.Group}).",
+            area: LogArea
+          );
         }
         subordinateBuffer.Remove(sub);
       }
@@ -2820,15 +2936,29 @@ ORDER BY full_name, time;
         {
           progress?.Invoke(new ProgressUpdate { StationsProcessed = stationsProcessed });
         }
+        if (traceEnabled && stationsProcessed % 25 == 0)
+        {
+          LoggingService.Debug(
+            $"Stations processed: {stationsProcessed}. Latest code {code}, sector {currentSector}, owner {owner}.",
+            area: LogArea
+          );
+        }
       }
       else
       {
+        macro = xr.GetAttribute("macro") ?? string.Empty;
         shipsProcessed++;
         if (shipsProcessed % 50 == 0)
         {
           progress?.Invoke(new ProgressUpdate { ShipsProcessed = shipsProcessed });
         }
-        macro = xr.GetAttribute("macro") ?? string.Empty;
+        if (traceEnabled && shipsProcessed % 25 == 0)
+        {
+          LoggingService.Debug(
+            $"Player ships processed: {shipsProcessed}. Latest macro '{macro}' code {code}, sector {currentSector}.",
+            area: LogArea
+          );
+        }
         if (string.IsNullOrEmpty(name))
         {
           if (!string.IsNullOrEmpty(macro))
@@ -2994,6 +3124,10 @@ ORDER BY full_name, time;
         {
           progress?.Invoke(new ProgressUpdate { ElementsProcessed = (int)Math.Min(int.MaxValue, elementsProcessed) });
         }
+        if (traceEnabled && elementsProcessed % 10000 == 0)
+        {
+          LoggingService.Debug($"XML elements processed so far: {elementsProcessed:n0}.", area: LogArea);
+        }
         if (!timeProcessed && xr.Name == "game")
         {
           gameTime = NormalizeTime(xr.GetAttribute("time") ?? string.Empty);
@@ -3001,6 +3135,7 @@ ORDER BY full_name, time;
         }
         if (!tradesProcessed && xr.Name == "entries" && xr.GetAttribute("type") == "trade")
         {
+          LoggingService.Debug("Switching to trade entries import phase.", area: LogArea);
           tradeEntries = true;
           detectNameViaProduction = false;
           progress?.Invoke(new ProgressUpdate { Status = "Importing trade logs..." });
@@ -3014,6 +3149,7 @@ ORDER BY full_name, time;
         }
         if (connectionsProcessed && !removedProcessed && !removedEntries && xr.Name == "removed")
         {
+          LoggingService.Debug("Switching to removed objects import phase.", area: LogArea);
           removedEntries = true;
           tradeEntries = false;
           continue;
@@ -3116,6 +3252,13 @@ ORDER BY full_name, time;
                 itemsForTransaction++;
                 superhighwaysProcessed++;
                 progress?.Invoke(new ProgressUpdate { SuperhighwaysProcessed = superhighwaysProcessed });
+                if (traceEnabled && superhighwaysProcessed % 5 == 0)
+                {
+                  LoggingService.Debug(
+                    $"Superhighways processed: {superhighwaysProcessed}. Latest macro {superHighway.Macro} from {superHighway.SectorFrom} to {superHighway.SectorTo}.",
+                    area: LogArea
+                  );
+                }
               }
               else
               {
@@ -3133,6 +3276,10 @@ ORDER BY full_name, time;
             if (sectorCount % 10 == 0)
             {
               progress?.Invoke(new ProgressUpdate { SectorsProcessed = sectorCount });
+            }
+            if (traceEnabled && sectorCount % 10 == 0)
+            {
+              LoggingService.Debug($"Sectors processed: {sectorCount}. Current sector '{currentSector}'.", area: LogArea);
             }
             continue;
           }
@@ -3196,6 +3343,13 @@ ORDER BY full_name, time;
                     if (gatesProcessed % 10 == 0)
                     {
                       progress?.Invoke(new ProgressUpdate { GatesProcessed = gatesProcessed });
+                    }
+                    if (traceEnabled && gatesProcessed % 20 == 0)
+                    {
+                      LoggingService.Debug(
+                        $"Gates processed: {gatesProcessed}. Sector {currentSector}, code {code}, connection {connectionId} -> {connectedId}.",
+                        area: LogArea
+                      );
                     }
                     connectedId = 0;
                   }
@@ -3303,6 +3457,13 @@ ORDER BY full_name, time;
               itemsForTransaction++;
               superhighwaysProcessed++;
               progress?.Invoke(new ProgressUpdate { SuperhighwaysProcessed = superhighwaysProcessed });
+              if (traceEnabled && superhighwaysProcessed % 5 == 0)
+              {
+                LoggingService.Debug(
+                  $"Superhighways processed: {superhighwaysProcessed}. Latest macro {sh.Macro} from {sh.SectorFrom} to {sh.SectorTo}.",
+                  area: LogArea
+                );
+              }
               superhighwayBuffer.Remove(sh);
             }
             continue;
@@ -3532,6 +3693,10 @@ ORDER BY full_name, time;
           {
             progress?.Invoke(new ProgressUpdate { RemovedProcessed = removedCount });
           }
+          if (traceEnabled && removedCount % 200 == 0)
+          {
+            LoggingService.Debug($"Removed objects recorded: {removedCount}. Latest code {code} in sector {sector}.", area: LogArea);
+          }
           continue;
         }
         if (tradeEntries && xr.Name == "log")
@@ -3579,6 +3744,13 @@ ORDER BY full_name, time;
             insertTrade.ExecuteNonQuery();
             tradeCount++;
             itemsForTransaction++;
+            if (traceEnabled && tradeCount % 500 == 0)
+            {
+              LoggingService.Debug(
+                $"Trades processed: {tradeCount}. Latest seller {seller}, buyer {buyer}, ware {ware}, volume {volume}.",
+                area: LogArea
+              );
+            }
             if (tradeCount % 100 == 0)
             {
               progress?.Invoke(new ProgressUpdate { TradesProcessed = tradeCount });
@@ -3615,11 +3787,13 @@ ORDER BY full_name, time;
           {
             tradeEntries = false;
             tradesProcessed = true;
+            LoggingService.Debug("Completed trade entries import phase.", area: LogArea);
             progress?.Invoke(new ProgressUpdate { TradesProcessed = tradeCount });
           }
           if (!connectionsProcessed && xr.Name == "universe")
           {
             connectionsProcessed = true;
+            LoggingService.Debug("Finished universe component import phase.", area: LogArea);
             progress?.Invoke(new ProgressUpdate { StationsProcessed = stationsProcessed });
             progress?.Invoke(new ProgressUpdate { ShipsProcessed = shipsProcessed });
             progress?.Invoke(new ProgressUpdate { SubordinatesProcessed = subordinatesProcessed });
@@ -3631,6 +3805,7 @@ ORDER BY full_name, time;
           {
             removedProcessed = true;
             removedEntries = false;
+            LoggingService.Debug("Completed removed objects import phase.", area: LogArea);
             progress?.Invoke(new ProgressUpdate { RemovedProcessed = removedCount });
           }
         }
@@ -3653,8 +3828,10 @@ ORDER BY full_name, time;
       }
     );
 
+    var importElapsed = DateTime.Now - startTime;
     LoggingService.Information(
-      $"Imported {shipsProcessed} ships, {stationsProcessed} stations, {tradeCount} trades. Time spent: {DateTime.Now - startTime}"
+      $"Imported {shipsProcessed} ships, {stationsProcessed} stations, {tradeCount} trades, {removedCount} removed entries, {gatesProcessed} gates, {superhighwaysProcessed} superhighways, {subordinatesProcessed} subordinate links in {importElapsed}.",
+      area: LogArea
     );
     RefreshStats();
   }
