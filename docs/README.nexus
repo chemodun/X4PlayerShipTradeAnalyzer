@@ -257,6 +257,18 @@ The app runs locally and reads only your X4 files. Nothing is uploaded. [b]Nothi
 [/list]
 [size=3][u][b]Change log[/b][/u][/size]
 [list]
+[*] 1.4.3 (2025-10-25)
+[list]
+[*] Fixed:
+[list]
+[*] Time values after a long play.
+[*] Drones, Laser Tower, etc. were accounted as player ships.
+[/list]
+[*] Introduced:
+[list]
+[*] Logging possibilities.
+[/list]
+[/list]
 [*] 1.4.2 (2025-10-21)
 [list]
 [*] Fixed:
@@ -375,4 +387,5 @@ The app runs locally and reads only your X4 files. Nothing is uploaded. [b]Nothi
 [list]
 [*] Thanks to all members of the [url=https://discord.com/channels/337098290917146624/502057640877228042]X4 modding channel[/url] on [url=https://discord.com/invite/zhs8sRpd3m]Egosoft Discord[/url]. And especially to [b]UniTrader[/b] and [b]Forleyor[/b].
 [*] Thanks to [url=https://www.reddit.com/user/Breakfast-Excellent/]u/Breakfast-Excellent[/url] for the report the trade loading issue and save file for testing.
+[*] Thanks to [url=https://www.reddit.com/user/ThaRippa/]u/ThaRippa[/url] for the suggestion to the another report the trade loading issue and save file for testing.
 [/list]
