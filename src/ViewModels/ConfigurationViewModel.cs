@@ -484,8 +484,11 @@ public sealed class ConfigurationViewModel : INotifyPropertyChanged
       return;
     try
     {
+      LoggingService.Debug($"Reloading save data from: {GameSavePath}");
       gameData.ImportSaveGame(progress);
+      LoggingService.Debug("Reloaded save data successfully.");
       TryUpdateStats(gameData);
+      LoggingService.Debug("Updated stats after reloading save data.");
     }
     catch
     {
