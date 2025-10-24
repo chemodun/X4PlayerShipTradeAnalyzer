@@ -181,10 +181,15 @@ public sealed class MainViewModel : INotifyPropertyChanged
 
   public static void LoadData()
   {
+    LoggingService.Debug("Loading data into MainViewModel...");
     Subordinate.LoadAllSubordinates();
+    LoggingService.Debug("Loaded all subordinates.");
     StationShort.RefreshStationsWithTradeOrMiningSubordinates();
+    LoggingService.Debug("Refreshed stations with trade or mining subordinates.");
     Transaction.GetAllTransactions(ref AllTransactions);
+    LoggingService.Debug("Loaded all transactions.");
     FullTrade.GetFullTrades(ref AllTrades, AllTransactions);
+    LoggingService.Debug("Loaded all full trades.");
   }
 
   public void RegisterCharts(Func<string, CartesianChart?> getChart)
@@ -257,17 +262,29 @@ public sealed class MainViewModel : INotifyPropertyChanged
   {
     // Reload data for all models
     LoadData();
+    LoggingService.Debug("Reloaded save data successfully.");
     TransactionsData?.Refresh();
+    LoggingService.Debug("Refreshed TransactionsData.");
     TransactionsGraphs?.Refresh();
+    LoggingService.Debug("Refreshed TransactionsGraphs.");
     TransactionsStatsShipsWares?.Refresh();
+    LoggingService.Debug("Refreshed TransactionsStatsShipsWares.");
     TransactionsStatsShipsLoad?.Refresh();
+    LoggingService.Debug("Refreshed TransactionsStatsShipsLoad.");
     TransactionsStatsWaresShips?.Refresh();
+    LoggingService.Debug("Refreshed TransactionsStatsWaresShips.");
     TradesGraphs?.Refresh();
+    LoggingService.Debug("Refreshed TradesGraphs.");
     TradesData?.Refresh();
+    LoggingService.Debug("Refreshed TradesData.");
     TradesStatsShipsWares?.Refresh();
+    LoggingService.Debug("Refreshed TradesStatsShipsWares.");
     TradesStatsShipsLoad?.Refresh();
+    LoggingService.Debug("Refreshed TradesStatsShipsLoad.");
     TradesStatsWaresShips?.Refresh();
+    LoggingService.Debug("Refreshed TradesStatsWaresShips.");
     Configuration?.RefreshStats();
+    LoggingService.Debug("Refreshed Configuration.");
   }
 
   // minimal INotifyPropertyChanged
