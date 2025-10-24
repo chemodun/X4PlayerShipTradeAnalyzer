@@ -1,5 +1,34 @@
 # Changelog
 
+## [1.4.3](https://github.com/chemodun/X4PlayerShipTradeAnalyzer/compare/v1.4.2...v1.4.3) (2025-10-24)
+
+
+### Code Refactoring
+
+* **ConfigurationViewModel:** add debug logging for game data reload ([0f981a7](https://github.com/chemodun/X4PlayerShipTradeAnalyzer/commit/0f981a74515e44307d2355372765f9fb02869d54))
+* **ConfigurationViewModel:** add debug logging for save data reload ([fa2e3c1](https://github.com/chemodun/X4PlayerShipTradeAnalyzer/commit/fa2e3c1dbf147a988e980be76dbef3736e47e412))
+* Enhance MainWindow and ProgressWindow for improved data initialization and user feedback ([5f16e44](https://github.com/chemodun/X4PlayerShipTradeAnalyzer/commit/5f16e44773835cb03dc10a9b8b1aafcd645c853e))
+* **GameData:** add detailed logging for game XML load process ([f604e7f](https://github.com/chemodun/X4PlayerShipTradeAnalyzer/commit/f604e7fbc8a365af8c04c37da0e4a6af49e05bc3))
+* **GameData:** add ship types tracking, processing and filtering ([bdd7bf2](https://github.com/chemodun/X4PlayerShipTradeAnalyzer/commit/bdd7bf22fddd723f954a70b0ddf0e49fa00df20c))
+* **GameData:** call RefreshStats after vacuum operation ([0f981a7](https://github.com/chemodun/X4PlayerShipTradeAnalyzer/commit/0f981a74515e44307d2355372765f9fb02869d54))
+* **GameData:** change gameTime and time types from int to long ([8d98a49](https://github.com/chemodun/X4PlayerShipTradeAnalyzer/commit/8d98a492064b11c01af6a58fe5bf680e7383b098))
+* **GameData:** improve regex for ship type parsing ([5e815c2](https://github.com/chemodun/X4PlayerShipTradeAnalyzer/commit/5e815c2efbe56c5182293e8bb562491648d9e193))
+* **GameData:** remove unused clearGameData flag ([b1787b1](https://github.com/chemodun/X4PlayerShipTradeAnalyzer/commit/b1787b1839d15c34b9d6c367f51a96249a1df048))
+* **logging:** add logging service with configurable options ([042ee56](https://github.com/chemodun/X4PlayerShipTradeAnalyzer/commit/042ee565ba643196b07334ca854d3d7228d0ecbf))
+* **MainViewModel:** add debug logging for data loading process ([7468719](https://github.com/chemodun/X4PlayerShipTradeAnalyzer/commit/7468719b9a0274cbef9a2462837c36660012e3ec))
+* **MainViewModel:** enhance data loading with progress updates ([0f981a7](https://github.com/chemodun/X4PlayerShipTradeAnalyzer/commit/0f981a74515e44307d2355372765f9fb02869d54))
+* **MainWindow:** add debug logging for data reload processes ([0f981a7](https://github.com/chemodun/X4PlayerShipTradeAnalyzer/commit/0f981a74515e44307d2355372765f9fb02869d54))
+* **StatsShipsLoadBaseModel:** ensure UI thread access during reload ([0f981a7](https://github.com/chemodun/X4PlayerShipTradeAnalyzer/commit/0f981a74515e44307d2355372765f9fb02869d54))
+* **StatsShipsWaresBaseModel:** ensure UI thread access during reload ([0f981a7](https://github.com/chemodun/X4PlayerShipTradeAnalyzer/commit/0f981a74515e44307d2355372765f9fb02869d54))
+* **StatsWaresShipsBaseModel:** ensure UI thread access during reload ([0f981a7](https://github.com/chemodun/X4PlayerShipTradeAnalyzer/commit/0f981a74515e44307d2355372765f9fb02869d54))
+
+
+### Documentation
+
+* **bbcode:** Update bbcode files ([bf708ed](https://github.com/chemodun/X4PlayerShipTradeAnalyzer/commit/bf708ed0668e95b005ab6170fa7ea200b1237892))
+* **README:** clarify issue description for scrap metal collector ([5978a79](https://github.com/chemodun/X4PlayerShipTradeAnalyzer/commit/5978a7968d4e41776fad84b89d86363971ad26d8))
+* **README:** update change log for version 1.4.3 ([e8b73df](https://github.com/chemodun/X4PlayerShipTradeAnalyzer/commit/e8b73df6d67be8054dee108ae085e22a263405dd))
+
 ## [1.4.2](https://github.com/chemodun/X4PlayerShipTradeAnalyzer/compare/v1.4.1...v1.4.2) (2025-10-20)
 
 
