@@ -2014,7 +2014,7 @@ CREATE TABLE IF NOT EXISTS ship_type (
 #pragma warning disable SYSLIB1045 // Convert to 'GeneratedRegexAttribute'.
     string expanded = Regex.Replace(
       value,
-      "\\{(\\d+),(\\d+)\\}",
+      "\\{\\s*(\\d+)\\s*,\\s*(\\d+)\\s*\\}",
       m =>
       {
         int rp = ParseInt(m.Groups[1].Value);
@@ -2114,7 +2114,7 @@ CREATE TABLE IF NOT EXISTS ship_type (
   private static (int page, int id) ParseTextItem(string input)
   {
 #pragma warning disable SYSLIB1045 // Convert to 'GeneratedRegexAttribute'.
-    var match = Regex.Match(input, @"^\{(\d+),(\d+)\}$", RegexOptions.IgnoreCase);
+    var match = Regex.Match(input, @"^\{\s*(\d+)\s*,\s*(\d+)\s*\}$", RegexOptions.IgnoreCase);
 #pragma warning restore SYSLIB1045 // Convert to 'GeneratedRegexAttribute'.
     if (match.Success && match.Groups.Count == 3)
     {
