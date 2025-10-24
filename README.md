@@ -183,6 +183,12 @@ The app runs locally and reads only your X4 files. Nothing is uploaded. **Nothin
 
 ## Change log
 
+- 1.4.3 (2025-10-25)
+  - Fixed:
+    - Time values after a long play.
+    - Drones, Laser Tower, etc. were accounted as player ships.
+  - Introduced:
+    - Logging possibilities.
 - 1.4.2 (2025-10-21)
   - Fixed:
     - Issue with Manticore or other scrap metal collector/deliverer.
@@ -249,3 +255,4 @@ The app runs locally and reads only your X4 files. Nothing is uploaded. **Nothin
 
 - Thanks to all members of the [X4 modding channel](https://discord.com/channels/337098290917146624/502057640877228042) on [Egosoft Discord](https://discord.com/invite/zhs8sRpd3m). And especially to `UniTrader` and `Forleyor`.
 - Thanks to [u/Breakfast-Excellent](https://www.reddit.com/user/Breakfast-Excellent/) for the report the trade loading issue and save file for testing.
+- Thanks to [u/ThaRippa](https://www.reddit.com/user/ThaRippa/) for the suggestion to the another report the trade loading issue and save file for testing.
