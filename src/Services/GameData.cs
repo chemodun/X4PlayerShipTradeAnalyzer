@@ -684,7 +684,6 @@ ORDER BY full_name, time;
   private void UpdateDBSchema(long currentVersion)
   {
     bool clearSaveData = false;
-    bool clearGameData = false;
     // Placeholder for future schema updates
     if (currentVersion < _dbSchemaVersion)
     {
@@ -693,7 +692,6 @@ ORDER BY full_name, time;
         if (currentVersion == 0)
         {
           clearSaveData = true;
-          clearGameData = true;
           ReOpenConnection();
           using (var deleteCmd = _conn.CreateCommand())
           {
@@ -854,7 +852,6 @@ ORDER BY full_name, time
         if (currentVersion == 2)
         {
           clearSaveData = true;
-          clearGameData = true;
           ReOpenConnection();
           using (var deleteCmd = _conn.CreateCommand())
           {
@@ -1357,7 +1354,6 @@ ORDER BY full_name, time;
         if (currentVersion == 6)
         {
           clearSaveData = true;
-          clearGameData = true;
           ReOpenConnection();
           // using (var deleteCmd = _conn.CreateCommand())
           // {
@@ -1393,10 +1389,6 @@ CREATE TABLE IF NOT EXISTS ship_type (
       if (clearSaveData)
       {
         ClearTablesFromGameSave();
-      }
-      if (clearGameData)
-      {
-        // ClearTablesFromGameData();
       }
     }
   }
@@ -2504,7 +2496,7 @@ CREATE TABLE IF NOT EXISTS ship_type (
     return dict;
   }
 
-  private void ClearTablesFromGameSave()
+  public void ClearTablesFromGameSave()
   {
     ReOpenConnection();
     // 2) Refine all values and write to DB
@@ -3689,6 +3681,7 @@ CREATE TABLE IF NOT EXISTS ship_type (
       area: LogArea
     );
     RefreshStats();
+    LoggingService.Debug("Database statistics refreshed after import.", area: LogArea);
   }
 
   public void RefreshStats()
