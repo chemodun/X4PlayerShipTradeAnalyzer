@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Threading;
 using LiveChartsCore;
 using LiveChartsCore.Drawing;
 using LiveChartsCore.Measure;
@@ -22,6 +23,8 @@ public sealed class MainViewModel : INotifyPropertyChanged
   public static List<Transaction> AllTransactions = new();
   public static List<FullTrade> AllTrades = new();
   public ObservableCollection<Ware> Wares { get; } = new();
+  private bool _dataInitialized;
+  public bool IsDataInitialized => _dataInitialized;
 
   private ShipsDataTransactionsModel? _transactionsData;
   public ShipsDataTransactionsModel? TransactionsData
@@ -147,7 +150,6 @@ public sealed class MainViewModel : INotifyPropertyChanged
   public MainViewModel()
   {
     LoggingService.Debug($"Connection state: {MainWindow.GameData.Connection.State}");
-    LoadData();
     TransactionsData = new ShipsDataTransactionsModel();
     TransactionsGraphs = new ShipsGraphTransactionsModel();
     TransactionsStatsShipsLoad = new StatsShipsLoadTransactionsModel();
@@ -264,43 +266,52 @@ public sealed class MainViewModel : INotifyPropertyChanged
 
   public void Refresh(Action<ProgressUpdate>? progress = null)
   {
-    // Reload data for all models
-    progress?.Invoke(new ProgressUpdate { Status = "Refreshing Loaded data..." });
     LoadData(progress);
     LoggingService.Debug("Reloaded save data successfully.");
     progress?.Invoke(new ProgressUpdate { Status = "Refreshing Transactions Data..." });
     TransactionsData?.Refresh();
     LoggingService.Debug("Refreshed TransactionsData.");
+
     progress?.Invoke(new ProgressUpdate { Status = "Refreshing Transactions Graphs..." });
     TransactionsGraphs?.Refresh();
     LoggingService.Debug("Refreshed TransactionsGraphs.");
+
     progress?.Invoke(new ProgressUpdate { Status = "Refreshing Transactions Stats Ships Load..." });
     TransactionsStatsShipsLoad?.Refresh();
     LoggingService.Debug("Refreshed TransactionsStatsShipsLoad.");
+
     progress?.Invoke(new ProgressUpdate { Status = "Refreshing Transactions Stats Ships Wares..." });
     TransactionsStatsShipsWares?.Refresh();
     LoggingService.Debug("Refreshed TransactionsStatsShipsWares.");
+
     progress?.Invoke(new ProgressUpdate { Status = "Refreshing Transactions Stats Wares Ships..." });
     TransactionsStatsWaresShips?.Refresh();
     LoggingService.Debug("Refreshed TransactionsStatsWaresShips.");
+
     progress?.Invoke(new ProgressUpdate { Status = "Refreshing Trades Data..." });
     TradesData?.Refresh();
     LoggingService.Debug("Refreshed TradesData.");
+
     progress?.Invoke(new ProgressUpdate { Status = "Refreshing Trades Graphs..." });
     TradesGraphs?.Refresh();
     LoggingService.Debug("Refreshed TradesGraphs.");
+
     progress?.Invoke(new ProgressUpdate { Status = "Refreshing Trades Stats Ships Load..." });
     TradesStatsShipsLoad?.Refresh();
     LoggingService.Debug("Refreshed TradesStatsShipsLoad.");
+
     progress?.Invoke(new ProgressUpdate { Status = "Refreshing Trades Stats Ships Wares..." });
     TradesStatsShipsWares?.Refresh();
     LoggingService.Debug("Refreshed TradesStatsShipsWares.");
+
     progress?.Invoke(new ProgressUpdate { Status = "Refreshing Trades Stats Wares Ships..." });
     TradesStatsWaresShips?.Refresh();
     LoggingService.Debug("Refreshed TradesStatsWaresShips.");
+
     progress?.Invoke(new ProgressUpdate { Status = "Refreshing Configuration..." });
     Configuration?.RefreshStats();
     LoggingService.Debug("Refreshed Configuration.");
+    _dataInitialized = true;
   }
 
   // minimal INotifyPropertyChanged

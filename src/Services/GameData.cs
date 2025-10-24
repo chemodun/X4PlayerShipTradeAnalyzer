@@ -1764,7 +1764,7 @@ CREATE TABLE IF NOT EXISTS ship_type (
     int langId = 0;
     string gameFolder = ConfigurationService.Instance.GameFolderExePath ?? string.Empty;
     string langPath = Path.Combine(gameFolder, "lang.dat");
-    LoggingService.Debug("Loading localisation text resources.", area: LogArea);
+    LoggingService.Debug("Loading localization text resources.", area: LogArea);
     if (File.Exists(langPath))
     {
       var first = File.ReadLines(langPath).FirstOrDefault();
@@ -1776,7 +1776,7 @@ CREATE TABLE IF NOT EXISTS ship_type (
         if (ConfigurationService.Instance.LoadOnlyGameLanguage)
         {
           mask = $"t/*-l{langId:D3}.xml";
-          LoggingService.Debug($"Detected game language {langId}; restricting localisation load to this language.", area: LogArea);
+          LoggingService.Debug($"Detected game language {langId}; restricting localization load to this language.", area: LogArea);
         }
         else
         {
@@ -1788,10 +1788,10 @@ CREATE TABLE IF NOT EXISTS ship_type (
     string[] files = catEntries.Select(e => e.FilePath).Distinct().ToArray();
     if (files.Length == 0)
     {
-      LoggingService.Debug("No localisation files found for current package.", area: LogArea);
+      LoggingService.Debug("No localization files found for current package.", area: LogArea);
       return;
     }
-    LoggingService.Debug($"Parsing {files.Length} localisation file(s) with mask '{mask}'.", area: LogArea);
+    LoggingService.Debug($"Parsing {files.Length} localization file(s) with mask '{mask}'.", area: LogArea);
     // 1) Parse all files and collect raw strings per (lang,page,id)
     //    This allows forward references during refinement.
     var raw = new Dictionary<int, Dictionary<int, Dictionary<int, string>>>(); // lang -> page -> id -> text
@@ -1799,7 +1799,7 @@ CREATE TABLE IF NOT EXISTS ship_type (
     var seenLangs = new HashSet<int>();
     foreach (var file in files)
     {
-      LoggingService.Debug($"Parsing localisation file '{file}'.", area: LogArea);
+      LoggingService.Debug($"Parsing localization file '{file}'.", area: LogArea);
       try
       {
         CatEntry entry = catEntries.Last(e => e.FilePath == file);
@@ -1889,7 +1889,7 @@ CREATE TABLE IF NOT EXISTS ship_type (
       }
       catch (Exception ex)
       {
-        LoggingService.Debug($"Skipping localisation file '{file}' due to parse error.", ex, area: LogArea);
+        LoggingService.Debug($"Skipping localization file '{file}' due to parse error.", ex, area: LogArea);
       }
       finally
       {
@@ -1962,7 +1962,7 @@ CREATE TABLE IF NOT EXISTS ship_type (
     var elapsed = DateTime.Now - textsStart;
     string targetLangLabel = targetLanguage?.ToString(CultureInfo.InvariantCulture) ?? "all";
     LoggingService.Debug(
-      $"Stored {count} localisation strings across {raw.Count} language(s) (target: {targetLangLabel}) in {elapsed}.",
+      $"Stored {count} localization strings across {raw.Count} language(s) (target: {targetLangLabel}) in {elapsed}.",
       area: LogArea
     );
   }

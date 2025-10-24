@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Threading;
 using X4PlayerShipTradeAnalyzer.Models;
 using X4PlayerShipTradeAnalyzer.Services;
 using X4PlayerShipTradeAnalyzer.Views;
@@ -98,6 +99,11 @@ public class ShipsDataTransactionsModel : ShipsDataBaseModel
     foreach (var s in ships.Values)
       ShipList.Add(s);
     ResortShips();
+    if (!Dispatcher.UIThread.CheckAccess())
+    {
+      Dispatcher.UIThread.Post(ApplyShipFilter);
+      return;
+    }
     ApplyShipFilter();
   }
 

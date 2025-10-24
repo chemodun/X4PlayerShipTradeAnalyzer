@@ -1,116 +1,312 @@
-<Window xmlns="https://github.com/avaloniaui"
+<Window x:Class="X4PlayerShipTradeAnalyzer.Views.ProgressWindow"
+        xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        x:Class="X4PlayerShipTradeAnalyzer.Views.ProgressWindow"
-        Width="420" Height="360"
-        CanResize="False"
-        WindowStartupLocation="CenterOwner"
         Title="Working..."
-        SystemDecorations="BorderOnly">
-  <Grid Margin="12">
-    <Grid.RowDefinitions>
-        <RowDefinition Height="Auto"/>   <!-- Message -->
-        <RowDefinition Height="12"/>     <!-- Spacer -->
-        <RowDefinition Height="Auto"/>   <!-- Top line -->
-        <RowDefinition Height="Auto"/>      <!-- Counters grid -->
-        <RowDefinition Height="Auto"/>   <!-- Bottom line -->
-        <RowDefinition Height="12"/>     <!-- Spacer -->
-        <RowDefinition Height="Auto"/>   <!-- Progress bar -->
-    </Grid.RowDefinitions>
+        Width="440"
+        Padding="12"
+        SizeToContent="Height"
+        SystemDecorations="BorderOnly"
+        WindowStartupLocation="CenterOwner">
 
-    <!-- Message -->
-    <TextBlock x:Name="MessageText"
-               Grid.Row="0"
-               TextWrapping="Wrap"
-               FontWeight="SemiBold"
-               Text="Loading, please wait..."/>
+  <Border x:Name="brMainBorder"
+          Margin="0"
+          Padding="16"
+          Background="White"
+          BorderBrush="Gray"
+          BorderThickness="1"
+          BoxShadow="0 0 20 #3C000000"
+          CornerRadius="8">
 
-    <!-- Top delimiter -->
-    <Border Grid.Row="2"
-            Height="1"
-            Background="Gray"
-            HorizontalAlignment="Stretch"
-            Margin="0,4"/>
 
-    <!-- Counters grid -->
-        <Grid Grid.Row="3"
-                  ColumnDefinitions="Auto,12,*"
-                  RowDefinitions="Auto,6,Auto,6,Auto,6,Auto,6,Auto,6,Auto,6,Auto,6,Auto,6,Auto,6,Auto,6,Auto,6,Auto,6">
+    <Grid Margin="16">
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="12" />
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="12" />
+        <RowDefinition Height="Auto" />
+      </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0" Grid.Column="0" x:Name="LblCurrentPackage" Text="Package:"/>
-        <TextBlock Grid.Row="0" Grid.Column="2" x:Name="CurrentPackage"/>
+      <TextBlock x:Name="MessageText"
+                 Grid.Row="0"
+                 HorizontalAlignment="Center"
+                 FontWeight="SemiBold"
+                 Text="Loading, please wait..."
+                 TextWrapping="Wrap" />
 
-        <TextBlock Grid.Row="2" Grid.Column="0" x:Name="LblProcessedFiles" Text="Processed files:"/>
-        <TextBlock Grid.Row="2" Grid.Column="2" x:Name="ProcessedFiles"/>
+      <Border x:Name="brTopDelimiter"
+              Grid.Row="2"
+              Height="1"
+              Margin="0,4"
+              HorizontalAlignment="Stretch"
+              Background="Gray" />
 
-        <TextBlock Grid.Row="4" Grid.Column="0" x:Name="LblLanguages" Text="Languages:"/>
-        <TextBlock Grid.Row="4" Grid.Column="2" x:Name="Languages"/>
+      <StackPanel x:Name="spCounters"
+                  Grid.Row="3"
+                  Spacing="12">
+        <Grid x:Name="grGameCounters">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="16" />
+            <ColumnDefinition Width="*" />
+          </Grid.ColumnDefinitions>
+          <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+          </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="6" Grid.Column="0" x:Name="LblCurrentPage" Text="Current page:"/>
-        <TextBlock Grid.Row="6" Grid.Column="2" x:Name="CurrentPage"/>
+          <TextBlock x:Name="LblCurrentPackage"
+                     Grid.Row="0"
+                     Grid.Column="0"
+                     Margin="0,0,0,4"
+                     Text="Package:" />
+          <TextBlock x:Name="CurrentPackage"
+                     Grid.Row="0"
+                     Grid.Column="2"
+                     Margin="0,0,0,4" />
 
-        <TextBlock Grid.Row="8" Grid.Column="0" x:Name="LblTItemsInPage" Text="T items in page:"/>
-        <TextBlock Grid.Row="8" Grid.Column="2" x:Name="TItemsInPage"/>
+          <TextBlock x:Name="LblProcessedFiles"
+                     Grid.Row="1"
+                     Grid.Column="0"
+                     Margin="0,0,0,4"
+                     Text="Processed files:" />
+          <TextBlock x:Name="ProcessedFiles"
+                     Grid.Row="1"
+                     Grid.Column="2"
+                     Margin="0,0,0,4" />
 
-        <TextBlock Grid.Row="10" Grid.Column="0" x:Name="LblStoredTItems" Text="Stored T items:"/>
-        <TextBlock Grid.Row="10" Grid.Column="2" x:Name="StoredTItems"/>
+          <TextBlock x:Name="LblLanguages"
+                     Grid.Row="2"
+                     Grid.Column="0"
+                     Margin="0,0,0,4"
+                     Text="Languages:" />
+          <TextBlock x:Name="Languages"
+                     Grid.Row="2"
+                     Grid.Column="2"
+                     Margin="0,0,0,4" />
 
-        <TextBlock Grid.Row="12" Grid.Column="0" x:Name="LblWaresProcessed" Text="Wares processed:"/>
-        <TextBlock Grid.Row="12" Grid.Column="2" x:Name="WaresProcessed"/>
+          <TextBlock x:Name="LblCurrentPage"
+                     Grid.Row="3"
+                     Grid.Column="0"
+                     Margin="0,0,0,4"
+                     Text="Current page:" />
+          <TextBlock x:Name="CurrentPage"
+                     Grid.Row="3"
+                     Grid.Column="2"
+                     Margin="0,0,0,4" />
 
-        <TextBlock Grid.Row="14" Grid.Column="0" x:Name="LblFactionsProcessed" Text="Factions processed:"/>
-        <TextBlock Grid.Row="14" Grid.Column="2" x:Name="FactionsProcessed"/>
+          <TextBlock x:Name="LblTItemsInPage"
+                     Grid.Row="4"
+                     Grid.Column="0"
+                     Margin="0,0,0,4"
+                     Text="T items in page:" />
+          <TextBlock x:Name="TItemsInPage"
+                     Grid.Row="4"
+                     Grid.Column="2"
+                     Margin="0,0,0,4" />
 
-        <TextBlock Grid.Row="16" Grid.Column="0" x:Name="LblStoragesProcessed" Text="Storages processed:"/>
-        <TextBlock Grid.Row="16" Grid.Column="2" x:Name="StoragesProcessed"/>
+          <TextBlock x:Name="LblStoredTItems"
+                     Grid.Row="5"
+                     Grid.Column="0"
+                     Margin="0,0,0,4"
+                     Text="Stored T items:" />
+          <TextBlock x:Name="StoredTItems"
+                     Grid.Row="5"
+                     Grid.Column="2"
+                     Margin="0,0,0,4" />
 
-        <TextBlock Grid.Row="18" Grid.Column="0" x:Name="LblShipStoragesProcessed" Text="Ship Storages processed:"/>
-        <TextBlock Grid.Row="18" Grid.Column="2" x:Name="ShipStoragesProcessed"/>
+          <TextBlock x:Name="LblWaresProcessed"
+                     Grid.Row="6"
+                     Grid.Column="0"
+                     Margin="0,0,0,4"
+                     Text="Wares processed:" />
+          <TextBlock x:Name="WaresProcessed"
+                     Grid.Row="6"
+                     Grid.Column="2"
+                     Margin="0,0,0,4" />
 
-        <TextBlock Grid.Row="20" Grid.Column="0" x:Name="LblShipTypesProcessed" Text="Ship Types processed:"/>
-        <TextBlock Grid.Row="20" Grid.Column="2" x:Name="ShipTypesProcessed"/>
+          <TextBlock x:Name="LblFactionsProcessed"
+                     Grid.Row="7"
+                     Grid.Column="0"
+                     Margin="0,0,0,4"
+                     Text="Factions processed:" />
+          <TextBlock x:Name="FactionsProcessed"
+                     Grid.Row="7"
+                     Grid.Column="2"
+                     Margin="0,0,0,4" />
 
-        <TextBlock Grid.Row="22" Grid.Column="0" x:Name="LblClusterSectorNamesProcessed" Text="Cluster/Sector names processed:"/>
-        <TextBlock Grid.Row="22" Grid.Column="2" x:Name="ClusterSectorNamesProcessed"/>
+          <TextBlock x:Name="LblStoragesProcessed"
+                     Grid.Row="8"
+                     Grid.Column="0"
+                     Margin="0,0,0,4"
+                     Text="Storages processed:" />
+          <TextBlock x:Name="StoragesProcessed"
+                     Grid.Row="8"
+                     Grid.Column="2"
+                     Margin="0,0,0,4" />
 
-        <!-- Save loading counters -->
-        <TextBlock Grid.Row="0" Grid.Column="0" x:Name="LblElementsProcessed" Text="Elements processed:"/>
-        <TextBlock Grid.Row="0" Grid.Column="2" x:Name="ElementsProcessed"/>
+          <TextBlock x:Name="LblShipStoragesProcessed"
+                     Grid.Row="9"
+                     Grid.Column="0"
+                     Margin="0,0,0,4"
+                     Text="Ship storages processed:" />
+          <TextBlock x:Name="ShipStoragesProcessed"
+                     Grid.Row="9"
+                     Grid.Column="2"
+                     Margin="0,0,0,4" />
 
-        <TextBlock Grid.Row="2" Grid.Column="0" x:Name="LblSectorsProcessed" Text="Sectors processed:"/>
-        <TextBlock Grid.Row="2" Grid.Column="2" x:Name="SectorsProcessed"/>
+          <TextBlock x:Name="LblShipTypesProcessed"
+                     Grid.Row="10"
+                     Grid.Column="0"
+                     Margin="0,0,0,4"
+                     Text="Ship types processed:" />
+          <TextBlock x:Name="ShipTypesProcessed"
+                     Grid.Row="10"
+                     Grid.Column="2"
+                     Margin="0,0,0,4" />
 
-        <TextBlock Grid.Row="4" Grid.Column="0" x:Name="LblGatesProcessed" Text="Gates connections processed:"/>
-        <TextBlock Grid.Row="4" Grid.Column="2" x:Name="GatesProcessed"/>
+          <TextBlock x:Name="LblClusterSectorNamesProcessed"
+                     Grid.Row="11"
+                     Grid.Column="0"
+                     Margin="0"
+                     Text="Cluster/Sector names processed:" />
+          <TextBlock x:Name="ClusterSectorNamesProcessed"
+                     Grid.Row="11"
+                     Grid.Column="2"
+                     Margin="0" />
+        </Grid>
 
-        <TextBlock Grid.Row="6" Grid.Column="0" x:Name="LblSuperhighwaysProcessed" Text="Superhighways processed:"/>
-        <TextBlock Grid.Row="6" Grid.Column="2" x:Name="SuperhighwaysProcessed"/>
+        <Grid x:Name="grSaveCounters">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="16" />
+            <ColumnDefinition Width="*" />
+          </Grid.ColumnDefinitions>
+          <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+          </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="8" Grid.Column="0" x:Name="LblStationsProcessed" Text="Stations processed:"/>
-        <TextBlock Grid.Row="8" Grid.Column="2" x:Name="StationsProcessed"/>
+          <TextBlock x:Name="LblElementsProcessed"
+                     Grid.Row="0"
+                     Grid.Column="0"
+                     Margin="0,0,0,4"
+                     Text="Elements processed:" />
+          <TextBlock x:Name="ElementsProcessed"
+                     Grid.Row="0"
+                     Grid.Column="2"
+                     Margin="0,0,0,4" />
 
-        <TextBlock Grid.Row="10" Grid.Column="0" x:Name="LblShipsProcessed" Text="Ships processed:"/>
-        <TextBlock Grid.Row="10" Grid.Column="2" x:Name="ShipsProcessed"/>
+          <TextBlock x:Name="LblSectorsProcessed"
+                     Grid.Row="1"
+                     Grid.Column="0"
+                     Margin="0,0,0,4"
+                     Text="Sectors processed:" />
+          <TextBlock x:Name="SectorsProcessed"
+                     Grid.Row="1"
+                     Grid.Column="2"
+                     Margin="0,0,0,4" />
 
-        <TextBlock Grid.Row="12" Grid.Column="0" x:Name="LblSubordinatesProcessed" Text="Subordinate connections processed:"/>
-        <TextBlock Grid.Row="12" Grid.Column="2" x:Name="SubordinatesProcessed"/>
+          <TextBlock x:Name="LblGatesProcessed"
+                     Grid.Row="2"
+                     Grid.Column="0"
+                     Margin="0,0,0,4"
+                     Text="Gates processed:" />
+          <TextBlock x:Name="GatesProcessed"
+                     Grid.Row="2"
+                     Grid.Column="2"
+                     Margin="0,0,0,4" />
 
-        <TextBlock Grid.Row="14" Grid.Column="0" x:Name="LblRemovedProcessed" Text="Removed processed:"/>
-        <TextBlock Grid.Row="14" Grid.Column="2" x:Name="RemovedProcessed"/>
+          <TextBlock x:Name="LblSuperhighwaysProcessed"
+                     Grid.Row="3"
+                     Grid.Column="0"
+                     Margin="0,0,0,4"
+                     Text="Superhighways processed:" />
+          <TextBlock x:Name="SuperhighwaysProcessed"
+                     Grid.Row="3"
+                     Grid.Column="2"
+                     Margin="0,0,0,4" />
 
-        <TextBlock Grid.Row="16" Grid.Column="0" x:Name="LblTradesProcessed" Text="Trades processed:"/>
-        <TextBlock Grid.Row="16" Grid.Column="2" x:Name="TradesProcessed"/>
+          <TextBlock x:Name="LblStationsProcessed"
+                     Grid.Row="4"
+                     Grid.Column="0"
+                     Margin="0,0,0,4"
+                     Text="Stations processed:" />
+          <TextBlock x:Name="StationsProcessed"
+                     Grid.Row="4"
+                     Grid.Column="2"
+                     Margin="0,0,0,4" />
+
+          <TextBlock x:Name="LblShipsProcessed"
+                     Grid.Row="5"
+                     Grid.Column="0"
+                     Margin="0,0,0,4"
+                     Text="Ships processed:" />
+          <TextBlock x:Name="ShipsProcessed"
+                     Grid.Row="5"
+                     Grid.Column="2"
+                     Margin="0,0,0,4" />
+
+          <TextBlock x:Name="LblSubordinatesProcessed"
+                     Grid.Row="6"
+                     Grid.Column="0"
+                     Margin="0,0,0,4"
+                     Text="Subordinates processed:" />
+          <TextBlock x:Name="SubordinatesProcessed"
+                     Grid.Row="6"
+                     Grid.Column="2"
+                     Margin="0,0,0,4" />
+
+          <TextBlock x:Name="LblRemovedProcessed"
+                     Grid.Row="7"
+                     Grid.Column="0"
+                     Margin="0,0,0,4"
+                     Text="Removed processed:" />
+          <TextBlock x:Name="RemovedProcessed"
+                     Grid.Row="7"
+                     Grid.Column="2"
+                     Margin="0,0,0,4" />
+
+          <TextBlock x:Name="LblTradesProcessed"
+                     Grid.Row="8"
+                     Grid.Column="0"
+                     Margin="0"
+                     Text="Trades processed:" />
+          <TextBlock x:Name="TradesProcessed"
+                     Grid.Row="8"
+                     Grid.Column="2"
+                     Margin="0" />
+        </Grid>
+      </StackPanel>
+
+      <Border x:Name="brBottomDelimiter"
+              Grid.Row="4"
+              Height="1"
+              Margin="0,4"
+              HorizontalAlignment="Stretch"
+              Background="Gray" />
+
+      <ProgressBar Grid.Row="5"
+                   Height="8"
+                   IsIndeterminate="True" />
     </Grid>
-
-    <!-- Bottom delimiter -->
-    <Border Grid.Row="4"
-            Height="1"
-            Background="Gray"
-            HorizontalAlignment="Stretch"
-            Margin="0,4"/>
-
-    <!-- Progress bar -->
-    <ProgressBar Grid.Row="6"
-                 IsIndeterminate="True"
-                 Height="8"/>
-  </Grid>
+  </Border>
 </Window>

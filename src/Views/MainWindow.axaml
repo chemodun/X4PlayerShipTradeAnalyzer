@@ -1,214 +1,305 @@
-<Window
-    xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:vm="clr-namespace:X4PlayerShipTradeAnalyzer.ViewModels"
-    xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.Avalonia;assembly=LiveChartsCore.SkiaSharpView.Avalonia"
-    xmlns:conv="clr-namespace:X4PlayerShipTradeAnalyzer.Converters"
-    xmlns:mdv="clr-namespace:MarkdownViewer.Core.Controls;assembly=MarkdownViewer.Core"
-    x:Class="X4PlayerShipTradeAnalyzer.Views.MainWindow"
-  Width="1200" Height="800"
-  Title="X4 Player Ship Trade Analyzer">
+<Window x:Class="X4PlayerShipTradeAnalyzer.Views.MainWindow"
+        xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:conv="clr-namespace:X4PlayerShipTradeAnalyzer.Converters"
+        xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.Avalonia;assembly=LiveChartsCore.SkiaSharpView.Avalonia"
+        xmlns:mdv="clr-namespace:MarkdownViewer.Core.Controls;assembly=MarkdownViewer.Core"
+        xmlns:vm="clr-namespace:X4PlayerShipTradeAnalyzer.ViewModels"
+        Title="X4 Player Ship Trade Analyzer"
+        Width="1200"
+        Height="800">
   <Window.Resources>
     <conv:NullToUnsetBrushConverter x:Key="NullToUnsetBrush" />
     <conv:ZeroToRedBrushConverter x:Key="ZeroToRed" />
     <conv:ZeroToRedIfEnabledConverter x:Key="ZeroToRedIfEnabled" />
     <conv:EnumEqualsConverter x:Key="EnumEquals" />
     <conv:BoolToChartPositionConverter x:Key="BoolToChartPos" />
-    <conv:LoadPercentToBrushConverter x:Key="LoadPercentToBrushConverter"/>
+    <conv:LoadPercentToBrushConverter x:Key="LoadPercentToBrushConverter" />
   </Window.Resources>
   <Window.Styles>
     <Style Selector="TextBlock.RightAligned">
-      <Setter Property="TextAlignment" Value="Right"/>
-      <Setter Property="HorizontalAlignment" Value="Right"/>
+      <Setter Property="TextAlignment" Value="Right" />
+      <Setter Property="HorizontalAlignment" Value="Right" />
     </Style>
-    <Style Selector="TextBlock.RightAlignedPadded" >
-      <Setter Property="TextAlignment" Value="Right"/>
-      <Setter Property="HorizontalAlignment" Value="Right"/>
-      <Setter Property="Padding" Value="8"/>
+    <Style Selector="TextBlock.RightAlignedPadded">
+      <Setter Property="TextAlignment" Value="Right" />
+      <Setter Property="HorizontalAlignment" Value="Right" />
+      <Setter Property="Padding" Value="8" />
     </Style>
   </Window.Styles>
 
   <Design.DataContext>
-    <vm:MainViewModel baseDir="."/>
+    <vm:MainViewModel baseDir="." />
   </Design.DataContext>
 
-  <TabControl Grid.Row="1" x:Name="MainTabs" SelectionChanged="MainTabs_SelectionChanged">
-    <!-- Parent: By Transactions -->
-    <TabItem Header="By Transactions" x:Name="ByTransactionsTab">
+  <TabControl x:Name="MainTabs"
+              Grid.Row="1"
+              SelectionChanged="MainTabs_SelectionChanged">
+    <!--  Parent: By Transactions  -->
+    <TabItem x:Name="ByTransactionsTab" Header="By Transactions">
       <TabControl x:Name="ByTransactionsTabs">
-        <TabItem Header="Ships Transactions" x:Name="TransactionsTab">
+        <TabItem x:Name="TransactionsTab" Header="Ships Transactions">
           <Grid DataContext="{Binding TransactionsData}">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
+              <ColumnDefinition Width="Auto" />
+              <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="36" />
-                <RowDefinition Height="36" />
-                <RowDefinition />
-                <RowDefinition Height="34" />
+              <RowDefinition Height="36" />
+              <RowDefinition Height="36" />
+              <RowDefinition />
+              <RowDefinition Height="34" />
             </Grid.RowDefinitions>
 
-            <Border Grid.Row="0" Grid.Column="0" BorderBrush="Gray" BorderThickness="0" Padding="0" Width="340">
-              <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Left" Margin="0">
-                <TextBlock Text="Parent station:" VerticalAlignment="Center" />
-                <ComboBox ItemsSource="{Binding Stations}" SelectedItem="{Binding SelectedStation}"  VerticalAlignment="Center"  Width="240">
+            <Border Grid.Row="0"
+                    Grid.Column="0"
+                    Width="340"
+                    Padding="0"
+                    BorderBrush="Gray"
+                    BorderThickness="0">
+              <StackPanel Margin="0"
+                          HorizontalAlignment="Left"
+                          Orientation="Horizontal"
+                          Spacing="6">
+                <TextBlock VerticalAlignment="Center" Text="Parent station:" />
+                <ComboBox Width="240"
+                          VerticalAlignment="Center"
+                          ItemsSource="{Binding Stations}"
+                          SelectedItem="{Binding SelectedStation}">
                   <ComboBox.ItemTemplate>
                     <DataTemplate>
-                      <TextBlock Text="{Binding Name}" ToolTip.Tip="{Binding Name}"/>
+                      <TextBlock Text="{Binding Name}" ToolTip.Tip="{Binding Name}" />
                     </DataTemplate>
-                </ComboBox.ItemTemplate>
-              </ComboBox>
+                  </ComboBox.ItemTemplate>
+                </ComboBox>
               </StackPanel>
             </Border>
 
-            <Border Grid.Row="1" Grid.Column="0" BorderBrush="Gray" BorderThickness="0" Padding="0">
-              <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Left" Margin="0">
-                <TextBlock Text="Class:" VerticalAlignment="Center" Margin="8,0,0,0"/>
-                <ComboBox ItemsSource="{Binding ShipClassOptions}" SelectedItem="{Binding SelectedShipClass}"  VerticalAlignment="Center"  Width="70"/>
-                <TextBlock Text="Transport:" VerticalAlignment="Center"/>
-                <ComboBox ItemsSource="{Binding TransportOptions}" SelectedItem="{Binding Transport}"  VerticalAlignment="Center"  Width="150"/>
+            <Border Grid.Row="1"
+                    Grid.Column="0"
+                    Padding="0"
+                    BorderBrush="Gray"
+                    BorderThickness="0">
+              <StackPanel Margin="0"
+                          HorizontalAlignment="Left"
+                          Orientation="Horizontal"
+                          Spacing="6">
+                <TextBlock Margin="8,0,0,0"
+                           VerticalAlignment="Center"
+                           Text="Class:" />
+                <ComboBox Width="70"
+                          VerticalAlignment="Center"
+                          ItemsSource="{Binding ShipClassOptions}"
+                          SelectedItem="{Binding SelectedShipClass}" />
+                <TextBlock VerticalAlignment="Center" Text="Transport:" />
+                <ComboBox Width="150"
+                          VerticalAlignment="Center"
+                          ItemsSource="{Binding TransportOptions}"
+                          SelectedItem="{Binding Transport}" />
               </StackPanel>
             </Border>
 
-            <Border Grid.Row="2" Grid.Column="0" BorderBrush="Gray" BorderThickness="0" Padding="0">
-              <ListBox ItemsSource="{Binding ShipList}"
-                      SelectedItem="{Binding SelectedShip, Mode=TwoWay}"
-                      Margin="8" Width="340">
+            <Border Grid.Row="2"
+                    Grid.Column="0"
+                    Padding="0"
+                    BorderBrush="Gray"
+                    BorderThickness="0">
+              <ListBox Width="340"
+                       Margin="8"
+                       ItemsSource="{Binding ShipList}"
+                       SelectedItem="{Binding SelectedShip, Mode=TwoWay}">
                 <ListBox.ItemTemplate>
                   <DataTemplate>
                     <Grid ColumnDefinitions="*,8,Auto">
-                      <TextBlock Grid.Column="0" Text="{Binding ShipName}" ToolTip.Tip="{Binding ShipName}"/>
-                      <TextBlock Grid.Column="2" Text="{Binding EstimatedProfit, StringFormat=N2}" FontWeight="SemiBold" Classes="RightAligned"  Margin="0"/>
+                      <TextBlock Grid.Column="0"
+                                 Text="{Binding ShipName}"
+                                 ToolTip.Tip="{Binding ShipName}" />
+                      <TextBlock Grid.Column="2"
+                                 Margin="0"
+                                 Classes="RightAligned"
+                                 FontWeight="SemiBold"
+                                 Text="{Binding EstimatedProfit, StringFormat=N2}" />
                     </Grid>
                   </DataTemplate>
                 </ListBox.ItemTemplate>
               </ListBox>
             </Border>
-            <Border Grid.Row="3" Grid.Column="0" BorderBrush="Gray" BorderThickness="0" Padding="0">
-              <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="4" Margin="0">
-                              <TextBlock Text="Sort:" VerticalAlignment="Center"/>
-                <RadioButton Content="Name" GroupName="ShipsSort" Margin="8,0,0,0"
-                              IsChecked="{Binding ShipsSortOrder, Mode=TwoWay, Converter={StaticResource EnumEquals}, ConverterParameter=Name}"/>
-                <RadioButton Content="Profit" GroupName="ShipsSort" Margin="8,0,0,0"
-                              IsChecked="{Binding ShipsSortOrder, Mode=TwoWay, Converter={StaticResource EnumEquals}, ConverterParameter=Profit}"/>
+            <Border Grid.Row="3"
+                    Grid.Column="0"
+                    Padding="0"
+                    BorderBrush="Gray"
+                    BorderThickness="0">
+              <StackPanel Margin="0"
+                          HorizontalAlignment="Center"
+                          VerticalAlignment="Center"
+                          Orientation="Horizontal"
+                          Spacing="4">
+                <TextBlock VerticalAlignment="Center" Text="Sort:" />
+                <RadioButton Margin="8,0,0,0"
+                             Content="Name"
+                             GroupName="ShipsSort"
+                             IsChecked="{Binding ShipsSortOrder, Mode=TwoWay, Converter={StaticResource EnumEquals}, ConverterParameter=Name}" />
+                <RadioButton Margin="8,0,0,0"
+                             Content="Profit"
+                             GroupName="ShipsSort"
+                             IsChecked="{Binding ShipsSortOrder, Mode=TwoWay, Converter={StaticResource EnumEquals}, ConverterParameter=Profit}" />
               </StackPanel>
             </Border>
 
-                      <!-- Row 0, Column 1: summary values -->
-            <Border Grid.Row="0" Grid.Column="1" BorderBrush="Gray" BorderThickness="0" Padding="4">
-              <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Spacing="24">
+            <!--  Row 0, Column 1: summary values  -->
+            <Border Grid.Row="0"
+                    Grid.Column="1"
+                    Padding="4"
+                    BorderBrush="Gray"
+                    BorderThickness="0">
+              <StackPanel HorizontalAlignment="Left"
+                          VerticalAlignment="Center"
+                          Orientation="Horizontal"
+                          Spacing="24">
                 <StackPanel Orientation="Horizontal" Spacing="6">
-                  <TextBlock Text="Ship:"/>
-                  <TextBlock Text="{Binding SelectedShip.ShipName}" FontWeight="Bold"/>
+                  <TextBlock Text="Ship:" />
+                  <TextBlock FontWeight="Bold" Text="{Binding SelectedShip.ShipName}" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Spacing="6">
-                  <TextBlock Text="Total Profit:"/>
-                  <TextBlock Text="{Binding TotalProfit}" FontWeight="Bold"/>
+                  <TextBlock Text="Total Profit:" />
+                  <TextBlock FontWeight="Bold" Text="{Binding TotalProfit}" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Spacing="6">
-                  <TextBlock Text="Items Traded:"/>
-                  <TextBlock Text="{Binding ItemsTraded}" FontWeight="Bold"/>
+                  <TextBlock Text="Items Traded:" />
+                  <TextBlock FontWeight="Bold" Text="{Binding ItemsTraded}" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Spacing="6">
-                  <TextBlock Text="Time in Service:"/>
-                  <TextBlock Text="{Binding TimeInService}" FontWeight="Bold"/>
+                  <TextBlock Text="Time in Service:" />
+                  <TextBlock FontWeight="Bold" Text="{Binding TimeInService}" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Spacing="6">
-                  <TextBlock Text="Elapsed Time (Buy→Sell):"/>
+                  <TextBlock Text="Elapsed Time (Buy→Sell):" />
                   <StackPanel Orientation="Horizontal" Spacing="6">
-                    <TextBlock Text="Min:"/>
-                    <TextBlock Text="{Binding TimeMin}" FontWeight="Bold"/>
+                    <TextBlock Text="Min:" />
+                    <TextBlock FontWeight="Bold" Text="{Binding TimeMin}" />
                   </StackPanel>
                   <StackPanel Orientation="Horizontal" Spacing="6">
-                    <TextBlock Text="Avg:"/>
-                    <TextBlock Text="{Binding TimeAvg}" FontWeight="Bold"/>
+                    <TextBlock Text="Avg:" />
+                    <TextBlock FontWeight="Bold" Text="{Binding TimeAvg}" />
                   </StackPanel>
                   <StackPanel Orientation="Horizontal" Spacing="6">
-                    <TextBlock Text="Max:"/>
-                    <TextBlock Text="{Binding TimeMax}" FontWeight="Bold"/>
+                    <TextBlock Text="Max:" />
+                    <TextBlock FontWeight="Bold" Text="{Binding TimeMax}" />
                   </StackPanel>
                 </StackPanel>
               </StackPanel>
             </Border>
 
-            <Border Grid.Row="1" Grid.RowSpan="3" Grid.Column="1" BorderBrush="Gray" BorderThickness="0" Padding="4">
+            <Border Grid.Row="1"
+                    Grid.RowSpan="3"
+                    Grid.Column="1"
+                    Padding="4"
+                    BorderBrush="Gray"
+                    BorderThickness="0">
 
-              <DataGrid ItemsSource="{Binding FilteredTransactions}"
+              <DataGrid Margin="8"
                         AutoGenerateColumns="False"
                         IsReadOnly="True"
-                        Margin="8">
+                        ItemsSource="{Binding FilteredTransactions}">
                 <DataGrid.Columns>
-                  <DataGridTemplateColumn Header="Time" SortMemberPath="RawTime" Width="90">
+                  <DataGridTemplateColumn Width="90"
+                                          Header="Time"
+                                          SortMemberPath="RawTime">
                     <DataGridTemplateColumn.CellTemplate>
                       <DataTemplate>
-                        <TextBlock Text="{Binding Time}" Classes="RightAlignedPadded"/>
+                        <TextBlock Classes="RightAlignedPadded" Text="{Binding Time}" />
                       </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                   </DataGridTemplateColumn>
-                  <DataGridTemplateColumn Header="Sector" SortMemberPath="Sector" Width="180">
+                  <DataGridTemplateColumn Width="180"
+                                          Header="Sector"
+                                          SortMemberPath="Sector">
                     <DataGridTemplateColumn.CellTemplate>
                       <DataTemplate>
-                        <TextBlock Text="{Binding Sector}" ToolTip.Tip="{Binding Sector}" Margin="8"/>
+                        <TextBlock Margin="8"
+                                   Text="{Binding Sector}"
+                                   ToolTip.Tip="{Binding Sector}" />
                       </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                   </DataGridTemplateColumn>
-                  <DataGridTemplateColumn Header="Station" SortMemberPath="Station" Width="180">
+                  <DataGridTemplateColumn Width="180"
+                                          Header="Station"
+                                          SortMemberPath="Station">
                     <DataGridTemplateColumn.CellTemplate>
                       <DataTemplate>
-                        <TextBlock Text="{Binding Station}" ToolTip.Tip="{Binding Station}" Margin="8"/>
+                        <TextBlock Margin="8"
+                                   Text="{Binding Station}"
+                                   ToolTip.Tip="{Binding Station}" />
                       </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                   </DataGridTemplateColumn>
-                  <DataGridTextColumn Header="Operation" Binding="{Binding Operation}" Width="100"/>
-                  <DataGridTemplateColumn Header="Product" SortMemberPath="Product" Width="140">
+                  <DataGridTextColumn Width="100"
+                                      Binding="{Binding Operation}"
+                                      Header="Operation" />
+                  <DataGridTemplateColumn Width="140"
+                                          Header="Product"
+                                          SortMemberPath="Product">
                     <DataGridTemplateColumn.CellTemplate>
                       <DataTemplate>
-                        <TextBlock Text="{Binding Product}" ToolTip.Tip="{Binding Product}" Margin="8"/>
+                        <TextBlock Margin="8"
+                                   Text="{Binding Product}"
+                                   ToolTip.Tip="{Binding Product}" />
                       </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                   </DataGridTemplateColumn>
-                  <DataGridTemplateColumn Header="Price" SortMemberPath="Price" Width="100">
+                  <DataGridTemplateColumn Width="100"
+                                          Header="Price"
+                                          SortMemberPath="Price">
                     <DataGridTemplateColumn.CellTemplate>
                       <DataTemplate>
-                        <TextBlock Text="{Binding Price, StringFormat=N2}" Classes="RightAlignedPadded" />
+                        <TextBlock Classes="RightAlignedPadded" Text="{Binding Price, StringFormat=N2}" />
                       </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                   </DataGridTemplateColumn>
-                  <DataGridTemplateColumn Header="Quantity" SortMemberPath="Quantity" Width="100">
+                  <DataGridTemplateColumn Width="100"
+                                          Header="Quantity"
+                                          SortMemberPath="Quantity">
                     <DataGridTemplateColumn.CellTemplate>
                       <DataTemplate>
-                        <TextBlock Text="{Binding Quantity, StringFormat=N0}" Classes="RightAlignedPadded" />
+                        <TextBlock Classes="RightAlignedPadded" Text="{Binding Quantity, StringFormat=N0}" />
                       </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                   </DataGridTemplateColumn>
-                  <DataGridTemplateColumn Header="Load, %" SortMemberPath="LoadPercent" Width="90">
+                  <DataGridTemplateColumn Width="90"
+                                          Header="Load, %"
+                                          SortMemberPath="LoadPercent">
                     <DataGridTemplateColumn.CellTemplate>
                       <DataTemplate>
-                        <TextBlock Text="{Binding LoadPercent, StringFormat=N2}"
-                                    Foreground="{Binding LoadPercent, Converter={StaticResource LoadPercentToBrushConverter}}"
-                                    Classes="RightAlignedPadded" />
+                        <TextBlock Classes="RightAlignedPadded"
+                                   Foreground="{Binding LoadPercent, Converter={StaticResource LoadPercentToBrushConverter}}"
+                                   Text="{Binding LoadPercent, StringFormat=N2}" />
                       </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                   </DataGridTemplateColumn>
-                  <DataGridTemplateColumn Header="Total" SortMemberPath="Total" Width="140">
+                  <DataGridTemplateColumn Width="140"
+                                          Header="Total"
+                                          SortMemberPath="Total">
                     <DataGridTemplateColumn.CellTemplate>
                       <DataTemplate>
-                        <TextBlock Text="{Binding Total, StringFormat=N2}" Classes="RightAlignedPadded" />
+                        <TextBlock Classes="RightAlignedPadded" Text="{Binding Total, StringFormat=N2}" />
                       </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                   </DataGridTemplateColumn>
-                  <DataGridTemplateColumn Header="Estimated Profit" SortMemberPath="EstimatedProfit" Width="140">
+                  <DataGridTemplateColumn Width="140"
+                                          Header="Estimated Profit"
+                                          SortMemberPath="EstimatedProfit">
                     <DataGridTemplateColumn.CellTemplate>
                       <DataTemplate>
-                        <TextBlock Text="{Binding EstimatedProfit, StringFormat=N2}" Classes="RightAlignedPadded" />
+                        <TextBlock Classes="RightAlignedPadded" Text="{Binding EstimatedProfit, StringFormat=N2}" />
                       </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                   </DataGridTemplateColumn>
-                  <DataGridTemplateColumn Header="Dist." SortMemberPath="Distance" Width="90">
+                  <DataGridTemplateColumn Width="90"
+                                          Header="Dist."
+                                          SortMemberPath="Distance">
                     <DataGridTemplateColumn.CellTemplate>
                       <DataTemplate>
-                        <TextBlock Text="{Binding Distance, StringFormat=N0}" Classes="RightAlignedPadded" />
+                        <TextBlock Classes="RightAlignedPadded" Text="{Binding Distance, StringFormat=N0}" />
                       </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                   </DataGridTemplateColumn>
@@ -219,312 +310,580 @@
           </Grid>
         </TabItem>
 
-        <TabItem Header="Ships Graphs" x:Name="TransactionsGraphsTab">
+        <TabItem x:Name="TransactionsGraphsTab" Header="Ships Graphs">
           <Grid DataContext="{Binding TransactionsGraphs}">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
+              <ColumnDefinition Width="Auto" />
+              <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="36" />
-                <RowDefinition Height="36" />
-                <RowDefinition />
-                <RowDefinition Height="34" />
+              <RowDefinition Height="36" />
+              <RowDefinition Height="36" />
+              <RowDefinition />
+              <RowDefinition Height="34" />
             </Grid.RowDefinitions>
 
-            <Border Grid.Row="0" Grid.Column="0" BorderBrush="Gray" BorderThickness="0" Padding="0" Width="340">
-              <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Left" Margin="0">
-                <TextBlock Text="Parent station:" VerticalAlignment="Center" />
-                <ComboBox ItemsSource="{Binding Stations}" SelectedItem="{Binding SelectedStation}"  VerticalAlignment="Center"  Width="240">
+            <Border Grid.Row="0"
+                    Grid.Column="0"
+                    Width="340"
+                    Padding="0"
+                    BorderBrush="Gray"
+                    BorderThickness="0">
+              <StackPanel Margin="0"
+                          HorizontalAlignment="Left"
+                          Orientation="Horizontal"
+                          Spacing="6">
+                <TextBlock VerticalAlignment="Center" Text="Parent station:" />
+                <ComboBox Width="240"
+                          VerticalAlignment="Center"
+                          ItemsSource="{Binding Stations}"
+                          SelectedItem="{Binding SelectedStation}">
                   <ComboBox.ItemTemplate>
                     <DataTemplate>
-                      <TextBlock Text="{Binding Name}" ToolTip.Tip="{Binding Name}"/>
+                      <TextBlock Text="{Binding Name}" ToolTip.Tip="{Binding Name}" />
                     </DataTemplate>
-                </ComboBox.ItemTemplate>
-              </ComboBox>
+                  </ComboBox.ItemTemplate>
+                </ComboBox>
               </StackPanel>
             </Border>
 
-            <Border Grid.Row="1" Grid.Column="0" BorderBrush="Gray" BorderThickness="0" Padding="0">
-              <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Left" Margin="0">
-                <TextBlock Text="Class:" VerticalAlignment="Center" Margin="8,0,0,0"/>
-                <ComboBox ItemsSource="{Binding ShipClassOptions}" SelectedItem="{Binding SelectedShipClass}"  VerticalAlignment="Center"  Width="70"/>
-                <TextBlock Text="Transport:" VerticalAlignment="Center"/>
-                <ComboBox ItemsSource="{Binding TransportOptions}" SelectedItem="{Binding Transport}"  VerticalAlignment="Center"  Width="150"/>
+            <Border Grid.Row="1"
+                    Grid.Column="0"
+                    Padding="0"
+                    BorderBrush="Gray"
+                    BorderThickness="0">
+              <StackPanel Margin="0"
+                          HorizontalAlignment="Left"
+                          Orientation="Horizontal"
+                          Spacing="6">
+                <TextBlock Margin="8,0,0,0"
+                           VerticalAlignment="Center"
+                           Text="Class:" />
+                <ComboBox Width="70"
+                          VerticalAlignment="Center"
+                          ItemsSource="{Binding ShipClassOptions}"
+                          SelectedItem="{Binding SelectedShipClass}" />
+                <TextBlock VerticalAlignment="Center" Text="Transport:" />
+                <ComboBox Width="150"
+                          VerticalAlignment="Center"
+                          ItemsSource="{Binding TransportOptions}"
+                          SelectedItem="{Binding Transport}" />
               </StackPanel>
             </Border>
 
-            <Border Grid.Row="2" Grid.Column="0" BorderBrush="Gray" BorderThickness="0" Padding="0">
-              <ListBox ItemsSource="{Binding ShipList}"
-                      Margin="8" Width="340"
-                      DoubleTapped="ShipGraphsList_DoubleTapped">
+            <Border Grid.Row="2"
+                    Grid.Column="0"
+                    Padding="0"
+                    BorderBrush="Gray"
+                    BorderThickness="0">
+              <ListBox Width="340"
+                       Margin="8"
+                       DoubleTapped="ShipGraphsList_DoubleTapped"
+                       ItemsSource="{Binding ShipList}">
                 <ListBox.ItemTemplate>
                   <DataTemplate>
                     <Grid ColumnDefinitions="*,8,Auto">
-                      <TextBlock Grid.Column="0" Text="{Binding ShipName}" ToolTip.Tip="{Binding ShipName}"
-                                  FontWeight="{Binding FontWeight}" Foreground="{Binding GraphBrush, Converter={StaticResource NullToUnsetBrush}}"/>
-                      <TextBlock Grid.Column="2" Text="{Binding EstimatedProfit, StringFormat=N2}" FontWeight="SemiBold" Classes="RightAligned"  Margin="0"/>
+                      <TextBlock Grid.Column="0"
+                                 FontWeight="{Binding FontWeight}"
+                                 Foreground="{Binding GraphBrush, Converter={StaticResource NullToUnsetBrush}}"
+                                 Text="{Binding ShipName}"
+                                 ToolTip.Tip="{Binding ShipName}" />
+                      <TextBlock Grid.Column="2"
+                                 Margin="0"
+                                 Classes="RightAligned"
+                                 FontWeight="SemiBold"
+                                 Text="{Binding EstimatedProfit, StringFormat=N2}" />
                     </Grid>
                   </DataTemplate>
                 </ListBox.ItemTemplate>
               </ListBox>
             </Border>
-            <Border Grid.Row="3" Grid.Column="0" BorderBrush="Gray" BorderThickness="0" Padding="0">
-              <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="4" Margin="0">
-                <TextBlock Text="Sort:" VerticalAlignment="Center"/>
-                <RadioButton Content="Name" GroupName="ShipsSort" Margin="8,0,0,0"
-                              IsChecked="{Binding ShipsSortOrder, Mode=TwoWay, Converter={StaticResource EnumEquals}, ConverterParameter=Name}"/>
-                <RadioButton Content="Profit" GroupName="ShipsSort" Margin="8,0,0,0"
-                              IsChecked="{Binding ShipsSortOrder, Mode=TwoWay, Converter={StaticResource EnumEquals}, ConverterParameter=Profit}"/>
+            <Border Grid.Row="3"
+                    Grid.Column="0"
+                    Padding="0"
+                    BorderBrush="Gray"
+                    BorderThickness="0">
+              <StackPanel Margin="0"
+                          HorizontalAlignment="Center"
+                          VerticalAlignment="Center"
+                          Orientation="Horizontal"
+                          Spacing="4">
+                <TextBlock VerticalAlignment="Center" Text="Sort:" />
+                <RadioButton Margin="8,0,0,0"
+                             Content="Name"
+                             GroupName="ShipsSort"
+                             IsChecked="{Binding ShipsSortOrder, Mode=TwoWay, Converter={StaticResource EnumEquals}, ConverterParameter=Name}" />
+                <RadioButton Margin="8,0,0,0"
+                             Content="Profit"
+                             GroupName="ShipsSort"
+                             IsChecked="{Binding ShipsSortOrder, Mode=TwoWay, Converter={StaticResource EnumEquals}, ConverterParameter=Profit}" />
               </StackPanel>
             </Border>
-            <Border Grid.Row="0" Grid.RowSpan="4" Grid.Column="1" BorderBrush="Gray" BorderThickness="0" Padding="8">
-              <lvc:CartesianChart Series="{Binding Series}"
+            <Border Grid.Row="0"
+                    Grid.RowSpan="4"
+                    Grid.Column="1"
+                    Padding="8"
+                    BorderBrush="Gray"
+                    BorderThickness="0">
+              <lvc:CartesianChart Sections="{Binding Sections}"
+                                  Series="{Binding Series}"
                                   XAxes="{Binding XAxes}"
-                                  YAxes="{Binding YAxes}"
-                                  Sections="{Binding Sections}"/>
+                                  YAxes="{Binding YAxes}" />
             </Border>
           </Grid>
         </TabItem>
-        <TabItem Header="Ships Load Distribution" x:Name="TransactionsStatsShipsLoadTab">
+        <TabItem x:Name="TransactionsStatsShipsLoadTab" Header="Ships Load Distribution">
           <Grid DataContext="{Binding TransactionsStatsShipsLoad}">
             <Grid.RowDefinitions>
               <RowDefinition Height="34" />
               <RowDefinition />
             </Grid.RowDefinitions>
-            <Grid Grid.Row="0" ColumnDefinitions="*,Auto" >
-              <StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="4" Margin="0">
-                <TextBlock Text="Transport:" VerticalAlignment="Center"/>
-                <RadioButton Content="All" GroupName="TxLoadTransport"
-                            IsChecked="{Binding Transport, Mode=TwoWay, Converter={StaticResource EnumEquals}, ConverterParameter=All}"/>
-                <RadioButton Content="Container" GroupName="TxLoadTransport"
-                            IsChecked="{Binding Transport, Mode=TwoWay, Converter={StaticResource EnumEquals}, ConverterParameter=Container}"/>
-                <RadioButton Content="Solid" GroupName="TxLoadTransport"
-                            IsChecked="{Binding Transport, Mode=TwoWay, Converter={StaticResource EnumEquals}, ConverterParameter=Solid}"/>
-                <RadioButton Content="Liquid" GroupName="TxLoadTransport"
-                            IsChecked="{Binding Transport, Mode=TwoWay, Converter={StaticResource EnumEquals}, ConverterParameter=Liquid}"/>
+            <Grid Grid.Row="0" ColumnDefinitions="*,Auto">
+              <StackPanel Grid.Column="0"
+                          Margin="0"
+                          HorizontalAlignment="Center"
+                          VerticalAlignment="Center"
+                          Orientation="Horizontal"
+                          Spacing="4">
+                <TextBlock VerticalAlignment="Center" Text="Transport:" />
+                <RadioButton Content="All"
+                             GroupName="TxLoadTransport"
+                             IsChecked="{Binding Transport, Mode=TwoWay, Converter={StaticResource EnumEquals}, ConverterParameter=All}" />
+                <RadioButton Content="Container"
+                             GroupName="TxLoadTransport"
+                             IsChecked="{Binding Transport, Mode=TwoWay, Converter={StaticResource EnumEquals}, ConverterParameter=Container}" />
+                <RadioButton Content="Solid"
+                             GroupName="TxLoadTransport"
+                             IsChecked="{Binding Transport, Mode=TwoWay, Converter={StaticResource EnumEquals}, ConverterParameter=Solid}" />
+                <RadioButton Content="Liquid"
+                             GroupName="TxLoadTransport"
+                             IsChecked="{Binding Transport, Mode=TwoWay, Converter={StaticResource EnumEquals}, ConverterParameter=Liquid}" />
               </StackPanel>
-              <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Spacing="8" Margin="0">
-                <TextBlock Text="Parent station:" VerticalAlignment="Center" />
-                <ComboBox ItemsSource="{Binding Stations}" SelectedItem="{Binding SelectedStation}"  VerticalAlignment="Center"  Width="240">
+              <StackPanel Grid.Column="1"
+                          Margin="0"
+                          HorizontalAlignment="Right"
+                          VerticalAlignment="Center"
+                          Orientation="Horizontal"
+                          Spacing="8">
+                <TextBlock VerticalAlignment="Center" Text="Parent station:" />
+                <ComboBox Width="240"
+                          VerticalAlignment="Center"
+                          ItemsSource="{Binding Stations}"
+                          SelectedItem="{Binding SelectedStation}">
                   <ComboBox.ItemTemplate>
                     <DataTemplate>
-                      <TextBlock Text="{Binding Name}" ToolTip.Tip="{Binding Name}"/>
+                      <TextBlock Text="{Binding Name}" ToolTip.Tip="{Binding Name}" />
                     </DataTemplate>
                   </ComboBox.ItemTemplate>
                 </ComboBox>
-                <TextBlock Text="Class:" VerticalAlignment="Center"/>
-                <ComboBox ItemsSource="{Binding ShipClassOptions}" SelectedItem="{Binding SelectedShipClass}" Width="70"/>
-                <TextBlock Text="Top N Ships:" VerticalAlignment="Center"/>
+                <TextBlock VerticalAlignment="Center" Text="Class:" />
+                <ComboBox Width="70"
+                          ItemsSource="{Binding ShipClassOptions}"
+                          SelectedItem="{Binding SelectedShipClass}" />
+                <TextBlock VerticalAlignment="Center" Text="Top N Ships:" />
                 <ComboBox ItemsSource="{Binding TopNOptions}" SelectedItem="{Binding TopN}" />
-                <CheckBox Content="Reverse Order" IsChecked="{Binding ReverseSort}" VerticalAlignment="Center"/>
+                <CheckBox VerticalAlignment="Center"
+                          Content="Reverse Order"
+                          IsChecked="{Binding ReverseSort}" />
               </StackPanel>
             </Grid>
-            <Grid Grid.Row="1" ColumnDefinitions="340,*" RowDefinitions="*,34">
-              <!-- Sidebar -->
-              <Border Grid.Column="0" Grid.Row="0" BorderBrush="Gray" BorderThickness="0" Width="340" Padding="0">
+            <Grid Grid.Row="1"
+                  ColumnDefinitions="340,*"
+                  RowDefinitions="*,34">
+              <!--  Sidebar  -->
+              <Border Grid.Row="0"
+                      Grid.Column="0"
+                      Width="340"
+                      Padding="0"
+                      BorderBrush="Gray"
+                      BorderThickness="0">
                 <Grid ColumnDefinitions="12,168,8,140,12" RowDefinitions="36,Auto,*">
-                  <TextBlock Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="5" Text="Selected Ship:" FontWeight="Bold" HorizontalAlignment="Center"/>
-                  <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding PressedShipName}" ToolTip.Tip="{Binding PressedShipName}" FontWeight="SemiBold"/>
-                  <TextBlock Grid.Column="3" Grid.Row="1" Text="{Binding PressedShipTotal}" FontWeight="Bold" Classes="RightAligned"/>
-                  <ListBox Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="5" ItemsSource="{Binding ShipBucketsList}" BorderThickness="0">
+                  <TextBlock Grid.Row="0"
+                             Grid.Column="0"
+                             Grid.ColumnSpan="5"
+                             HorizontalAlignment="Center"
+                             FontWeight="Bold"
+                             Text="Selected Ship:" />
+                  <TextBlock Grid.Row="1"
+                             Grid.Column="1"
+                             FontWeight="SemiBold"
+                             Text="{Binding PressedShipName}"
+                             ToolTip.Tip="{Binding PressedShipName}" />
+                  <TextBlock Grid.Row="1"
+                             Grid.Column="3"
+                             Classes="RightAligned"
+                             FontWeight="Bold"
+                             Text="{Binding PressedShipTotal}" />
+                  <ListBox Grid.Row="2"
+                           Grid.Column="0"
+                           Grid.ColumnSpan="5"
+                           BorderThickness="0"
+                           ItemsSource="{Binding ShipBucketsList}">
                     <ListBox.Styles>
                       <Style Selector="ListBoxItem">
-                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                       </Style>
                     </ListBox.Styles>
                     <ListBox.ItemTemplate>
                       <DataTemplate>
                         <Grid ColumnDefinitions="4,168,8,140,4">
-                          <TextBlock Grid.Column="1" Text="{Binding Name}" FontWeight="{Binding FontWeight}" Margin="0" Foreground="{Binding GraphBrush, Converter={StaticResource NullToUnsetBrush}}"/>
-                          <TextBlock Grid.Column="3" Text="{Binding Percent, StringFormat=N2}%" FontWeight="Bold" Classes="RightAligned" Margin="0" Foreground="{Binding GraphBrush, Converter={StaticResource NullToUnsetBrush}}"/>
+                          <TextBlock Grid.Column="1"
+                                     Margin="0"
+                                     FontWeight="{Binding FontWeight}"
+                                     Foreground="{Binding GraphBrush, Converter={StaticResource NullToUnsetBrush}}"
+                                     Text="{Binding Name}" />
+                          <TextBlock Grid.Column="3"
+                                     Margin="0"
+                                     Classes="RightAligned"
+                                     FontWeight="Bold"
+                                     Foreground="{Binding GraphBrush, Converter={StaticResource NullToUnsetBrush}}"
+                                     Text="{Binding Percent, StringFormat=N2}%" />
                         </Grid>
                       </DataTemplate>
                     </ListBox.ItemTemplate>
                   </ListBox>
                 </Grid>
               </Border>
-              <!-- Chart -->
-              <Border Grid.Column="1" Grid.Row="0" BorderBrush="Gray" BorderThickness="0" Padding="8">
-                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+              <!--  Chart  -->
+              <Border Grid.Row="0"
+                      Grid.Column="1"
+                      Padding="8"
+                      BorderBrush="Gray"
+                      BorderThickness="0">
+                <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
                   <Border MinWidth="{Binding ChartMinWidth}">
-                    <lvc:CartesianChart Series="{Binding Series}" XAxes="{Binding XAxes}" YAxes="{Binding YAxes}" Sections="{Binding Sections}" x:Name="TransactionsShipsLoadChart" TooltipPosition="{Binding ShowToolTip, Converter={StaticResource BoolToChartPos}}" LegendPosition="Hidden"/>
+                    <lvc:CartesianChart x:Name="TransactionsShipsLoadChart"
+                                        LegendPosition="Hidden"
+                                        Sections="{Binding Sections}"
+                                        Series="{Binding Series}"
+                                        TooltipPosition="{Binding ShowToolTip, Converter={StaticResource BoolToChartPos}}"
+                                        XAxes="{Binding XAxes}"
+                                        YAxes="{Binding YAxes}" />
                   </Border>
                 </ScrollViewer>
               </Border>
-              <Border Grid.Column="0" Grid.Row="1" BorderBrush="Gray" BorderThickness="0" Padding="0">
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="24">
-                  <TextBlock Text="Display Tooltip:" VerticalAlignment="Center" Margin="0,0,8,0"/>
-                  <CheckBox IsChecked="{Binding ShowToolTip}" VerticalAlignment="Center"/>
+              <Border Grid.Row="1"
+                      Grid.Column="0"
+                      Padding="0"
+                      BorderBrush="Gray"
+                      BorderThickness="0">
+                <StackPanel HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Orientation="Horizontal"
+                            Spacing="24">
+                  <TextBlock Margin="0,0,8,0"
+                             VerticalAlignment="Center"
+                             Text="Display Tooltip:" />
+                  <CheckBox VerticalAlignment="Center" IsChecked="{Binding ShowToolTip}" />
                 </StackPanel>
               </Border>
             </Grid>
           </Grid>
         </TabItem>
-        <TabItem Header="Ships by Wares Stats" x:Name="TransactionsStatsShipsWaresTab">
+        <TabItem x:Name="TransactionsStatsShipsWaresTab" Header="Ships by Wares Stats">
           <Grid DataContext="{Binding TransactionsStatsShipsWares}">
             <Grid.RowDefinitions>
               <RowDefinition Height="34" />
               <RowDefinition />
             </Grid.RowDefinitions>
-            <!-- Filters row -->
-            <Border Grid.Row="0" BorderBrush="Gray" BorderThickness="0" Padding="4">
-              <Grid Grid.ColumnDefinitions="*,Auto" >
-                <StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="4" Margin="0">
-                  <TextBlock Text="Transport:" VerticalAlignment="Center"/>
-                  <RadioButton Content="All" GroupName="TxTransport"
-                              IsChecked="{Binding Transport, Mode=TwoWay, Converter={StaticResource EnumEquals}, ConverterParameter=All}"/>
-                  <RadioButton Content="Container" GroupName="TxTransport"
-                              IsChecked="{Binding Transport, Mode=TwoWay, Converter={StaticResource EnumEquals}, ConverterParameter=Container}"/>
-                  <RadioButton Content="Solid" GroupName="TxTransport"
-                              IsChecked="{Binding Transport, Mode=TwoWay, Converter={StaticResource EnumEquals}, ConverterParameter=Solid}"/>
-                  <RadioButton Content="Liquid" GroupName="TxTransport"
-                              IsChecked="{Binding Transport, Mode=TwoWay, Converter={StaticResource EnumEquals}, ConverterParameter=Liquid}"/>
+            <!--  Filters row  -->
+            <Border Grid.Row="0"
+                    Padding="4"
+                    BorderBrush="Gray"
+                    BorderThickness="0">
+              <Grid Grid.ColumnDefinitions="*,Auto">
+                <StackPanel Grid.Column="0"
+                            Margin="0"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Orientation="Horizontal"
+                            Spacing="4">
+                  <TextBlock VerticalAlignment="Center" Text="Transport:" />
+                  <RadioButton Content="All"
+                               GroupName="TxTransport"
+                               IsChecked="{Binding Transport, Mode=TwoWay, Converter={StaticResource EnumEquals}, ConverterParameter=All}" />
+                  <RadioButton Content="Container"
+                               GroupName="TxTransport"
+                               IsChecked="{Binding Transport, Mode=TwoWay, Converter={StaticResource EnumEquals}, ConverterParameter=Container}" />
+                  <RadioButton Content="Solid"
+                               GroupName="TxTransport"
+                               IsChecked="{Binding Transport, Mode=TwoWay, Converter={StaticResource EnumEquals}, ConverterParameter=Solid}" />
+                  <RadioButton Content="Liquid"
+                               GroupName="TxTransport"
+                               IsChecked="{Binding Transport, Mode=TwoWay, Converter={StaticResource EnumEquals}, ConverterParameter=Liquid}" />
                 </StackPanel>
-                <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Spacing="8" Margin="0">
-                  <TextBlock Text="Parent station:" VerticalAlignment="Center" />
-                  <ComboBox ItemsSource="{Binding Stations}" SelectedItem="{Binding SelectedStation}"  VerticalAlignment="Center"  Width="240">
+                <StackPanel Grid.Column="1"
+                            Margin="0"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            Orientation="Horizontal"
+                            Spacing="8">
+                  <TextBlock VerticalAlignment="Center" Text="Parent station:" />
+                  <ComboBox Width="240"
+                            VerticalAlignment="Center"
+                            ItemsSource="{Binding Stations}"
+                            SelectedItem="{Binding SelectedStation}">
                     <ComboBox.ItemTemplate>
                       <DataTemplate>
-                        <TextBlock Text="{Binding Name}" ToolTip.Tip="{Binding Name}"/>
+                        <TextBlock Text="{Binding Name}" ToolTip.Tip="{Binding Name}" />
                       </DataTemplate>
                     </ComboBox.ItemTemplate>
                   </ComboBox>
-                  <TextBlock Text="Class:" VerticalAlignment="Center"/>
-                  <ComboBox ItemsSource="{Binding ShipClassOptions}" SelectedItem="{Binding SelectedShipClass}" Width="70"/>
-                  <TextBlock Text="Top N Ships:" VerticalAlignment="Center"/>
+                  <TextBlock VerticalAlignment="Center" Text="Class:" />
+                  <ComboBox Width="70"
+                            ItemsSource="{Binding ShipClassOptions}"
+                            SelectedItem="{Binding SelectedShipClass}" />
+                  <TextBlock VerticalAlignment="Center" Text="Top N Ships:" />
                   <ComboBox ItemsSource="{Binding TopNOptions}" SelectedItem="{Binding TopN}" />
-                  <CheckBox Content="Reverse Order" IsChecked="{Binding ReverseSort}" VerticalAlignment="Center"/>
+                  <CheckBox VerticalAlignment="Center"
+                            Content="Reverse Order"
+                            IsChecked="{Binding ReverseSort}" />
                 </StackPanel>
               </Grid>
             </Border>
-            <!-- Chart + custom legend -->
-            <Grid Grid.Row="1" ColumnDefinitions="340, *" RowDefinitions="Auto,*,34">
-              <Border Grid.Column="0" Grid.Row="0" BorderBrush="Gray" BorderThickness="0" Width="340" Padding="0">
+            <!--  Chart + custom legend  -->
+            <Grid Grid.Row="1"
+                  ColumnDefinitions="340, *"
+                  RowDefinitions="Auto,*,34">
+              <Border Grid.Row="0"
+                      Grid.Column="0"
+                      Width="340"
+                      Padding="0"
+                      BorderBrush="Gray"
+                      BorderThickness="0">
                 <Grid ColumnDefinitions="12,168,8,140,12" RowDefinitions="36, Auto">
-                  <TextBlock Grid.Column="0" Grid.Row="0"  Grid.ColumnSpan="5" Text="Selected Ship:" FontWeight="Bold" HorizontalAlignment="Center"/>
-                  <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding PressedShipName}" ToolTip.Tip="{Binding PressedShipName}" FontWeight="SemiBold"/>
-                  <TextBlock Grid.Column="3" Grid.Row="1" Text="{Binding PressedShipTotal}" FontWeight="Bold" Classes="RightAligned"/>
+                  <TextBlock Grid.Row="0"
+                             Grid.Column="0"
+                             Grid.ColumnSpan="5"
+                             HorizontalAlignment="Center"
+                             FontWeight="Bold"
+                             Text="Selected Ship:" />
+                  <TextBlock Grid.Row="1"
+                             Grid.Column="1"
+                             FontWeight="SemiBold"
+                             Text="{Binding PressedShipName}"
+                             ToolTip.Tip="{Binding PressedShipName}" />
+                  <TextBlock Grid.Row="1"
+                             Grid.Column="3"
+                             Classes="RightAligned"
+                             FontWeight="Bold"
+                             Text="{Binding PressedShipTotal}" />
                 </Grid>
               </Border>
-              <Border Grid.Column="0" Grid.Row="1" BorderBrush="Gray" BorderThickness="0" Padding="4">
-                <ListBox ItemsSource="{Binding ShipWaresList}"
-                        Background="Transparent"
-                        Margin="0" Width="340">
+              <Border Grid.Row="1"
+                      Grid.Column="0"
+                      Padding="4"
+                      BorderBrush="Gray"
+                      BorderThickness="0">
+                <ListBox Width="340"
+                         Margin="0"
+                         Background="Transparent"
+                         ItemsSource="{Binding ShipWaresList}">
                   <ListBox.ItemTemplate>
                     <DataTemplate>
                       <Grid ColumnDefinitions="*,8,Auto">
-                        <TextBlock Grid.Column="0" Text="{Binding Name}" ToolTip.Tip="{Binding Name}" FontWeight="SemiBold"
-                                    Foreground="{Binding GraphBrush, Converter={StaticResource NullToUnsetBrush}}"/>
-                        <TextBlock Grid.Column="2" Text="{Binding Money, StringFormat=N2}" FontWeight="Bold" Classes="RightAligned"  Margin="0"
-                                    Foreground="{Binding GraphBrush, Converter={StaticResource NullToUnsetBrush}}"/>
+                        <TextBlock Grid.Column="0"
+                                   FontWeight="SemiBold"
+                                   Foreground="{Binding GraphBrush, Converter={StaticResource NullToUnsetBrush}}"
+                                   Text="{Binding Name}"
+                                   ToolTip.Tip="{Binding Name}" />
+                        <TextBlock Grid.Column="2"
+                                   Margin="0"
+                                   Classes="RightAligned"
+                                   FontWeight="Bold"
+                                   Foreground="{Binding GraphBrush, Converter={StaticResource NullToUnsetBrush}}"
+                                   Text="{Binding Money, StringFormat=N2}" />
                       </Grid>
                     </DataTemplate>
                   </ListBox.ItemTemplate>
                 </ListBox>
               </Border>
-              <Border Grid.Column="0" Grid.Row="2" BorderBrush="Gray" BorderThickness="0" Padding="0">
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="24">
-                  <TextBlock Text="Display Tooltip:" VerticalAlignment="Center" Margin="0,0,8,0"/>
-                  <CheckBox IsChecked="{Binding ShowToolTip}" VerticalAlignment="Center"/>
+              <Border Grid.Row="2"
+                      Grid.Column="0"
+                      Padding="0"
+                      BorderBrush="Gray"
+                      BorderThickness="0">
+                <StackPanel HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Orientation="Horizontal"
+                            Spacing="24">
+                  <TextBlock Margin="0,0,8,0"
+                             VerticalAlignment="Center"
+                             Text="Display Tooltip:" />
+                  <CheckBox VerticalAlignment="Center" IsChecked="{Binding ShowToolTip}" />
                 </StackPanel>
               </Border>
-              <Border Grid.Column="1" Grid.Row="0" Grid.RowSpan="3" BorderBrush="Gray" BorderThickness="0" Padding="8">
-                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+              <Border Grid.Row="0"
+                      Grid.RowSpan="3"
+                      Grid.Column="1"
+                      Padding="8"
+                      BorderBrush="Gray"
+                      BorderThickness="0">
+                <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
                   <Border MinWidth="{Binding ChartMinWidth}">
-                    <lvc:CartesianChart Grid.Column="0"
-                                        Series="{Binding Series}"
-                                        XAxes="{Binding XAxes}"
-                                        YAxes="{Binding YAxes}"
+                    <lvc:CartesianChart x:Name="TransactionsShipsByWaresChart"
+                                        Grid.Column="0"
+                                        LegendPosition="Hidden"
                                         Sections="{Binding Sections}"
-                                        x:Name="TransactionsShipsByWaresChart"
+                                        Series="{Binding Series}"
                                         TooltipPosition="{Binding ShowToolTip, Converter={StaticResource BoolToChartPos}}"
-                                        LegendPosition="Hidden"/>
+                                        XAxes="{Binding XAxes}"
+                                        YAxes="{Binding YAxes}" />
                   </Border>
                 </ScrollViewer>
               </Border>
             </Grid>
           </Grid>
         </TabItem>
-        <TabItem Header="Wares by Ships Stats" x:Name="TransactionsStatsWaresShipsTab">
+        <TabItem x:Name="TransactionsStatsWaresShipsTab" Header="Wares by Ships Stats">
           <Grid DataContext="{Binding TransactionsStatsWaresShips}">
             <Grid.RowDefinitions>
               <RowDefinition Height="34" />
               <RowDefinition />
             </Grid.RowDefinitions>
-            <!-- Filters row -->
-            <Border Grid.Row="0" BorderBrush="Gray" BorderThickness="0" Padding="4">
-              <Grid Grid.ColumnDefinitions="*,Auto" >
-                <StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="4" Margin="0">
-                  <TextBlock Text="Transport:" VerticalAlignment="Center"/>
-                  <RadioButton Content="All" GroupName="TxTransport"
-                              IsChecked="{Binding Transport, Mode=TwoWay, Converter={StaticResource EnumEquals}, ConverterParameter=All}"/>
-                  <RadioButton Content="Container" GroupName="TxTransport"
-                              IsChecked="{Binding Transport, Mode=TwoWay, Converter={StaticResource EnumEquals}, ConverterParameter=Container}"/>
-                  <RadioButton Content="Solid" GroupName="TxTransport"
-                              IsChecked="{Binding Transport, Mode=TwoWay, Converter={StaticResource EnumEquals}, ConverterParameter=Solid}"/>
-                  <RadioButton Content="Liquid" GroupName="TxTransport"
-                              IsChecked="{Binding Transport, Mode=TwoWay, Converter={StaticResource EnumEquals}, ConverterParameter=Liquid}"/>
+            <!--  Filters row  -->
+            <Border Grid.Row="0"
+                    Padding="4"
+                    BorderBrush="Gray"
+                    BorderThickness="0">
+              <Grid Grid.ColumnDefinitions="*,Auto">
+                <StackPanel Grid.Column="0"
+                            Margin="0"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Orientation="Horizontal"
+                            Spacing="4">
+                  <TextBlock VerticalAlignment="Center" Text="Transport:" />
+                  <RadioButton Content="All"
+                               GroupName="TxTransport"
+                               IsChecked="{Binding Transport, Mode=TwoWay, Converter={StaticResource EnumEquals}, ConverterParameter=All}" />
+                  <RadioButton Content="Container"
+                               GroupName="TxTransport"
+                               IsChecked="{Binding Transport, Mode=TwoWay, Converter={StaticResource EnumEquals}, ConverterParameter=Container}" />
+                  <RadioButton Content="Solid"
+                               GroupName="TxTransport"
+                               IsChecked="{Binding Transport, Mode=TwoWay, Converter={StaticResource EnumEquals}, ConverterParameter=Solid}" />
+                  <RadioButton Content="Liquid"
+                               GroupName="TxTransport"
+                               IsChecked="{Binding Transport, Mode=TwoWay, Converter={StaticResource EnumEquals}, ConverterParameter=Liquid}" />
                 </StackPanel>
-                <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Spacing="8" Margin="0">
-                  <TextBlock Text="Parent station:" VerticalAlignment="Center" />
-                  <ComboBox ItemsSource="{Binding Stations}" SelectedItem="{Binding SelectedStation}"  VerticalAlignment="Center"  Width="240">
+                <StackPanel Grid.Column="1"
+                            Margin="0"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            Orientation="Horizontal"
+                            Spacing="8">
+                  <TextBlock VerticalAlignment="Center" Text="Parent station:" />
+                  <ComboBox Width="240"
+                            VerticalAlignment="Center"
+                            ItemsSource="{Binding Stations}"
+                            SelectedItem="{Binding SelectedStation}">
                     <ComboBox.ItemTemplate>
                       <DataTemplate>
-                        <TextBlock Text="{Binding Name}" ToolTip.Tip="{Binding Name}"/>
+                        <TextBlock Text="{Binding Name}" ToolTip.Tip="{Binding Name}" />
                       </DataTemplate>
                     </ComboBox.ItemTemplate>
                   </ComboBox>
-                  <TextBlock Text="Class:" VerticalAlignment="Center"/>
-                  <ComboBox ItemsSource="{Binding ShipClassOptions}" SelectedItem="{Binding SelectedShipClass}" Width="70"/>
-                  <TextBlock Text="Top N Wares:" VerticalAlignment="Center"/>
+                  <TextBlock VerticalAlignment="Center" Text="Class:" />
+                  <ComboBox Width="70"
+                            ItemsSource="{Binding ShipClassOptions}"
+                            SelectedItem="{Binding SelectedShipClass}" />
+                  <TextBlock VerticalAlignment="Center" Text="Top N Wares:" />
                   <ComboBox ItemsSource="{Binding TopNOptions}" SelectedItem="{Binding TopN}" />
-                  <CheckBox Content="Reverse Order" IsChecked="{Binding ReverseSort}" VerticalAlignment="Center"/>
+                  <CheckBox VerticalAlignment="Center"
+                            Content="Reverse Order"
+                            IsChecked="{Binding ReverseSort}" />
                 </StackPanel>
               </Grid>
             </Border>
-            <!-- Chart + custom legend -->
-            <Grid Grid.Row="1" ColumnDefinitions="340, *" RowDefinitions="Auto,*,34">
-              <Border Grid.Column="0" Grid.Row="0" BorderBrush="Gray" BorderThickness="0" Width="340" Padding="0">
+            <!--  Chart + custom legend  -->
+            <Grid Grid.Row="1"
+                  ColumnDefinitions="340, *"
+                  RowDefinitions="Auto,*,34">
+              <Border Grid.Row="0"
+                      Grid.Column="0"
+                      Width="340"
+                      Padding="0"
+                      BorderBrush="Gray"
+                      BorderThickness="0">
                 <Grid ColumnDefinitions="12,168,8,140,12" RowDefinitions="36, Auto">
-                  <TextBlock Grid.Column="0" Grid.Row="0"  Grid.ColumnSpan="5" Text="Selected Ware:" FontWeight="Bold" HorizontalAlignment="Center"/>
-                  <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding PressedWareName}" ToolTip.Tip="{Binding PressedWareName}" FontWeight="SemiBold"/>
-                  <TextBlock Grid.Column="3" Grid.Row="1" Text="{Binding PressedWareTotal}" FontWeight="Bold" Classes="RightAligned"/>
+                  <TextBlock Grid.Row="0"
+                             Grid.Column="0"
+                             Grid.ColumnSpan="5"
+                             HorizontalAlignment="Center"
+                             FontWeight="Bold"
+                             Text="Selected Ware:" />
+                  <TextBlock Grid.Row="1"
+                             Grid.Column="1"
+                             FontWeight="SemiBold"
+                             Text="{Binding PressedWareName}"
+                             ToolTip.Tip="{Binding PressedWareName}" />
+                  <TextBlock Grid.Row="1"
+                             Grid.Column="3"
+                             Classes="RightAligned"
+                             FontWeight="Bold"
+                             Text="{Binding PressedWareTotal}" />
                 </Grid>
               </Border>
-              <Border Grid.Column="0" Grid.Row="1" BorderBrush="Gray" BorderThickness="0" Padding="4">
-                <ListBox ItemsSource="{Binding WareShipsList}"
-                        Background="Transparent"
-                        Margin="0" Width="340">
+              <Border Grid.Row="1"
+                      Grid.Column="0"
+                      Padding="4"
+                      BorderBrush="Gray"
+                      BorderThickness="0">
+                <ListBox Width="340"
+                         Margin="0"
+                         Background="Transparent"
+                         ItemsSource="{Binding WareShipsList}">
                   <ListBox.ItemTemplate>
                     <DataTemplate>
                       <Grid ColumnDefinitions="*,8,Auto">
-                        <TextBlock Grid.Column="0" Text="{Binding ShipName}" ToolTip.Tip="{Binding ShipName}" FontWeight="SemiBold"
-                                    Foreground="{Binding GraphBrush, Converter={StaticResource NullToUnsetBrush}}"/>
-                        <TextBlock Grid.Column="2" Text="{Binding EstimatedProfit, StringFormat=N2}" FontWeight="Bold" Classes="RightAligned"  Margin="0"
-                                    Foreground="{Binding GraphBrush, Converter={StaticResource NullToUnsetBrush}}"/>
+                        <TextBlock Grid.Column="0"
+                                   FontWeight="SemiBold"
+                                   Foreground="{Binding GraphBrush, Converter={StaticResource NullToUnsetBrush}}"
+                                   Text="{Binding ShipName}"
+                                   ToolTip.Tip="{Binding ShipName}" />
+                        <TextBlock Grid.Column="2"
+                                   Margin="0"
+                                   Classes="RightAligned"
+                                   FontWeight="Bold"
+                                   Foreground="{Binding GraphBrush, Converter={StaticResource NullToUnsetBrush}}"
+                                   Text="{Binding EstimatedProfit, StringFormat=N2}" />
                       </Grid>
                     </DataTemplate>
                   </ListBox.ItemTemplate>
                 </ListBox>
               </Border>
-              <Border Grid.Column="0" Grid.Row="2" BorderBrush="Gray" BorderThickness="0" Padding="0">
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="24">
-                  <TextBlock Text="Display Tooltip:" VerticalAlignment="Center" Margin="0,0,8,0"/>
-                  <CheckBox IsChecked="{Binding ShowToolTip}" VerticalAlignment="Center"/>
+              <Border Grid.Row="2"
+                      Grid.Column="0"
+                      Padding="0"
+                      BorderBrush="Gray"
+                      BorderThickness="0">
+                <StackPanel HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Orientation="Horizontal"
+                            Spacing="24">
+                  <TextBlock Margin="0,0,8,0"
+                             VerticalAlignment="Center"
+                             Text="Display Tooltip:" />
+                  <CheckBox VerticalAlignment="Center" IsChecked="{Binding ShowToolTip}" />
                 </StackPanel>
               </Border>
-              <Border Grid.Column="1" Grid.Row="0" Grid.RowSpan="3" BorderBrush="Gray" BorderThickness="0" Padding="8">
-                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+              <Border Grid.Row="0"
+                      Grid.RowSpan="3"
+                      Grid.Column="1"
+                      Padding="8"
+                      BorderBrush="Gray"
+                      BorderThickness="0">
+                <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
                   <Border MinWidth="{Binding ChartMinWidth}">
-                    <lvc:CartesianChart Grid.Column="0"
-                                        Series="{Binding Series}"
-                                        XAxes="{Binding XAxes}"
-                                        YAxes="{Binding YAxes}"
+                    <lvc:CartesianChart x:Name="TransactionsWaresByShipsChart"
+                                        Grid.Column="0"
+                                        LegendPosition="Hidden"
                                         Sections="{Binding Sections}"
-                                        x:Name="TransactionsWaresByShipsChart"
+                                        Series="{Binding Series}"
                                         TooltipPosition="{Binding ShowToolTip, Converter={StaticResource BoolToChartPos}}"
-                                        LegendPosition="Hidden"/>
+                                        XAxes="{Binding XAxes}"
+                                        YAxes="{Binding YAxes}" />
                   </Border>
                 </ScrollViewer>
               </Border>
@@ -534,157 +893,231 @@
       </TabControl>
     </TabItem>
 
-    <!-- Parent: By Trades -->
-    <TabItem Header="By Trades" x:Name="ByTradesTab">
+    <!--  Parent: By Trades  -->
+    <TabItem x:Name="ByTradesTab" Header="By Trades">
       <TabControl x:Name="ByTradesTabs">
-        <TabItem Header="Ships Trades" x:Name="TradesTab">
+        <TabItem x:Name="TradesTab" Header="Ships Trades">
           <Grid DataContext="{Binding TradesData}">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
+              <ColumnDefinition Width="Auto" />
+              <ColumnDefinition Width="Auto" />
+              <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="36" />
-                <RowDefinition Height="36" />
-                <RowDefinition />
-                <RowDefinition Height="34" />
+              <RowDefinition Height="36" />
+              <RowDefinition Height="36" />
+              <RowDefinition />
+              <RowDefinition Height="34" />
             </Grid.RowDefinitions>
 
-            <Border Grid.Row="0" Grid.Column="0" BorderBrush="Gray" BorderThickness="0" Padding="0" Width="340">
-              <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Left" Margin="0">
-                <TextBlock Text="Parent station:" VerticalAlignment="Center" />
-                <ComboBox ItemsSource="{Binding Stations}" SelectedItem="{Binding SelectedStation}"  VerticalAlignment="Center"  Width="240">
+            <Border Grid.Row="0"
+                    Grid.Column="0"
+                    Width="340"
+                    Padding="0"
+                    BorderBrush="Gray"
+                    BorderThickness="0">
+              <StackPanel Margin="0"
+                          HorizontalAlignment="Left"
+                          Orientation="Horizontal"
+                          Spacing="6">
+                <TextBlock VerticalAlignment="Center" Text="Parent station:" />
+                <ComboBox Width="240"
+                          VerticalAlignment="Center"
+                          ItemsSource="{Binding Stations}"
+                          SelectedItem="{Binding SelectedStation}">
                   <ComboBox.ItemTemplate>
                     <DataTemplate>
-                      <TextBlock Text="{Binding Name}" ToolTip.Tip="{Binding Name}"/>
+                      <TextBlock Text="{Binding Name}" ToolTip.Tip="{Binding Name}" />
                     </DataTemplate>
-                </ComboBox.ItemTemplate>
-              </ComboBox>
+                  </ComboBox.ItemTemplate>
+                </ComboBox>
               </StackPanel>
             </Border>
 
-            <Border Grid.Row="1" Grid.Column="0" BorderBrush="Gray" BorderThickness="0" Padding="0">
-              <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Left" Margin="0">
-                <TextBlock Text="Class:" VerticalAlignment="Center" Margin="8,0,0,0"/>
-                <ComboBox ItemsSource="{Binding ShipClassOptions}" SelectedItem="{Binding SelectedShipClass}"  VerticalAlignment="Center" Width="70"/>
+            <Border Grid.Row="1"
+                    Grid.Column="0"
+                    Padding="0"
+                    BorderBrush="Gray"
+                    BorderThickness="0">
+              <StackPanel Margin="0"
+                          HorizontalAlignment="Left"
+                          Orientation="Horizontal"
+                          Spacing="6">
+                <TextBlock Margin="8,0,0,0"
+                           VerticalAlignment="Center"
+                           Text="Class:" />
+                <ComboBox Width="70"
+                          VerticalAlignment="Center"
+                          ItemsSource="{Binding ShipClassOptions}"
+                          SelectedItem="{Binding SelectedShipClass}" />
 
-                <CheckBox Content="With Internal Trades" IsChecked="{Binding WithInternalTrades, Mode=TwoWay}" Margin="48,0,0,0"/>
+                <CheckBox Margin="48,0,0,0"
+                          Content="With Internal Trades"
+                          IsChecked="{Binding WithInternalTrades, Mode=TwoWay}" />
               </StackPanel>
             </Border>
 
-            <!-- Left: ships list -->
-            <Border Grid.Row="2" Grid.Column="0" BorderBrush="Gray" BorderThickness="0" Padding="0">
-              <ListBox ItemsSource="{Binding ShipList}"
-                      SelectedItem="{Binding SelectedShip, Mode=TwoWay}"
-                      Margin="8" Width="340">
+            <!--  Left: ships list  -->
+            <Border Grid.Row="2"
+                    Grid.Column="0"
+                    Padding="0"
+                    BorderBrush="Gray"
+                    BorderThickness="0">
+              <ListBox Width="340"
+                       Margin="8"
+                       ItemsSource="{Binding ShipList}"
+                       SelectedItem="{Binding SelectedShip, Mode=TwoWay}">
                 <ListBox.ItemTemplate>
                   <DataTemplate>
                     <Grid ColumnDefinitions="*,8,Auto">
-                      <TextBlock Grid.Column="0" Text="{Binding ShipName}" ToolTip.Tip="{Binding ShipName}"/>
-                      <TextBlock Grid.Column="2" Text="{Binding EstimatedProfit, StringFormat=N2}" FontWeight="SemiBold" Classes="RightAligned"  Margin="0"/>
+                      <TextBlock Grid.Column="0"
+                                 Text="{Binding ShipName}"
+                                 ToolTip.Tip="{Binding ShipName}" />
+                      <TextBlock Grid.Column="2"
+                                 Margin="0"
+                                 Classes="RightAligned"
+                                 FontWeight="SemiBold"
+                                 Text="{Binding EstimatedProfit, StringFormat=N2}" />
                     </Grid>
                   </DataTemplate>
                 </ListBox.ItemTemplate>
               </ListBox>
             </Border>
 
-            <Border Grid.Row="3" Grid.Column="0" BorderBrush="Gray" BorderThickness="0" Padding="0">
-              <StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="6">
-                <TextBlock Text="Sort:" VerticalAlignment="Center"/>
-                <RadioButton Content="Name" GroupName="ShipsSort" Margin="8,0,0,0"
-                              IsChecked="{Binding ShipsSortOrder, Mode=TwoWay, Converter={StaticResource EnumEquals}, ConverterParameter=Name}"/>
-                <RadioButton Content="Profit" GroupName="ShipsSort" Margin="8,0,0,0"
-                              IsChecked="{Binding ShipsSortOrder, Mode=TwoWay, Converter={StaticResource EnumEquals}, ConverterParameter=Profit}"/>
+            <Border Grid.Row="3"
+                    Grid.Column="0"
+                    Padding="0"
+                    BorderBrush="Gray"
+                    BorderThickness="0">
+              <StackPanel Grid.Column="0"
+                          HorizontalAlignment="Center"
+                          VerticalAlignment="Center"
+                          Orientation="Horizontal"
+                          Spacing="6">
+                <TextBlock VerticalAlignment="Center" Text="Sort:" />
+                <RadioButton Margin="8,0,0,0"
+                             Content="Name"
+                             GroupName="ShipsSort"
+                             IsChecked="{Binding ShipsSortOrder, Mode=TwoWay, Converter={StaticResource EnumEquals}, ConverterParameter=Name}" />
+                <RadioButton Margin="8,0,0,0"
+                             Content="Profit"
+                             GroupName="ShipsSort"
+                             IsChecked="{Binding ShipsSortOrder, Mode=TwoWay, Converter={StaticResource EnumEquals}, ConverterParameter=Profit}" />
               </StackPanel>
             </Border>
-            <!-- Filters / summary row -->
-            <Border Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" BorderBrush="Gray" BorderThickness="0" Padding="4">
-              <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Spacing="24">
+            <!--  Filters / summary row  -->
+            <Border Grid.Row="0"
+                    Grid.Column="1"
+                    Grid.ColumnSpan="2"
+                    Padding="4"
+                    BorderBrush="Gray"
+                    BorderThickness="0">
+              <StackPanel HorizontalAlignment="Left"
+                          Orientation="Horizontal"
+                          Spacing="24">
                 <StackPanel Orientation="Horizontal" Spacing="6">
-                  <TextBlock Text="Ship:"/>
-                  <TextBlock Text="{Binding SelectedShip.ShipName}" FontWeight="Bold"/>
+                  <TextBlock Text="Ship:" />
+                  <TextBlock FontWeight="Bold" Text="{Binding SelectedShip.ShipName}" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Spacing="6">
-                  <TextBlock Text="Total Profit:"/>
-                  <TextBlock Text="{Binding TotalProfit}" FontWeight="Bold"/>
+                  <TextBlock Text="Total Profit:" />
+                  <TextBlock FontWeight="Bold" Text="{Binding TotalProfit}" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Spacing="6">
-                  <TextBlock Text="Items Traded:"/>
-                  <TextBlock Text="{Binding ItemsTraded}" FontWeight="Bold"/>
+                  <TextBlock Text="Items Traded:" />
+                  <TextBlock FontWeight="Bold" Text="{Binding ItemsTraded}" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Spacing="6">
-                  <TextBlock Text="Time in Service:"/>
-                  <TextBlock Text="{Binding TimeInService}" FontWeight="Bold"/>
+                  <TextBlock Text="Time in Service:" />
+                  <TextBlock FontWeight="Bold" Text="{Binding TimeInService}" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Spacing="6">
-                  <TextBlock Text="Trade Time:"/>
+                  <TextBlock Text="Trade Time:" />
                   <StackPanel Orientation="Horizontal" Spacing="6">
-                    <TextBlock Text="Min:"/>
-                    <TextBlock Text="{Binding TimeMin}" FontWeight="Bold"/>
+                    <TextBlock Text="Min:" />
+                    <TextBlock FontWeight="Bold" Text="{Binding TimeMin}" />
                   </StackPanel>
                   <StackPanel Orientation="Horizontal" Spacing="6">
-                    <TextBlock Text="Avg:"/>
-                    <TextBlock Text="{Binding TimeAvg}" FontWeight="Bold"/>
+                    <TextBlock Text="Avg:" />
+                    <TextBlock FontWeight="Bold" Text="{Binding TimeAvg}" />
                   </StackPanel>
                   <StackPanel Orientation="Horizontal" Spacing="6">
-                    <TextBlock Text="Max:"/>
-                    <TextBlock Text="{Binding TimeMax}" FontWeight="Bold"/>
+                    <TextBlock Text="Max:" />
+                    <TextBlock FontWeight="Bold" Text="{Binding TimeMax}" />
                   </StackPanel>
                 </StackPanel>
               </StackPanel>
             </Border>
 
-            <!-- Middle: full trades grid -->
-            <Border Grid.Row="1" Grid.RowSpan="2" Grid.Column="1" BorderBrush="Gray" BorderThickness="0" Padding="4">
-              <DataGrid ItemsSource="{Binding FilteredFullTrades}"
-                        SelectedItem="{Binding SelectedFullTrade, Mode=TwoWay}"
+            <!--  Middle: full trades grid  -->
+            <Border Grid.Row="1"
+                    Grid.RowSpan="2"
+                    Grid.Column="1"
+                    Padding="4"
+                    BorderBrush="Gray"
+                    BorderThickness="0">
+              <DataGrid Margin="8"
                         AutoGenerateColumns="False"
                         IsReadOnly="True"
-                        Margin="8">
+                        ItemsSource="{Binding FilteredFullTrades}"
+                        SelectedItem="{Binding SelectedFullTrade, Mode=TwoWay}">
                 <DataGrid.Columns>
-                  <DataGridTemplateColumn Header="Time" SortMemberPath="EndTime" Width="90">
+                  <DataGridTemplateColumn Width="90"
+                                          Header="Time"
+                                          SortMemberPath="EndTime">
                     <DataGridTemplateColumn.CellTemplate>
                       <DataTemplate>
-                        <TextBlock Text="{Binding Time}" Classes="RightAlignedPadded"/>
+                        <TextBlock Classes="RightAlignedPadded" Text="{Binding Time}" />
                       </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                   </DataGridTemplateColumn>
-                  <DataGridTextColumn Header="Product" Binding="{Binding Product}" Width="200"/>
-                  <DataGridTemplateColumn Header="Quantity" SortMemberPath="BoughtQuantity" Width="90">
+                  <DataGridTextColumn Width="200"
+                                      Binding="{Binding Product}"
+                                      Header="Product" />
+                  <DataGridTemplateColumn Width="90"
+                                          Header="Quantity"
+                                          SortMemberPath="BoughtQuantity">
                     <DataGridTemplateColumn.CellTemplate>
                       <DataTemplate>
-                        <TextBlock Text="{Binding BoughtQuantity, StringFormat=N0}" Classes="RightAlignedPadded" />
+                        <TextBlock Classes="RightAlignedPadded" Text="{Binding BoughtQuantity, StringFormat=N0}" />
                       </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                   </DataGridTemplateColumn>
-                  <DataGridTemplateColumn Header="Load, %" SortMemberPath="LoadPercent" Width="90">
+                  <DataGridTemplateColumn Width="90"
+                                          Header="Load, %"
+                                          SortMemberPath="LoadPercent">
                     <DataGridTemplateColumn.CellTemplate>
                       <DataTemplate>
-                        <TextBlock Text="{Binding LoadPercent, StringFormat=N2}"
-                                    Foreground="{Binding LoadPercent, Converter={StaticResource LoadPercentToBrushConverter}}"
-                                    Classes="RightAlignedPadded" />
+                        <TextBlock Classes="RightAlignedPadded"
+                                   Foreground="{Binding LoadPercent, Converter={StaticResource LoadPercentToBrushConverter}}"
+                                   Text="{Binding LoadPercent, StringFormat=N2}" />
                       </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                   </DataGridTemplateColumn>
-                  <DataGridTemplateColumn Header="Profit" SortMemberPath="Profit" Width="120">
+                  <DataGridTemplateColumn Width="120"
+                                          Header="Profit"
+                                          SortMemberPath="Profit">
                     <DataGridTemplateColumn.CellTemplate>
                       <DataTemplate>
-                        <TextBlock Text="{Binding Profit, StringFormat=N2}" Classes="RightAlignedPadded" />
+                        <TextBlock Classes="RightAlignedPadded" Text="{Binding Profit, StringFormat=N2}" />
                       </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                   </DataGridTemplateColumn>
-                  <DataGridTemplateColumn Header="Spent Time" SortMemberPath="SpentTime" Width="90">
+                  <DataGridTemplateColumn Width="90"
+                                          Header="Spent Time"
+                                          SortMemberPath="SpentTime">
                     <DataGridTemplateColumn.CellTemplate>
                       <DataTemplate>
-                        <TextBlock Text="{Binding SpentTime}" Classes="RightAlignedPadded"/>
+                        <TextBlock Classes="RightAlignedPadded" Text="{Binding SpentTime}" />
                       </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                   </DataGridTemplateColumn>
-                  <DataGridTemplateColumn Header="Dist." SortMemberPath="Distance" Width="90">
+                  <DataGridTemplateColumn Width="90"
+                                          Header="Dist."
+                                          SortMemberPath="Distance">
                     <DataGridTemplateColumn.CellTemplate>
                       <DataTemplate>
-                        <TextBlock Text="{Binding Distance, StringFormat=N0}" Classes="RightAlignedPadded" />
+                        <TextBlock Classes="RightAlignedPadded" Text="{Binding Distance, StringFormat=N0}" />
                       </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                   </DataGridTemplateColumn>
@@ -692,350 +1125,632 @@
               </DataGrid>
             </Border>
 
-    <!-- Right: combined steps grid -->
-            <Border Grid.Row="1" Grid.RowSpan="2" Grid.Column="2" BorderBrush="Gray" BorderThickness="0" Padding="4">
-              <DataGrid ItemsSource="{Binding TradeSteps}"
+            <!--  Right: combined steps grid  -->
+            <Border Grid.Row="1"
+                    Grid.RowSpan="2"
+                    Grid.Column="2"
+                    Padding="4"
+                    BorderBrush="Gray"
+                    BorderThickness="0">
+              <DataGrid Margin="8"
                         AutoGenerateColumns="False"
                         IsReadOnly="True"
-                        Margin="8">
+                        ItemsSource="{Binding TradeSteps}">
                 <DataGrid.Columns>
-                <DataGridTemplateColumn Header="Time" SortMemberPath="TimeRaw" Width="90">
-                  <DataGridTemplateColumn.CellTemplate>
-                    <DataTemplate>
-                      <TextBlock Text="{Binding Time}" Classes="RightAlignedPadded"/>
-                    </DataTemplate>
-                  </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-                <DataGridTextColumn Header="Op." Binding="{Binding Operation}" Width="60"/>
-                <DataGridTemplateColumn Header="Qnt."  SortMemberPath="Volume" Width="80">
-                  <DataGridTemplateColumn.CellTemplate>
-                    <DataTemplate>
-                      <TextBlock Text="{Binding Volume, StringFormat=N0}" Classes="RightAlignedPadded"/>
-                    </DataTemplate>
-                  </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-                <DataGridTemplateColumn Header="Price" SortMemberPath="Price" Width="80">
-                  <DataGridTemplateColumn.CellTemplate>
-                    <DataTemplate>
-                      <TextBlock Text="{Binding Price, StringFormat=N2}" Classes="RightAlignedPadded" />
-                    </DataTemplate>
-                  </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-                <DataGridTemplateColumn Header="Dist." SortMemberPath="Distance" Width="90">
-                  <DataGridTemplateColumn.CellTemplate>
-                    <DataTemplate>
-                      <TextBlock Text="{Binding Distance, StringFormat=N0}" Classes="RightAlignedPadded" />
-                    </DataTemplate>
-                  </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-                <DataGridTemplateColumn Header="Sector" SortMemberPath="Sector" Width="140">
-                  <DataGridTemplateColumn.CellTemplate>
-                    <DataTemplate>
-                      <TextBlock Text="{Binding Sector}" ToolTip.Tip="{Binding Sector}" Margin="8"/>
-                    </DataTemplate>
-                  </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-                <DataGridTemplateColumn Header="Station" SortMemberPath="Station" Width="Auto">
-                  <DataGridTemplateColumn.CellTemplate>
-                    <DataTemplate>
-                      <TextBlock Text="{Binding Station}" ToolTip.Tip="{Binding Station}" Margin="8"/>
-                    </DataTemplate>
-                  </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
+                  <DataGridTemplateColumn Width="90"
+                                          Header="Time"
+                                          SortMemberPath="TimeRaw">
+                    <DataGridTemplateColumn.CellTemplate>
+                      <DataTemplate>
+                        <TextBlock Classes="RightAlignedPadded" Text="{Binding Time}" />
+                      </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                  </DataGridTemplateColumn>
+                  <DataGridTextColumn Width="60"
+                                      Binding="{Binding Operation}"
+                                      Header="Op." />
+                  <DataGridTemplateColumn Width="80"
+                                          Header="Qnt."
+                                          SortMemberPath="Volume">
+                    <DataGridTemplateColumn.CellTemplate>
+                      <DataTemplate>
+                        <TextBlock Classes="RightAlignedPadded" Text="{Binding Volume, StringFormat=N0}" />
+                      </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                  </DataGridTemplateColumn>
+                  <DataGridTemplateColumn Width="80"
+                                          Header="Price"
+                                          SortMemberPath="Price">
+                    <DataGridTemplateColumn.CellTemplate>
+                      <DataTemplate>
+                        <TextBlock Classes="RightAlignedPadded" Text="{Binding Price, StringFormat=N2}" />
+                      </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                  </DataGridTemplateColumn>
+                  <DataGridTemplateColumn Width="90"
+                                          Header="Dist."
+                                          SortMemberPath="Distance">
+                    <DataGridTemplateColumn.CellTemplate>
+                      <DataTemplate>
+                        <TextBlock Classes="RightAlignedPadded" Text="{Binding Distance, StringFormat=N0}" />
+                      </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                  </DataGridTemplateColumn>
+                  <DataGridTemplateColumn Width="140"
+                                          Header="Sector"
+                                          SortMemberPath="Sector">
+                    <DataGridTemplateColumn.CellTemplate>
+                      <DataTemplate>
+                        <TextBlock Margin="8"
+                                   Text="{Binding Sector}"
+                                   ToolTip.Tip="{Binding Sector}" />
+                      </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                  </DataGridTemplateColumn>
+                  <DataGridTemplateColumn Width="Auto"
+                                          Header="Station"
+                                          SortMemberPath="Station">
+                    <DataGridTemplateColumn.CellTemplate>
+                      <DataTemplate>
+                        <TextBlock Margin="8"
+                                   Text="{Binding Station}"
+                                   ToolTip.Tip="{Binding Station}" />
+                      </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                  </DataGridTemplateColumn>
                 </DataGrid.Columns>
               </DataGrid>
             </Border>
           </Grid>
         </TabItem>
-        <TabItem Header="Ships Graphs" x:Name="TradesGraphsTab">
+        <TabItem x:Name="TradesGraphsTab" Header="Ships Graphs">
           <Grid DataContext="{Binding TradesGraphs}">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
+              <ColumnDefinition Width="Auto" />
+              <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="36" />
-                <RowDefinition Height="36" />
-                <RowDefinition />
-                <RowDefinition Height="34" />
+              <RowDefinition Height="36" />
+              <RowDefinition Height="36" />
+              <RowDefinition />
+              <RowDefinition Height="34" />
             </Grid.RowDefinitions>
-            <Border Grid.Row="0" Grid.Column="0" BorderBrush="Gray" BorderThickness="0" Padding="0" Width="340">
-              <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Left" Margin="0">
-                <TextBlock Text="Parent station:" VerticalAlignment="Center" />
-                <ComboBox ItemsSource="{Binding Stations}" SelectedItem="{Binding SelectedStation}"  VerticalAlignment="Center"  Width="240">
+            <Border Grid.Row="0"
+                    Grid.Column="0"
+                    Width="340"
+                    Padding="0"
+                    BorderBrush="Gray"
+                    BorderThickness="0">
+              <StackPanel Margin="0"
+                          HorizontalAlignment="Left"
+                          Orientation="Horizontal"
+                          Spacing="6">
+                <TextBlock VerticalAlignment="Center" Text="Parent station:" />
+                <ComboBox Width="240"
+                          VerticalAlignment="Center"
+                          ItemsSource="{Binding Stations}"
+                          SelectedItem="{Binding SelectedStation}">
                   <ComboBox.ItemTemplate>
                     <DataTemplate>
-                      <TextBlock Text="{Binding Name}" ToolTip.Tip="{Binding Name}"/>
+                      <TextBlock Text="{Binding Name}" ToolTip.Tip="{Binding Name}" />
                     </DataTemplate>
-                </ComboBox.ItemTemplate>
-              </ComboBox>
+                  </ComboBox.ItemTemplate>
+                </ComboBox>
               </StackPanel>
             </Border>
 
-            <Border Grid.Row="1" Grid.Column="0" BorderBrush="Gray" BorderThickness="0" Padding="0">
-              <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Left" Margin="0">
-                <TextBlock Text="Class:" VerticalAlignment="Center" Margin="8,0,0,0"/>
-                <ComboBox ItemsSource="{Binding ShipClassOptions}" SelectedItem="{Binding SelectedShipClass}"  VerticalAlignment="Center" Width="70"/>
+            <Border Grid.Row="1"
+                    Grid.Column="0"
+                    Padding="0"
+                    BorderBrush="Gray"
+                    BorderThickness="0">
+              <StackPanel Margin="0"
+                          HorizontalAlignment="Left"
+                          Orientation="Horizontal"
+                          Spacing="6">
+                <TextBlock Margin="8,0,0,0"
+                           VerticalAlignment="Center"
+                           Text="Class:" />
+                <ComboBox Width="70"
+                          VerticalAlignment="Center"
+                          ItemsSource="{Binding ShipClassOptions}"
+                          SelectedItem="{Binding SelectedShipClass}" />
 
-                <CheckBox Content="With Internal Trades" IsChecked="{Binding WithInternalTrades, Mode=TwoWay}" Margin="48,0,0,0"/>
+                <CheckBox Margin="48,0,0,0"
+                          Content="With Internal Trades"
+                          IsChecked="{Binding WithInternalTrades, Mode=TwoWay}" />
               </StackPanel>
             </Border>
-            <Border Grid.Row="2" Grid.Column="0" BorderBrush="Gray" BorderThickness="0" Padding="0">
-              <ListBox ItemsSource="{Binding ShipList}"
-                  Margin="8" Width="340"
-                  DoubleTapped="ShipGraphsList_DoubleTapped">
+            <Border Grid.Row="2"
+                    Grid.Column="0"
+                    Padding="0"
+                    BorderBrush="Gray"
+                    BorderThickness="0">
+              <ListBox Width="340"
+                       Margin="8"
+                       DoubleTapped="ShipGraphsList_DoubleTapped"
+                       ItemsSource="{Binding ShipList}">
                 <ListBox.ItemTemplate>
                   <DataTemplate>
                     <Grid ColumnDefinitions="*,8,Auto">
-                      <TextBlock Grid.Column="0" Text="{Binding ShipName}" ToolTip.Tip="{Binding ShipName}"
-                                  FontWeight="{Binding FontWeight}" Foreground="{Binding GraphBrush, Converter={StaticResource NullToUnsetBrush}}"/>
-                      <TextBlock Grid.Column="2" Text="{Binding EstimatedProfit, StringFormat=N2}" FontWeight="SemiBold" Classes="RightAligned"  Margin="0"/>
+                      <TextBlock Grid.Column="0"
+                                 FontWeight="{Binding FontWeight}"
+                                 Foreground="{Binding GraphBrush, Converter={StaticResource NullToUnsetBrush}}"
+                                 Text="{Binding ShipName}"
+                                 ToolTip.Tip="{Binding ShipName}" />
+                      <TextBlock Grid.Column="2"
+                                 Margin="0"
+                                 Classes="RightAligned"
+                                 FontWeight="SemiBold"
+                                 Text="{Binding EstimatedProfit, StringFormat=N2}" />
                     </Grid>
                   </DataTemplate>
                 </ListBox.ItemTemplate>
               </ListBox>
             </Border>
-            <!-- Filters row -->
-            <Border Grid.Row="3" Grid.Column="0" BorderBrush="Gray" BorderThickness="0" Padding="0">
-                <StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="24">
-                  <StackPanel Orientation="Horizontal" Spacing="12">
-                    <RadioButton Content="Name" GroupName="ShipsSort" Margin="8,0,0,0"
-                                  IsChecked="{Binding ShipsSortOrder, Mode=TwoWay, Converter={StaticResource EnumEquals}, ConverterParameter=Name}"/>
-                    <RadioButton Content="Profit" GroupName="ShipsSort" Margin="8,0,0,0"
-                                  IsChecked="{Binding ShipsSortOrder, Mode=TwoWay, Converter={StaticResource EnumEquals}, ConverterParameter=Profit}"/>
-                  </StackPanel>
+            <!--  Filters row  -->
+            <Border Grid.Row="3"
+                    Grid.Column="0"
+                    Padding="0"
+                    BorderBrush="Gray"
+                    BorderThickness="0">
+              <StackPanel Grid.Column="0"
+                          HorizontalAlignment="Center"
+                          VerticalAlignment="Center"
+                          Orientation="Horizontal"
+                          Spacing="24">
+                <StackPanel Orientation="Horizontal" Spacing="12">
+                  <RadioButton Margin="8,0,0,0"
+                               Content="Name"
+                               GroupName="ShipsSort"
+                               IsChecked="{Binding ShipsSortOrder, Mode=TwoWay, Converter={StaticResource EnumEquals}, ConverterParameter=Name}" />
+                  <RadioButton Margin="8,0,0,0"
+                               Content="Profit"
+                               GroupName="ShipsSort"
+                               IsChecked="{Binding ShipsSortOrder, Mode=TwoWay, Converter={StaticResource EnumEquals}, ConverterParameter=Profit}" />
                 </StackPanel>
+              </StackPanel>
             </Border>
-            <Border Grid.Row="0" Grid.RowSpan="3" Grid.Column="1" BorderBrush="Gray" BorderThickness="0" Padding="8">
+            <Border Grid.Row="0"
+                    Grid.RowSpan="3"
+                    Grid.Column="1"
+                    Padding="8"
+                    BorderBrush="Gray"
+                    BorderThickness="0">
               <lvc:CartesianChart Series="{Binding Series}"
                                   XAxes="{Binding XAxes}"
-                                  YAxes="{Binding YAxes}"/>
+                                  YAxes="{Binding YAxes}" />
             </Border>
           </Grid>
         </TabItem>
-        <TabItem Header="Ships Load Distribution" x:Name="TradesStatsShipsLoadTab">
+        <TabItem x:Name="TradesStatsShipsLoadTab" Header="Ships Load Distribution">
           <Grid DataContext="{Binding TradesStatsShipsLoad}">
             <Grid.RowDefinitions>
               <RowDefinition Height="34" />
               <RowDefinition />
             </Grid.RowDefinitions>
-            <Grid Grid.Row="0" ColumnDefinitions="*,Auto" >
-              <StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="24" Margin="0">
-                <CheckBox Content="With Internal Trades" IsChecked="{Binding WithInternalTrades, Mode=TwoWay}"/>
+            <Grid Grid.Row="0" ColumnDefinitions="*,Auto">
+              <StackPanel Grid.Column="0"
+                          Margin="0"
+                          HorizontalAlignment="Center"
+                          VerticalAlignment="Center"
+                          Orientation="Horizontal"
+                          Spacing="24">
+                <CheckBox Content="With Internal Trades" IsChecked="{Binding WithInternalTrades, Mode=TwoWay}" />
               </StackPanel>
-              <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Spacing="8" Margin="0">
-                <TextBlock Text="Parent station:" VerticalAlignment="Center" />
-                <ComboBox ItemsSource="{Binding Stations}" SelectedItem="{Binding SelectedStation}"  VerticalAlignment="Center"  Width="240">
+              <StackPanel Grid.Column="1"
+                          Margin="0"
+                          HorizontalAlignment="Right"
+                          VerticalAlignment="Center"
+                          Orientation="Horizontal"
+                          Spacing="8">
+                <TextBlock VerticalAlignment="Center" Text="Parent station:" />
+                <ComboBox Width="240"
+                          VerticalAlignment="Center"
+                          ItemsSource="{Binding Stations}"
+                          SelectedItem="{Binding SelectedStation}">
                   <ComboBox.ItemTemplate>
                     <DataTemplate>
-                      <TextBlock Text="{Binding Name}" ToolTip.Tip="{Binding Name}"/>
+                      <TextBlock Text="{Binding Name}" ToolTip.Tip="{Binding Name}" />
                     </DataTemplate>
                   </ComboBox.ItemTemplate>
                 </ComboBox>
-                <TextBlock Text="Class:" VerticalAlignment="Center"/>
-                <ComboBox ItemsSource="{Binding ShipClassOptions}" SelectedItem="{Binding SelectedShipClass}" Width="70"/>
-                <TextBlock Text="Top N Ships:" VerticalAlignment="Center"/>
+                <TextBlock VerticalAlignment="Center" Text="Class:" />
+                <ComboBox Width="70"
+                          ItemsSource="{Binding ShipClassOptions}"
+                          SelectedItem="{Binding SelectedShipClass}" />
+                <TextBlock VerticalAlignment="Center" Text="Top N Ships:" />
                 <ComboBox ItemsSource="{Binding TopNOptions}" SelectedItem="{Binding TopN}" />
-                <CheckBox Content="Reverse Order" IsChecked="{Binding ReverseSort}" VerticalAlignment="Center"/>
+                <CheckBox VerticalAlignment="Center"
+                          Content="Reverse Order"
+                          IsChecked="{Binding ReverseSort}" />
               </StackPanel>
             </Grid>
-            <Grid Grid.Row="1" ColumnDefinitions="340,*" RowDefinitions="*,34">
-              <!-- Sidebar -->
-              <Border Grid.Column="0" Grid.Row="0" BorderBrush="Gray" BorderThickness="0" Width="340" Padding="0">
+            <Grid Grid.Row="1"
+                  ColumnDefinitions="340,*"
+                  RowDefinitions="*,34">
+              <!--  Sidebar  -->
+              <Border Grid.Row="0"
+                      Grid.Column="0"
+                      Width="340"
+                      Padding="0"
+                      BorderBrush="Gray"
+                      BorderThickness="0">
                 <Grid ColumnDefinitions="12,168,8,140,12" RowDefinitions="36,Auto,*">
-                  <TextBlock Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="5" Text="Selected Ship:" FontWeight="Bold" HorizontalAlignment="Center"/>
-                  <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding PressedShipName}" ToolTip.Tip="{Binding PressedShipName}" FontWeight="SemiBold"/>
-                  <TextBlock Grid.Column="3" Grid.Row="1" Text="{Binding PressedShipTotal}" FontWeight="Bold" Classes="RightAligned"/>
-                  <ListBox Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="5" ItemsSource="{Binding ShipBucketsList}" BorderThickness="0">
+                  <TextBlock Grid.Row="0"
+                             Grid.Column="0"
+                             Grid.ColumnSpan="5"
+                             HorizontalAlignment="Center"
+                             FontWeight="Bold"
+                             Text="Selected Ship:" />
+                  <TextBlock Grid.Row="1"
+                             Grid.Column="1"
+                             FontWeight="SemiBold"
+                             Text="{Binding PressedShipName}"
+                             ToolTip.Tip="{Binding PressedShipName}" />
+                  <TextBlock Grid.Row="1"
+                             Grid.Column="3"
+                             Classes="RightAligned"
+                             FontWeight="Bold"
+                             Text="{Binding PressedShipTotal}" />
+                  <ListBox Grid.Row="2"
+                           Grid.Column="0"
+                           Grid.ColumnSpan="5"
+                           BorderThickness="0"
+                           ItemsSource="{Binding ShipBucketsList}">
                     <ListBox.Styles>
                       <Style Selector="ListBoxItem">
-                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                       </Style>
                     </ListBox.Styles>
                     <ListBox.ItemTemplate>
                       <DataTemplate>
                         <Grid ColumnDefinitions="4,168,8,140,4">
-                          <TextBlock Grid.Column="1" Text="{Binding Name}" FontWeight="{Binding FontWeight}" Margin="0" Foreground="{Binding GraphBrush, Converter={StaticResource NullToUnsetBrush}}"/>
-                          <TextBlock Grid.Column="3" Text="{Binding Percent, StringFormat=N2}%" FontWeight="Bold" Classes="RightAligned" Margin="0" Foreground="{Binding GraphBrush, Converter={StaticResource NullToUnsetBrush}}"/>
+                          <TextBlock Grid.Column="1"
+                                     Margin="0"
+                                     FontWeight="{Binding FontWeight}"
+                                     Foreground="{Binding GraphBrush, Converter={StaticResource NullToUnsetBrush}}"
+                                     Text="{Binding Name}" />
+                          <TextBlock Grid.Column="3"
+                                     Margin="0"
+                                     Classes="RightAligned"
+                                     FontWeight="Bold"
+                                     Foreground="{Binding GraphBrush, Converter={StaticResource NullToUnsetBrush}}"
+                                     Text="{Binding Percent, StringFormat=N2}%" />
                         </Grid>
                       </DataTemplate>
                     </ListBox.ItemTemplate>
                   </ListBox>
                 </Grid>
               </Border>
-              <!-- Chart -->
-              <Border Grid.Column="1" Grid.Row="0" BorderBrush="Gray" BorderThickness="0" Padding="8">
-                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+              <!--  Chart  -->
+              <Border Grid.Row="0"
+                      Grid.Column="1"
+                      Padding="8"
+                      BorderBrush="Gray"
+                      BorderThickness="0">
+                <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
                   <Border MinWidth="{Binding ChartMinWidth}">
-                    <lvc:CartesianChart Series="{Binding Series}" XAxes="{Binding XAxes}" YAxes="{Binding YAxes}" Sections="{Binding Sections}" x:Name="TradesShipsLoadChart" TooltipPosition="{Binding ShowToolTip, Converter={StaticResource BoolToChartPos}}" LegendPosition="Hidden"/>
+                    <lvc:CartesianChart x:Name="TradesShipsLoadChart"
+                                        LegendPosition="Hidden"
+                                        Sections="{Binding Sections}"
+                                        Series="{Binding Series}"
+                                        TooltipPosition="{Binding ShowToolTip, Converter={StaticResource BoolToChartPos}}"
+                                        XAxes="{Binding XAxes}"
+                                        YAxes="{Binding YAxes}" />
                   </Border>
                 </ScrollViewer>
               </Border>
-              <Border Grid.Column="0" Grid.Row="1" BorderBrush="Gray" BorderThickness="0" Padding="0">
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="24">
-                  <TextBlock Text="Display Tooltip:" VerticalAlignment="Center" Margin="0,0,8,0"/>
-                  <CheckBox IsChecked="{Binding ShowToolTip}" VerticalAlignment="Center"/>
+              <Border Grid.Row="1"
+                      Grid.Column="0"
+                      Padding="0"
+                      BorderBrush="Gray"
+                      BorderThickness="0">
+                <StackPanel HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Orientation="Horizontal"
+                            Spacing="24">
+                  <TextBlock Margin="0,0,8,0"
+                             VerticalAlignment="Center"
+                             Text="Display Tooltip:" />
+                  <CheckBox VerticalAlignment="Center" IsChecked="{Binding ShowToolTip}" />
                 </StackPanel>
               </Border>
             </Grid>
           </Grid>
         </TabItem>
-        <TabItem Header="Ships by Wares Stats" x:Name="TradesStatsShipsWaresTab">
+        <TabItem x:Name="TradesStatsShipsWaresTab" Header="Ships by Wares Stats">
           <Grid DataContext="{Binding TradesStatsShipsWares}">
             <Grid.RowDefinitions>
               <RowDefinition Height="34" />
               <RowDefinition />
             </Grid.RowDefinitions>
-            <!-- Filters row -->
-            <Border Grid.Row="0" BorderBrush="Gray" BorderThickness="0" Padding="4">
-              <Grid Grid.ColumnDefinitions="*,Auto" >
-                <Border Grid.Row="0" Grid.Column="0" BorderBrush="Gray" BorderThickness="0" Padding="4">
-                    <StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Center" Spacing="24">
-                      <StackPanel Orientation="Horizontal" Spacing="12">
-                        <CheckBox Content="With Internal Trades" IsChecked="{Binding WithInternalTrades, Mode=TwoWay}"/>
-                      </StackPanel>
+            <!--  Filters row  -->
+            <Border Grid.Row="0"
+                    Padding="4"
+                    BorderBrush="Gray"
+                    BorderThickness="0">
+              <Grid Grid.ColumnDefinitions="*,Auto">
+                <Border Grid.Row="0"
+                        Grid.Column="0"
+                        Padding="4"
+                        BorderBrush="Gray"
+                        BorderThickness="0">
+                  <StackPanel Grid.Column="0"
+                              HorizontalAlignment="Center"
+                              Orientation="Horizontal"
+                              Spacing="24">
+                    <StackPanel Orientation="Horizontal" Spacing="12">
+                      <CheckBox Content="With Internal Trades" IsChecked="{Binding WithInternalTrades, Mode=TwoWay}" />
                     </StackPanel>
+                  </StackPanel>
                 </Border>
-                <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Spacing="8" Margin="0">
-                  <TextBlock Text="Parent station:" VerticalAlignment="Center" />
-                  <ComboBox ItemsSource="{Binding Stations}" SelectedItem="{Binding SelectedStation}"  VerticalAlignment="Center"  Width="240">
+                <StackPanel Grid.Column="1"
+                            Margin="0"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            Orientation="Horizontal"
+                            Spacing="8">
+                  <TextBlock VerticalAlignment="Center" Text="Parent station:" />
+                  <ComboBox Width="240"
+                            VerticalAlignment="Center"
+                            ItemsSource="{Binding Stations}"
+                            SelectedItem="{Binding SelectedStation}">
                     <ComboBox.ItemTemplate>
                       <DataTemplate>
-                        <TextBlock Text="{Binding Name}" ToolTip.Tip="{Binding Name}"/>
+                        <TextBlock Text="{Binding Name}" ToolTip.Tip="{Binding Name}" />
                       </DataTemplate>
                     </ComboBox.ItemTemplate>
                   </ComboBox>
-                  <TextBlock Text="Class:" VerticalAlignment="Center"/>
-                  <ComboBox ItemsSource="{Binding ShipClassOptions}" SelectedItem="{Binding SelectedShipClass}" Width="70"/>
-                  <TextBlock Text="Top N Ships:" VerticalAlignment="Center"/>
+                  <TextBlock VerticalAlignment="Center" Text="Class:" />
+                  <ComboBox Width="70"
+                            ItemsSource="{Binding ShipClassOptions}"
+                            SelectedItem="{Binding SelectedShipClass}" />
+                  <TextBlock VerticalAlignment="Center" Text="Top N Ships:" />
                   <ComboBox ItemsSource="{Binding TopNOptions}" SelectedItem="{Binding TopN}" />
-                  <CheckBox Content="Reverse Order" IsChecked="{Binding ReverseSort}" VerticalAlignment="Center"/>
+                  <CheckBox VerticalAlignment="Center"
+                            Content="Reverse Order"
+                            IsChecked="{Binding ReverseSort}" />
                 </StackPanel>
               </Grid>
             </Border>
-            <!-- Chart + custom legend -->
-            <Grid Grid.Row="1" ColumnDefinitions="340, *" RowDefinitions="Auto,*,34">
-              <Border Grid.Column="0" Grid.Row="0" BorderBrush="Gray" BorderThickness="0" Width="340" Padding="0">
+            <!--  Chart + custom legend  -->
+            <Grid Grid.Row="1"
+                  ColumnDefinitions="340, *"
+                  RowDefinitions="Auto,*,34">
+              <Border Grid.Row="0"
+                      Grid.Column="0"
+                      Width="340"
+                      Padding="0"
+                      BorderBrush="Gray"
+                      BorderThickness="0">
                 <Grid ColumnDefinitions="12,168,8,140,12" RowDefinitions="36, Auto">
-                  <TextBlock Grid.Column="0" Grid.Row="0"  Grid.ColumnSpan="5" Text="Selected Ship:" FontWeight="Bold" HorizontalAlignment="Center"/>
-                  <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding PressedShipName}" ToolTip.Tip="{Binding PressedShipName}" FontWeight="SemiBold"/>
-                  <TextBlock Grid.Column="3" Grid.Row="1" Text="{Binding PressedShipTotal}" FontWeight="Bold" Classes="RightAligned"/>
+                  <TextBlock Grid.Row="0"
+                             Grid.Column="0"
+                             Grid.ColumnSpan="5"
+                             HorizontalAlignment="Center"
+                             FontWeight="Bold"
+                             Text="Selected Ship:" />
+                  <TextBlock Grid.Row="1"
+                             Grid.Column="1"
+                             FontWeight="SemiBold"
+                             Text="{Binding PressedShipName}"
+                             ToolTip.Tip="{Binding PressedShipName}" />
+                  <TextBlock Grid.Row="1"
+                             Grid.Column="3"
+                             Classes="RightAligned"
+                             FontWeight="Bold"
+                             Text="{Binding PressedShipTotal}" />
                 </Grid>
               </Border>
-              <Border Grid.Column="0" Grid.Row="1" BorderBrush="Gray" BorderThickness="0" Padding="4">
-                <ListBox ItemsSource="{Binding ShipWaresList}"
-                        Background="Transparent"
-                        Margin="0" Width="340">
+              <Border Grid.Row="1"
+                      Grid.Column="0"
+                      Padding="4"
+                      BorderBrush="Gray"
+                      BorderThickness="0">
+                <ListBox Width="340"
+                         Margin="0"
+                         Background="Transparent"
+                         ItemsSource="{Binding ShipWaresList}">
                   <ListBox.ItemTemplate>
                     <DataTemplate>
                       <Grid ColumnDefinitions="*,8,Auto">
-                        <TextBlock Grid.Column="0" Text="{Binding Name}" ToolTip.Tip="{Binding Name}" FontWeight="SemiBold"
-                                    Foreground="{Binding GraphBrush, Converter={StaticResource NullToUnsetBrush}}"/>
-                        <TextBlock Grid.Column="2" Text="{Binding Money, StringFormat=N2}" FontWeight="Bold" Classes="RightAligned"  Margin="0"
-                                    Foreground="{Binding GraphBrush, Converter={StaticResource NullToUnsetBrush}}"/>
+                        <TextBlock Grid.Column="0"
+                                   FontWeight="SemiBold"
+                                   Foreground="{Binding GraphBrush, Converter={StaticResource NullToUnsetBrush}}"
+                                   Text="{Binding Name}"
+                                   ToolTip.Tip="{Binding Name}" />
+                        <TextBlock Grid.Column="2"
+                                   Margin="0"
+                                   Classes="RightAligned"
+                                   FontWeight="Bold"
+                                   Foreground="{Binding GraphBrush, Converter={StaticResource NullToUnsetBrush}}"
+                                   Text="{Binding Money, StringFormat=N2}" />
                       </Grid>
                     </DataTemplate>
                   </ListBox.ItemTemplate>
                 </ListBox>
               </Border>
-              <Border Grid.Column="0" Grid.Row="2" BorderBrush="Gray" BorderThickness="0" Padding="0">
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="24">
-                  <TextBlock Text="Display Tooltip:" VerticalAlignment="Center" Margin="0,0,8,0"/>
-                  <CheckBox IsChecked="{Binding ShowToolTip}" VerticalAlignment="Center"/>
+              <Border Grid.Row="2"
+                      Grid.Column="0"
+                      Padding="0"
+                      BorderBrush="Gray"
+                      BorderThickness="0">
+                <StackPanel HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Orientation="Horizontal"
+                            Spacing="24">
+                  <TextBlock Margin="0,0,8,0"
+                             VerticalAlignment="Center"
+                             Text="Display Tooltip:" />
+                  <CheckBox VerticalAlignment="Center" IsChecked="{Binding ShowToolTip}" />
                 </StackPanel>
               </Border>
-              <Border Grid.Column="1" Grid.Row="0" Grid.RowSpan="3" BorderBrush="Gray" BorderThickness="0" Padding="8">
-                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+              <Border Grid.Row="0"
+                      Grid.RowSpan="3"
+                      Grid.Column="1"
+                      Padding="8"
+                      BorderBrush="Gray"
+                      BorderThickness="0">
+                <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
                   <Border MinWidth="{Binding ChartMinWidth}">
-                    <lvc:CartesianChart Grid.Column="0"
-                                        Series="{Binding Series}"
-                                        XAxes="{Binding XAxes}"
-                                        YAxes="{Binding YAxes}"
+                    <lvc:CartesianChart x:Name="TradesShipsByWaresChart"
+                                        Grid.Column="0"
+                                        LegendPosition="Hidden"
                                         Sections="{Binding Sections}"
-                                        x:Name="TradesShipsByWaresChart"
+                                        Series="{Binding Series}"
                                         TooltipPosition="{Binding ShowToolTip, Converter={StaticResource BoolToChartPos}}"
-                                        LegendPosition="Hidden"/>
+                                        XAxes="{Binding XAxes}"
+                                        YAxes="{Binding YAxes}" />
                   </Border>
                 </ScrollViewer>
               </Border>
             </Grid>
           </Grid>
         </TabItem>
-        <TabItem Header="Wares by Ships Stats" x:Name="TradesStatsWaresShipsTab">
+        <TabItem x:Name="TradesStatsWaresShipsTab" Header="Wares by Ships Stats">
           <Grid DataContext="{Binding TradesStatsWaresShips}">
             <Grid.RowDefinitions>
               <RowDefinition Height="34" />
               <RowDefinition />
             </Grid.RowDefinitions>
-            <!-- Filters row -->
-            <Border Grid.Row="0" BorderBrush="Gray" BorderThickness="0" Padding="4">
-              <Grid Grid.ColumnDefinitions="*,Auto" >
-                <Border Grid.Row="0" Grid.Column="0" BorderBrush="Gray" BorderThickness="0" Padding="4">
-                    <StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Center" Spacing="24">
-                      <StackPanel Orientation="Horizontal" Spacing="12">
-                        <CheckBox Content="With Internal Trades" IsChecked="{Binding WithInternalTrades, Mode=TwoWay}"/>
-                      </StackPanel>
+            <!--  Filters row  -->
+            <Border Grid.Row="0"
+                    Padding="4"
+                    BorderBrush="Gray"
+                    BorderThickness="0">
+              <Grid Grid.ColumnDefinitions="*,Auto">
+                <Border Grid.Row="0"
+                        Grid.Column="0"
+                        Padding="4"
+                        BorderBrush="Gray"
+                        BorderThickness="0">
+                  <StackPanel Grid.Column="0"
+                              HorizontalAlignment="Center"
+                              Orientation="Horizontal"
+                              Spacing="24">
+                    <StackPanel Orientation="Horizontal" Spacing="12">
+                      <CheckBox Content="With Internal Trades" IsChecked="{Binding WithInternalTrades, Mode=TwoWay}" />
                     </StackPanel>
+                  </StackPanel>
                 </Border>
-                <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Spacing="8" Margin="0">
-                  <TextBlock Text="Parent station:" VerticalAlignment="Center" />
-                  <ComboBox ItemsSource="{Binding Stations}" SelectedItem="{Binding SelectedStation}"  VerticalAlignment="Center"  Width="240">
+                <StackPanel Grid.Column="1"
+                            Margin="0"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            Orientation="Horizontal"
+                            Spacing="8">
+                  <TextBlock VerticalAlignment="Center" Text="Parent station:" />
+                  <ComboBox Width="240"
+                            VerticalAlignment="Center"
+                            ItemsSource="{Binding Stations}"
+                            SelectedItem="{Binding SelectedStation}">
                     <ComboBox.ItemTemplate>
                       <DataTemplate>
-                        <TextBlock Text="{Binding Name}" ToolTip.Tip="{Binding Name}"/>
+                        <TextBlock Text="{Binding Name}" ToolTip.Tip="{Binding Name}" />
                       </DataTemplate>
                     </ComboBox.ItemTemplate>
                   </ComboBox>
-                  <TextBlock Text="Class:" VerticalAlignment="Center"/>
-                  <ComboBox ItemsSource="{Binding ShipClassOptions}" SelectedItem="{Binding SelectedShipClass}" Width="70"/>
-                  <TextBlock Text="Top N Wares:" VerticalAlignment="Center"/>
+                  <TextBlock VerticalAlignment="Center" Text="Class:" />
+                  <ComboBox Width="70"
+                            ItemsSource="{Binding ShipClassOptions}"
+                            SelectedItem="{Binding SelectedShipClass}" />
+                  <TextBlock VerticalAlignment="Center" Text="Top N Wares:" />
                   <ComboBox ItemsSource="{Binding TopNOptions}" SelectedItem="{Binding TopN}" />
-                  <CheckBox Content="Reverse Order" IsChecked="{Binding ReverseSort}" VerticalAlignment="Center"/>
+                  <CheckBox VerticalAlignment="Center"
+                            Content="Reverse Order"
+                            IsChecked="{Binding ReverseSort}" />
                 </StackPanel>
               </Grid>
             </Border>
-            <!-- Chart + custom legend -->
-            <Grid Grid.Row="1" ColumnDefinitions="340, *" RowDefinitions="Auto,*,34">
-              <Border Grid.Column="0" Grid.Row="0" BorderBrush="Gray" BorderThickness="0" Width="340" Padding="0">
+            <!--  Chart + custom legend  -->
+            <Grid Grid.Row="1"
+                  ColumnDefinitions="340, *"
+                  RowDefinitions="Auto,*,34">
+              <Border Grid.Row="0"
+                      Grid.Column="0"
+                      Width="340"
+                      Padding="0"
+                      BorderBrush="Gray"
+                      BorderThickness="0">
                 <Grid ColumnDefinitions="12,168,8,140,12" RowDefinitions="36, Auto">
-                  <TextBlock Grid.Column="0" Grid.Row="0"  Grid.ColumnSpan="5" Text="Selected Ware:" FontWeight="Bold" HorizontalAlignment="Center"/>
-                  <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding PressedWareName}" ToolTip.Tip="{Binding PressedWareName}" FontWeight="SemiBold"/>
-                  <TextBlock Grid.Column="3" Grid.Row="1" Text="{Binding PressedWareTotal}" FontWeight="Bold" Classes="RightAligned"/>
+                  <TextBlock Grid.Row="0"
+                             Grid.Column="0"
+                             Grid.ColumnSpan="5"
+                             HorizontalAlignment="Center"
+                             FontWeight="Bold"
+                             Text="Selected Ware:" />
+                  <TextBlock Grid.Row="1"
+                             Grid.Column="1"
+                             FontWeight="SemiBold"
+                             Text="{Binding PressedWareName}"
+                             ToolTip.Tip="{Binding PressedWareName}" />
+                  <TextBlock Grid.Row="1"
+                             Grid.Column="3"
+                             Classes="RightAligned"
+                             FontWeight="Bold"
+                             Text="{Binding PressedWareTotal}" />
                 </Grid>
               </Border>
-              <Border Grid.Column="0" Grid.Row="1" BorderBrush="Gray" BorderThickness="0" Padding="4">
-                <ListBox ItemsSource="{Binding WareShipsList}"
-                        Background="Transparent"
-                        Margin="0" Width="340">
+              <Border Grid.Row="1"
+                      Grid.Column="0"
+                      Padding="4"
+                      BorderBrush="Gray"
+                      BorderThickness="0">
+                <ListBox Width="340"
+                         Margin="0"
+                         Background="Transparent"
+                         ItemsSource="{Binding WareShipsList}">
                   <ListBox.ItemTemplate>
                     <DataTemplate>
                       <Grid ColumnDefinitions="*,8,Auto">
-                        <TextBlock Grid.Column="0" Text="{Binding ShipName}" ToolTip.Tip="{Binding ShipName}" FontWeight="SemiBold"
-                                    Foreground="{Binding GraphBrush, Converter={StaticResource NullToUnsetBrush}}"/>
-                        <TextBlock Grid.Column="2" Text="{Binding EstimatedProfit, StringFormat=N2}" FontWeight="Bold" Classes="RightAligned"  Margin="0"
-                                    Foreground="{Binding GraphBrush, Converter={StaticResource NullToUnsetBrush}}"/>
+                        <TextBlock Grid.Column="0"
+                                   FontWeight="SemiBold"
+                                   Foreground="{Binding GraphBrush, Converter={StaticResource NullToUnsetBrush}}"
+                                   Text="{Binding ShipName}"
+                                   ToolTip.Tip="{Binding ShipName}" />
+                        <TextBlock Grid.Column="2"
+                                   Margin="0"
+                                   Classes="RightAligned"
+                                   FontWeight="Bold"
+                                   Foreground="{Binding GraphBrush, Converter={StaticResource NullToUnsetBrush}}"
+                                   Text="{Binding EstimatedProfit, StringFormat=N2}" />
                       </Grid>
                     </DataTemplate>
                   </ListBox.ItemTemplate>
                 </ListBox>
               </Border>
-              <Border Grid.Column="0" Grid.Row="2" BorderBrush="Gray" BorderThickness="0" Padding="0">
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="24">
-                  <TextBlock Text="Display Tooltip:" VerticalAlignment="Center" Margin="0,0,8,0"/>
-                  <CheckBox IsChecked="{Binding ShowToolTip}" VerticalAlignment="Center"/>
+              <Border Grid.Row="2"
+                      Grid.Column="0"
+                      Padding="0"
+                      BorderBrush="Gray"
+                      BorderThickness="0">
+                <StackPanel HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Orientation="Horizontal"
+                            Spacing="24">
+                  <TextBlock Margin="0,0,8,0"
+                             VerticalAlignment="Center"
+                             Text="Display Tooltip:" />
+                  <CheckBox VerticalAlignment="Center" IsChecked="{Binding ShowToolTip}" />
                 </StackPanel>
               </Border>
-              <Border Grid.Column="1" Grid.Row="0" Grid.RowSpan="3" BorderBrush="Gray" BorderThickness="0" Padding="8">
-                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+              <Border Grid.Row="0"
+                      Grid.RowSpan="3"
+                      Grid.Column="1"
+                      Padding="8"
+                      BorderBrush="Gray"
+                      BorderThickness="0">
+                <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
                   <Border MinWidth="{Binding ChartMinWidth}">
-                    <lvc:CartesianChart Grid.Column="0"
-                                        Series="{Binding Series}"
-                                        XAxes="{Binding XAxes}"
-                                        YAxes="{Binding YAxes}"
+                    <lvc:CartesianChart x:Name="TradesWaresByShipsChart"
+                                        Grid.Column="0"
+                                        LegendPosition="Hidden"
                                         Sections="{Binding Sections}"
-                                        x:Name="TradesWaresByShipsChart"
+                                        Series="{Binding Series}"
                                         TooltipPosition="{Binding ShowToolTip, Converter={StaticResource BoolToChartPos}}"
-                                        LegendPosition="Hidden"/>
+                                        XAxes="{Binding XAxes}"
+                                        YAxes="{Binding YAxes}" />
                   </Border>
                 </ScrollViewer>
               </Border>
@@ -1044,193 +1759,316 @@
         </TabItem>
       </TabControl>
     </TabItem>
-    <TabItem Header="Configuration" x:Name="ConfigurationTab">
-      <Grid DataContext="{Binding Configuration}" Margin="12">
+    <TabItem x:Name="ConfigurationTab" Header="Configuration">
+      <Grid Margin="12" DataContext="{Binding Configuration}">
         <Grid.RowDefinitions>
-          <!-- 0: Game folder row -->
-          <RowDefinition Height="Auto"/>
-          <!-- 1: gap -->
-            <RowDefinition Height="8"/>
-          <!-- 2: Game-data statistics row -->
-          <RowDefinition Height="Auto"/>
-          <!-- 3: big separation -->
-          <RowDefinition Height="32"/>
-          <!-- 4: Game save path row -->
-          <RowDefinition Height="Auto"/>
-          <!-- 5: gap -->
-          <RowDefinition Height="8"/>
-          <!-- 6: Auto reload game save row -->
-          <RowDefinition Height="Auto"/>
-          <!-- 7: Save-data statistics row -->
-          <RowDefinition Height="Auto"/>
-          <!-- 8: gap -->
-          <RowDefinition Height="8"/>
-          <!-- 9: Theme selector row -->
-          <RowDefinition Height="Auto"/>
-          <!-- 10: gap before debug options -->
-          <RowDefinition Height="8"/>
-          <!-- 11: debug options row   -->
-          <RowDefinition Height="Auto"/>
-          <!-- 12: gap before update info -->
-          <RowDefinition Height="8"/>
-          <!-- 13: Update info gap -->
-          <RowDefinition Height="8"/>
-          <!-- 14: Update checker row -->
-          <RowDefinition Height="Auto"/>
+          <!--  0: Game folder row  -->
+          <RowDefinition Height="Auto" />
+          <!--  1: gap  -->
+          <RowDefinition Height="8" />
+          <!--  2: Game-data statistics row  -->
+          <RowDefinition Height="Auto" />
+          <!--  3: big separation  -->
+          <RowDefinition Height="32" />
+          <!--  4: Game save path row  -->
+          <RowDefinition Height="Auto" />
+          <!--  5: gap  -->
+          <RowDefinition Height="8" />
+          <!--  6: Auto reload game save row  -->
+          <RowDefinition Height="Auto" />
+          <!--  7: Save-data statistics row  -->
+          <RowDefinition Height="Auto" />
+          <!--  8: gap  -->
+          <RowDefinition Height="8" />
+          <!--  9: Theme selector row  -->
+          <RowDefinition Height="Auto" />
+          <!--  10: gap before debug options  -->
+          <RowDefinition Height="8" />
+          <!--  11: debug options row  -->
+          <RowDefinition Height="Auto" />
+          <!--  12: gap before update info  -->
+          <RowDefinition Height="8" />
+          <!--  13: Update info gap  -->
+          <RowDefinition Height="8" />
+          <!--  14: Update checker row  -->
+          <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-          <ColumnDefinition Width="160"/>
-          <ColumnDefinition Width="*"/>
-          <ColumnDefinition Width="Auto"/>
-          <ColumnDefinition Width="12"/>
-          <ColumnDefinition Width="Auto"/>
-          <ColumnDefinition Width="12"/>
-          <ColumnDefinition Width="Auto"/>
-          <ColumnDefinition Width="12"/>
-          <ColumnDefinition Width="Auto"/>
+          <ColumnDefinition Width="160" />
+          <ColumnDefinition Width="*" />
+          <ColumnDefinition Width="Auto" />
+          <ColumnDefinition Width="12" />
+          <ColumnDefinition Width="Auto" />
+          <ColumnDefinition Width="12" />
+          <ColumnDefinition Width="Auto" />
+          <ColumnDefinition Width="12" />
+          <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
 
-        <!-- 0: Game Folder (X4.exe) -->
-        <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Text="Game Folder"/>
-        <TextBlock Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Text="{Binding GameFolderExePath}"/>
-        <Button Grid.Row="0" Grid.Column="2" Content="Set" Click="SetGameFolder_Click"/>
-        <CheckBox Grid.Row="0" Grid.Column="4" Content="Load Only Game Language" IsChecked="{Binding LoadOnlyGameLanguage, Mode=TwoWay}" VerticalAlignment="Center"/>
-        <Button Grid.Row="0" Grid.Column="6" Content="Load Game Data" IsEnabled="{Binding CanReloadGameData}" Click="ReloadGameData_Click"/>
+        <!--  0: Game Folder (X4.exe)  -->
+        <TextBlock Grid.Row="0"
+                   Grid.Column="0"
+                   VerticalAlignment="Center"
+                   Text="Game Folder" />
+        <TextBlock Grid.Row="0"
+                   Grid.Column="1"
+                   VerticalAlignment="Center"
+                   Text="{Binding GameFolderExePath}"
+                   TextTrimming="CharacterEllipsis" />
+        <Button Grid.Row="0"
+                Grid.Column="2"
+                Click="SetGameFolder_Click"
+                Content="Set" />
+        <CheckBox Grid.Row="0"
+                  Grid.Column="4"
+                  VerticalAlignment="Center"
+                  Content="Load Only Game Language"
+                  IsChecked="{Binding LoadOnlyGameLanguage, Mode=TwoWay}" />
+        <Button Grid.Row="0"
+                Grid.Column="6"
+                Click="ReloadGameData_Click"
+                Content="Load Game Data"
+                IsEnabled="{Binding CanReloadGameData}" />
 
-        <!-- 2: Game-data statistics (each stat on its own line) -->
-        <Border Grid.Row="2" Grid.ColumnSpan="7" BorderBrush="Gray" BorderThickness="0 0 0 1" Padding="8 0 0 8">
+        <!--  2: Game-data statistics (each stat on its own line)  -->
+        <Border Grid.Row="2"
+                Grid.ColumnSpan="7"
+                Padding="8,0,0,8"
+                BorderBrush="Gray"
+                BorderThickness="0,0,0,1">
           <StackPanel Orientation="Vertical" Spacing="6">
             <StackPanel Orientation="Horizontal" Spacing="6">
               <TextBlock Text="Languages:" />
-              <TextBlock Text="{Binding LanguagesCount}" FontWeight="Bold" Foreground="{Binding LanguagesCount, Converter={StaticResource ZeroToRed}}"/>
+              <TextBlock FontWeight="Bold"
+                         Foreground="{Binding LanguagesCount, Converter={StaticResource ZeroToRed}}"
+                         Text="{Binding LanguagesCount}" />
             </StackPanel>
             <StackPanel Orientation="Horizontal" Spacing="6">
-              <TextBlock Text="Texts ( " Foreground="{Binding CurrentLanguageTextCount, Converter={StaticResource ZeroToRed}}"/>
-              <TextBlock Text="Language Id: "/>
-              <TextBlock Text="{Binding CurrentLanguageId}" FontWeight="Bold" Foreground="{Binding CurrentLanguageId, Converter={StaticResource ZeroToRed}}"/>
-              <TextBlock Text="):" Foreground="{Binding CurrentLanguageTextCount, Converter={StaticResource ZeroToRed}}"/>
-              <TextBlock Text="{Binding CurrentLanguageTextCount}" FontWeight="Bold" Foreground="{Binding CurrentLanguageTextCount, Converter={StaticResource ZeroToRed}}"/>
+              <TextBlock Foreground="{Binding CurrentLanguageTextCount, Converter={StaticResource ZeroToRed}}" Text="Texts ( " />
+              <TextBlock Text="Language Id: " />
+              <TextBlock FontWeight="Bold"
+                         Foreground="{Binding CurrentLanguageId, Converter={StaticResource ZeroToRed}}"
+                         Text="{Binding CurrentLanguageId}" />
+              <TextBlock Foreground="{Binding CurrentLanguageTextCount, Converter={StaticResource ZeroToRed}}" Text="):" />
+              <TextBlock FontWeight="Bold"
+                         Foreground="{Binding CurrentLanguageTextCount, Converter={StaticResource ZeroToRed}}"
+                         Text="{Binding CurrentLanguageTextCount}" />
             </StackPanel>
             <StackPanel Orientation="Horizontal" Spacing="6">
-              <TextBlock Text="Wares:" Foreground="{Binding WaresCount, Converter={StaticResource ZeroToRed}}"/>
-              <TextBlock Text="{Binding WaresCount}" FontWeight="Bold" Foreground="{Binding WaresCount, Converter={StaticResource ZeroToRed}}"/>
+              <TextBlock Foreground="{Binding WaresCount, Converter={StaticResource ZeroToRed}}" Text="Wares:" />
+              <TextBlock FontWeight="Bold"
+                         Foreground="{Binding WaresCount, Converter={StaticResource ZeroToRed}}"
+                         Text="{Binding WaresCount}" />
             </StackPanel>
             <StackPanel Orientation="Horizontal" Spacing="6">
-              <TextBlock Text="Factions:" Foreground="{Binding FactionsCount, Converter={StaticResource ZeroToRed}}"/>
-              <TextBlock Text="{Binding FactionsCount}" FontWeight="Bold" Foreground="{Binding FactionsCount, Converter={StaticResource ZeroToRed}}"/>
+              <TextBlock Foreground="{Binding FactionsCount, Converter={StaticResource ZeroToRed}}" Text="Factions:" />
+              <TextBlock FontWeight="Bold"
+                         Foreground="{Binding FactionsCount, Converter={StaticResource ZeroToRed}}"
+                         Text="{Binding FactionsCount}" />
             </StackPanel>
             <StackPanel Orientation="Horizontal" Spacing="6">
-              <TextBlock Text="Cluster/Sector names:" Foreground="{Binding ClusterSectorNamesCount, Converter={StaticResource ZeroToRed}}"/>
-              <TextBlock Text="{Binding ClusterSectorNamesCount}" FontWeight="Bold" Foreground="{Binding ClusterSectorNamesCount, Converter={StaticResource ZeroToRed}}"/>
+              <TextBlock Foreground="{Binding ClusterSectorNamesCount, Converter={StaticResource ZeroToRed}}" Text="Cluster/Sector names:" />
+              <TextBlock FontWeight="Bold"
+                         Foreground="{Binding ClusterSectorNamesCount, Converter={StaticResource ZeroToRed}}"
+                         Text="{Binding ClusterSectorNamesCount}" />
             </StackPanel>
             <StackPanel Orientation="Horizontal" Spacing="6">
-              <TextBlock Text="Storages:" Foreground="{Binding StoragesCount, Converter={StaticResource ZeroToRed}}"/>
-              <TextBlock Text="{Binding StoragesCount}" FontWeight="Bold" Foreground="{Binding StoragesCount, Converter={StaticResource ZeroToRed}}"/>
+              <TextBlock Foreground="{Binding StoragesCount, Converter={StaticResource ZeroToRed}}" Text="Storages:" />
+              <TextBlock FontWeight="Bold"
+                         Foreground="{Binding StoragesCount, Converter={StaticResource ZeroToRed}}"
+                         Text="{Binding StoragesCount}" />
             </StackPanel>
             <StackPanel Orientation="Horizontal" Spacing="6">
-              <TextBlock Text="Ship storages:" Foreground="{Binding ShipStoragesCount, Converter={StaticResource ZeroToRed}}"/>
-              <TextBlock Text="{Binding ShipStoragesCount}" FontWeight="Bold" Foreground="{Binding ShipStoragesCount, Converter={StaticResource ZeroToRed}}"/>
+              <TextBlock Foreground="{Binding ShipStoragesCount, Converter={StaticResource ZeroToRed}}" Text="Ship storages:" />
+              <TextBlock FontWeight="Bold"
+                         Foreground="{Binding ShipStoragesCount, Converter={StaticResource ZeroToRed}}"
+                         Text="{Binding ShipStoragesCount}" />
             </StackPanel>
             <StackPanel Orientation="Horizontal" Spacing="6">
-              <TextBlock Text="Ship types:" Foreground="{Binding ShipTypesCount, Converter={StaticResource ZeroToRed}}"/>
-              <TextBlock Text="{Binding ShipTypesCount}" FontWeight="Bold" Foreground="{Binding ShipTypesCount, Converter={StaticResource ZeroToRed}}"/>
+              <TextBlock Foreground="{Binding ShipTypesCount, Converter={StaticResource ZeroToRed}}" Text="Ship types:" />
+              <TextBlock FontWeight="Bold"
+                         Foreground="{Binding ShipTypesCount, Converter={StaticResource ZeroToRed}}"
+                         Text="{Binding ShipTypesCount}" />
             </StackPanel>
           </StackPanel>
         </Border>
 
-        <!-- 4: Game Save Path -->
-        <TextBlock Grid.Row="4" Grid.Column="0" VerticalAlignment="Center" Text="Game Save Path"/>
-        <TextBlock Grid.Row="4" Grid.Column="1" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Text="{Binding GameSavePath}"/>
-        <Button Grid.Row="4" Grid.Column="2" Content="Set" Click="SetSaveFolder_Click"/>
-        <CheckBox Grid.Row="4" Grid.Column="4" Content="Load removed objects" IsChecked="{Binding LoadRemovedObjects, Mode=TwoWay}" VerticalAlignment="Center"/>
-        <Button Grid.Row="4" Grid.Column="6" Content="Load Save Data" IsEnabled="{Binding CanReloadSaveData}" Click="ReloadSaveData_Click"/>
+        <!--  4: Game Save Path  -->
+        <TextBlock Grid.Row="4"
+                   Grid.Column="0"
+                   VerticalAlignment="Center"
+                   Text="Game Save Path" />
+        <TextBlock Grid.Row="4"
+                   Grid.Column="1"
+                   VerticalAlignment="Center"
+                   Text="{Binding GameSavePath}"
+                   TextTrimming="CharacterEllipsis" />
+        <Button Grid.Row="4"
+                Grid.Column="2"
+                Click="SetSaveFolder_Click"
+                Content="Set" />
+        <CheckBox Grid.Row="4"
+                  Grid.Column="4"
+                  VerticalAlignment="Center"
+                  Content="Load removed objects"
+                  IsChecked="{Binding LoadRemovedObjects, Mode=TwoWay}" />
+        <Button Grid.Row="4"
+                Grid.Column="6"
+                Click="ReloadSaveData_Click"
+                Content="Load Save Data"
+                IsEnabled="{Binding CanReloadSaveData}" />
 
-        <!-- 6: Auto reload game save selection -->
-        <StackPanel Grid.Row="6" Grid.ColumnSpan="7" Orientation="Horizontal" Spacing="12" Margin="0 0 0 4">
-          <TextBlock Text="Auto reload game save:" VerticalAlignment="Center"/>
-          <RadioButton Content="No" IsChecked="{Binding AutoReloadNone}" GroupName="AutoReloadSaveMode"/>
-          <RadioButton Content="Selected Save file" IsChecked="{Binding AutoReloadSelectedFile}" GroupName="AutoReloadSaveMode"/>
-          <RadioButton Content="Any Save file" IsChecked="{Binding AutoReloadAnyFile}" GroupName="AutoReloadSaveMode"/>
+        <!--  6: Auto reload game save selection  -->
+        <StackPanel Grid.Row="6"
+                    Grid.ColumnSpan="7"
+                    Margin="0,0,0,4"
+                    Orientation="Horizontal"
+                    Spacing="12">
+          <TextBlock VerticalAlignment="Center" Text="Auto reload game save:" />
+          <RadioButton Content="No"
+                       GroupName="AutoReloadSaveMode"
+                       IsChecked="{Binding AutoReloadNone}" />
+          <RadioButton Content="Selected Save file"
+                       GroupName="AutoReloadSaveMode"
+                       IsChecked="{Binding AutoReloadSelectedFile}" />
+          <RadioButton Content="Any Save file"
+                       GroupName="AutoReloadSaveMode"
+                       IsChecked="{Binding AutoReloadAnyFile}" />
         </StackPanel>
 
-        <!-- 7: Save-data statistics (each stat on its own line) -->
-        <Border Grid.Row="7" Grid.ColumnSpan="7" BorderBrush="Gray" BorderThickness="0 0 0 1" Padding="8 0 0 8">
+        <!--  7: Save-data statistics (each stat on its own line)  -->
+        <Border Grid.Row="7"
+                Grid.ColumnSpan="7"
+                Padding="8,0,0,8"
+                BorderBrush="Gray"
+                BorderThickness="0,0,0,1">
           <StackPanel Orientation="Vertical" Spacing="6">
             <StackPanel Orientation="Horizontal" Spacing="6">
-              <TextBlock Text="Player ships:" Foreground="{Binding PlayerShipsCount, Converter={StaticResource ZeroToRed}}"/>
-              <TextBlock Text="{Binding PlayerShipsCount}" FontWeight="Bold" Foreground="{Binding PlayerShipsCount, Converter={StaticResource ZeroToRed}}"/>
+              <TextBlock Foreground="{Binding PlayerShipsCount, Converter={StaticResource ZeroToRed}}" Text="Player ships:" />
+              <TextBlock FontWeight="Bold"
+                         Foreground="{Binding PlayerShipsCount, Converter={StaticResource ZeroToRed}}"
+                         Text="{Binding PlayerShipsCount}" />
             </StackPanel>
             <StackPanel Orientation="Horizontal" Spacing="6">
-              <TextBlock Text="Stations:" Foreground="{Binding StationsCount, Converter={StaticResource ZeroToRed}}"/>
-              <TextBlock Text="{Binding StationsCount}" FontWeight="Bold" Foreground="{Binding StationsCount, Converter={StaticResource ZeroToRed}}"/>
+              <TextBlock Foreground="{Binding StationsCount, Converter={StaticResource ZeroToRed}}" Text="Stations:" />
+              <TextBlock FontWeight="Bold"
+                         Foreground="{Binding StationsCount, Converter={StaticResource ZeroToRed}}"
+                         Text="{Binding StationsCount}" />
             </StackPanel>
             <StackPanel Orientation="Horizontal" Spacing="6">
-              <TextBlock Text="Gates Connections:" Foreground="{Binding GatesCount, Converter={StaticResource ZeroToRed}}"/>
-              <TextBlock Text="{Binding GatesCount}" FontWeight="Bold" Foreground="{Binding GatesCount, Converter={StaticResource ZeroToRed}}"/>
+              <TextBlock Foreground="{Binding GatesCount, Converter={StaticResource ZeroToRed}}" Text="Gates Connections:" />
+              <TextBlock FontWeight="Bold"
+                         Foreground="{Binding GatesCount, Converter={StaticResource ZeroToRed}}"
+                         Text="{Binding GatesCount}" />
             </StackPanel>
             <StackPanel Orientation="Horizontal" Spacing="6">
               <TextBlock Text="Removed objects:">
                 <TextBlock.Foreground>
                   <MultiBinding Converter="{StaticResource ZeroToRedIfEnabled}">
-                    <Binding Path="RemovedObjectCount"/>
-                    <Binding Path="LoadRemovedObjects"/>
+                    <Binding Path="RemovedObjectCount" />
+                    <Binding Path="LoadRemovedObjects" />
                   </MultiBinding>
                 </TextBlock.Foreground>
               </TextBlock>
-              <TextBlock Text="{Binding RemovedObjectCount}" FontWeight="Bold">
+              <TextBlock FontWeight="Bold" Text="{Binding RemovedObjectCount}">
                 <TextBlock.Foreground>
                   <MultiBinding Converter="{StaticResource ZeroToRedIfEnabled}">
-                    <Binding Path="RemovedObjectCount"/>
-                    <Binding Path="LoadRemovedObjects"/>
+                    <Binding Path="RemovedObjectCount" />
+                    <Binding Path="LoadRemovedObjects" />
                   </MultiBinding>
                 </TextBlock.Foreground>
               </TextBlock>
             </StackPanel>
             <StackPanel Orientation="Horizontal" Spacing="6">
-              <TextBlock Text="Trades:" Foreground="{Binding TradesCount, Converter={StaticResource ZeroToRed}}"/>
-              <TextBlock Text="{Binding TradesCount}" FontWeight="Bold" Foreground="{Binding TradesCount, Converter={StaticResource ZeroToRed}}"/>
+              <TextBlock Foreground="{Binding TradesCount, Converter={StaticResource ZeroToRed}}" Text="Trades:" />
+              <TextBlock FontWeight="Bold"
+                         Foreground="{Binding TradesCount, Converter={StaticResource ZeroToRed}}"
+                         Text="{Binding TradesCount}" />
             </StackPanel>
             <StackPanel Orientation="Horizontal" Spacing="6">
-              <TextBlock Text="Subordinate connections:" Foreground="{Binding SubordinateCount, Converter={StaticResource ZeroToRed}}"/>
-              <TextBlock Text="{Binding SubordinateCount}" FontWeight="Bold" Foreground="{Binding SubordinateCount, Converter={StaticResource ZeroToRed}}"/>
+              <TextBlock Foreground="{Binding SubordinateCount, Converter={StaticResource ZeroToRed}}" Text="Subordinate connections:" />
+              <TextBlock FontWeight="Bold"
+                         Foreground="{Binding SubordinateCount, Converter={StaticResource ZeroToRed}}"
+                         Text="{Binding SubordinateCount}" />
             </StackPanel>
           </StackPanel>
         </Border>
 
-        <!-- 8: Theme selector -->
-        <TextBlock Grid.Row="9" Grid.Column="0" VerticalAlignment="Center" Text="Theme"/>
-        <ComboBox Grid.Row="9" Grid.Column="1" Width="200" SelectedItem="{Binding AppTheme, Mode=TwoWay}">
+        <!--  8: Theme selector  -->
+        <TextBlock Grid.Row="9"
+                   Grid.Column="0"
+                   VerticalAlignment="Center"
+                   Text="Theme" />
+        <ComboBox Grid.Row="9"
+                  Grid.Column="1"
+                  Width="200"
+                  SelectedItem="{Binding AppTheme, Mode=TwoWay}">
           <x:String>System</x:String>
           <x:String>Light</x:String>
           <x:String>Dark</x:String>
         </ComboBox>
-        <StackPanel Grid.Row="11" Grid.Column="0" Grid.ColumnSpan="9" Orientation="Horizontal" Spacing="16" VerticalAlignment="Center">
-          <CheckBox Content="Write log file" IsChecked="{Binding EnableFileLogging, Mode=TwoWay}" VerticalAlignment="Center"/>
-          <CheckBox Content="Include Avalonia logs" IsChecked="{Binding IncludeAvaloniaLogs, Mode=TwoWay}" VerticalAlignment="Center"/>
-          <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
-            <TextBlock Text="Minimum log level" VerticalAlignment="Center"/>
-            <ComboBox Width="150" ItemsSource="{Binding LogLevels}" SelectedItem="{Binding MinimumLogLevel, Mode=TwoWay}"/>
+        <StackPanel Grid.Row="11"
+                    Grid.Column="0"
+                    Grid.ColumnSpan="9"
+                    VerticalAlignment="Center"
+                    Orientation="Horizontal"
+                    Spacing="16">
+          <CheckBox VerticalAlignment="Center"
+                    Content="Write log file"
+                    IsChecked="{Binding EnableFileLogging, Mode=TwoWay}" />
+          <CheckBox VerticalAlignment="Center"
+                    Content="Include Avalonia logs"
+                    IsChecked="{Binding IncludeAvaloniaLogs, Mode=TwoWay}" />
+          <StackPanel VerticalAlignment="Center"
+                      Orientation="Horizontal"
+                      Spacing="6">
+            <TextBlock VerticalAlignment="Center" Text="Minimum log level" />
+            <ComboBox Width="150"
+                      ItemsSource="{Binding LogLevels}"
+                      SelectedItem="{Binding MinimumLogLevel, Mode=TwoWay}" />
           </StackPanel>
         </StackPanel>
 
-        <Border Grid.Row="12" Grid.ColumnSpan="7" BorderBrush="Gray" BorderThickness="0 0 0 1" Padding="8 0 0 8"/>
+        <Border Grid.Row="12"
+                Grid.ColumnSpan="7"
+                Padding="8,0,0,8"
+                BorderBrush="Gray"
+                BorderThickness="0,0,0,1" />
 
-        <!-- 10: Update checker row -->
-        <TextBlock Grid.Row="14" Grid.Column="0" VerticalAlignment="Center" Text="Version:"/>
-        <StackPanel Grid.Row="14" Grid.Column="1" VerticalAlignment="Center" Orientation="Horizontal" Spacing="6">
-          <TextBlock Text="Current:"/>
-          <TextBlock Text="{Binding CurrentVersion}" FontWeight="Bold"/>
-          <TextBlock Text="Latest published:"/>
-          <TextBlock Text="{Binding LastCheckedRemoteVersion}" FontWeight="Bold"/>
+        <!--  10: Update checker row  -->
+        <TextBlock Grid.Row="14"
+                   Grid.Column="0"
+                   VerticalAlignment="Center"
+                   Text="Version:" />
+        <StackPanel Grid.Row="14"
+                    Grid.Column="1"
+                    VerticalAlignment="Center"
+                    Orientation="Horizontal"
+                    Spacing="6">
+          <TextBlock Text="Current:" />
+          <TextBlock FontWeight="Bold" Text="{Binding CurrentVersion}" />
+          <TextBlock Text="Latest published:" />
+          <TextBlock FontWeight="Bold" Text="{Binding LastCheckedRemoteVersion}" />
         </StackPanel>
-        <CheckBox Grid.Row="14" Grid.Column="4" Content="Check for updates on startup" IsChecked="{Binding CheckForUpdatesOnStartup, Mode=TwoWay}" VerticalAlignment="Center"/>
-        <Button Grid.Row="14" Grid.Column="6" VerticalAlignment="Center" Content="Check for updates" IsEnabled="{Binding CanCheckForUpdates}" Click="CheckForUpdates_Click"/>
+        <CheckBox Grid.Row="14"
+                  Grid.Column="4"
+                  VerticalAlignment="Center"
+                  Content="Check for updates on startup"
+                  IsChecked="{Binding CheckForUpdatesOnStartup, Mode=TwoWay}" />
+        <Button Grid.Row="14"
+                Grid.Column="6"
+                VerticalAlignment="Center"
+                Click="CheckForUpdates_Click"
+                Content="Check for updates"
+                IsEnabled="{Binding CanCheckForUpdates}" />
       </Grid>
     </TabItem>
 
-    <TabItem Header="Readme" x:Name="ReadmeTab">
+    <TabItem x:Name="ReadmeTab" Header="Readme">
       <Grid>
-        <ScrollViewer Margin="8" VerticalScrollBarVisibility="Auto" x:Name="ReadmeScrollViewer"/>
+        <ScrollViewer x:Name="ReadmeScrollViewer"
+                      Margin="8"
+                      VerticalScrollBarVisibility="Auto" />
       </Grid>
     </TabItem>
   </TabControl>

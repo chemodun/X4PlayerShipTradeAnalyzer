@@ -89,7 +89,7 @@ public static class LoggingService
 
     if (firstInitialization)
     {
-      WriteInternal(LogLevel.Information, DefaultArea, "Logging initialised.", null);
+      WriteInternal(LogLevel.Information, DefaultArea, "Logging initialized.", null);
     }
     else
     {

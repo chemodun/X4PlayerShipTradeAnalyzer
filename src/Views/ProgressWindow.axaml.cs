@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+using Avalonia.Media;
 using Avalonia.Threading;
 using X4PlayerShipTradeAnalyzer.Services;
 
@@ -13,6 +14,7 @@ public partial class ProgressWindow : Window
     Unknown,
     GameData,
     SaveData,
+    OnStartup,
   }
 
   private ProgressMode _mode = ProgressMode.Unknown;
@@ -104,25 +106,25 @@ public partial class ProgressWindow : Window
     _mode = mode;
 
     // Helpers
-    void Show(params string[] names)
+    void SetVisibility(bool visible, params string[] names)
     {
       foreach (var n in names)
       {
+        if (this.FindControl<Control>(n) is { } ctrl)
+        {
+          ctrl.IsVisible = visible;
+          continue;
+        }
         if (this.FindControl<TextBlock>(n) is { } tb)
-          tb.IsVisible = true;
+        {
+          tb.IsVisible = visible;
+        }
       }
     }
-    void Hide(params string[] names)
-    {
-      foreach (var n in names)
-      {
-        if (this.FindControl<TextBlock>(n) is { } tb)
-          tb.IsVisible = false;
-      }
-    }
+    void Show(params string[] names) => SetVisibility(true, names);
+    void Hide(params string[] names) => SetVisibility(false, names);
 
-    // Full sets
-    string[] gameLabels = new[]
+    var gameLabels = new[]
     {
       "LblCurrentPackage",
       "CurrentPackage",
@@ -148,8 +150,10 @@ public partial class ProgressWindow : Window
       "ShipTypesProcessed",
       "LblClusterSectorNamesProcessed",
       "ClusterSectorNamesProcessed",
+      "grGameCounters",
     };
-    string[] saveLabels = new[]
+
+    var saveLabels = new[]
     {
       "LblElementsProcessed",
       "ElementsProcessed",
@@ -169,21 +173,26 @@ public partial class ProgressWindow : Window
       "RemovedProcessed",
       "LblTradesProcessed",
       "TradesProcessed",
+      "grSaveCounters",
     };
+
+    var sharedContainers = new[] { "brTopDelimiter", "brBottomDelimiter", "spCounters" };
 
     if (mode == ProgressMode.GameData)
     {
+      Show(sharedContainers);
       Show(gameLabels);
       Hide(saveLabels);
     }
     else if (mode == ProgressMode.SaveData)
     {
+      Show(sharedContainers);
       Show(saveLabels);
       Hide(gameLabels);
     }
     else
     {
-      // Unknown: hide all counters
+      Hide(sharedContainers);
       Hide(gameLabels);
       Hide(saveLabels);
     }

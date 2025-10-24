@@ -3,7 +3,6 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
@@ -158,6 +157,14 @@ public partial class MainWindow : Window
       {
         tabs.SelectedItem = _configurationTab;
       }
+    }
+
+    if (!vm.IsDataInitialized)
+    {
+      Dispatcher.UIThread.Post(() =>
+      {
+        EnsureInitialDataAsync(vm);
+      });
     }
 
     if (vm.Configuration is { CheckForUpdatesOnStartup: true } cfg)
@@ -402,6 +409,34 @@ public partial class MainWindow : Window
       UpdateTabsEnabled();
 
       LoggingService.Debug("Reload save data complete.");
+    }
+    finally
+    {
+      await Dispatcher.UIThread.InvokeAsync(() =>
+      {
+        progress.Close();
+        this.IsEnabled = true;
+      });
+    }
+  }
+
+  private async void EnsureInitialDataAsync(MainViewModel vm)
+  {
+    var progress = new ProgressWindow { Title = "Preparing data...", CanResize = false };
+    progress.SetMessage("Preparing data for charts, please wait...");
+    progress.ApplyMode(ProgressWindow.ProgressMode.OnStartup);
+    progress.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+    progress.Show(this);
+    this.IsEnabled = false;
+
+    try
+    {
+      await Task.Run(() => vm.Refresh(u => progress.SetProgress(u)));
+      progress.SetProgress(new ProgressUpdate { Status = "Refreshing statistics..." });
+      GameData.RefreshStats();
+      progress.SetProgress(new ProgressUpdate { Status = "Updating interface..." });
+      UpdateTabsEnabled();
+      progress.SetProgress(new ProgressUpdate { Status = "Data preparation complete." });
     }
     finally
     {
