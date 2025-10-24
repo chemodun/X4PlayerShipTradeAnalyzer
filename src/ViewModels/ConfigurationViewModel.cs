@@ -217,6 +217,7 @@ public sealed class ConfigurationViewModel : INotifyPropertyChanged
     && ClusterSectorNamesCount > 0
     && StoragesCount > 0
     && ShipStoragesCount > 0
+    && ShipTypesCount > 0
     && LanguagesCount > 0
     && CurrentLanguageId > 0
     && CurrentLanguageTextCount > 0;
@@ -394,6 +395,20 @@ public sealed class ConfigurationViewModel : INotifyPropertyChanged
     }
   }
 
+  private int _shipTypesCount;
+  public int ShipTypesCount
+  {
+    get => _shipTypesCount;
+    private set
+    {
+      if (_shipTypesCount != value)
+      {
+        _shipTypesCount = value;
+        OnPropertyChanged();
+      }
+    }
+  }
+
   private int _currentLanguageTextCount;
   public int CurrentLanguageTextCount
   {
@@ -498,6 +513,7 @@ public sealed class ConfigurationViewModel : INotifyPropertyChanged
       ClusterSectorNamesCount = gameData.Stats.ClusterSectorNamesCount;
       StoragesCount = gameData.Stats.StoragesCount;
       ShipStoragesCount = gameData.Stats.ShipStoragesCount;
+      ShipTypesCount = gameData.Stats.ShipTypesCount;
       LanguagesCount = gameData.Stats.LanguagesCount;
       CurrentLanguageTextCount = gameData.Stats.CurrentLanguageTextCount;
       CurrentLanguageId = gameData.Stats.CurrentLanguageId;
@@ -524,7 +540,7 @@ public sealed class ConfigurationViewModel : INotifyPropertyChanged
       var version = assembly.GetName().Version;
       if (version != null)
       {
-        var parts = new[] { version.Major, version.Minor, version.Build, version.Revision };
+        var parts = new[] { version.Major, version.Minor, version.Build };
         var length = parts.Length;
         while (length > 2 && parts[length - 1] == 0)
           length--;

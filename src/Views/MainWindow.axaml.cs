@@ -179,6 +179,7 @@ public partial class MainWindow : Window
       || s.SubordinateCount == 0
       || s.StoragesCount == 0
       || s.ShipStoragesCount == 0
+      || s.ShipTypesCount == 0
       || (removedRequired && s.RemovedObjectCount == 0)
       || s.TradesCount == 0
       || s.LanguagesCount == 0

@@ -34,7 +34,7 @@
     <!-- Counters grid -->
         <Grid Grid.Row="3"
                   ColumnDefinitions="Auto,12,*"
-                  RowDefinitions="Auto,6,Auto,6,Auto,6,Auto,6,Auto,6,Auto,6,Auto,6,Auto,6,Auto,6,Auto,6,Auto,6">
+                  RowDefinitions="Auto,6,Auto,6,Auto,6,Auto,6,Auto,6,Auto,6,Auto,6,Auto,6,Auto,6,Auto,6,Auto,6,Auto,6">
 
         <TextBlock Grid.Row="0" Grid.Column="0" x:Name="LblCurrentPackage" Text="Package:"/>
         <TextBlock Grid.Row="0" Grid.Column="2" x:Name="CurrentPackage"/>
@@ -66,8 +66,11 @@
         <TextBlock Grid.Row="18" Grid.Column="0" x:Name="LblShipStoragesProcessed" Text="Ship Storages processed:"/>
         <TextBlock Grid.Row="18" Grid.Column="2" x:Name="ShipStoragesProcessed"/>
 
-        <TextBlock Grid.Row="20" Grid.Column="0" x:Name="LblClusterSectorNamesProcessed" Text="Cluster/Sector names processed:"/>
-        <TextBlock Grid.Row="20" Grid.Column="2" x:Name="ClusterSectorNamesProcessed"/>
+        <TextBlock Grid.Row="20" Grid.Column="0" x:Name="LblShipTypesProcessed" Text="Ship Types processed:"/>
+        <TextBlock Grid.Row="20" Grid.Column="2" x:Name="ShipTypesProcessed"/>
+
+        <TextBlock Grid.Row="22" Grid.Column="0" x:Name="LblClusterSectorNamesProcessed" Text="Cluster/Sector names processed:"/>
+        <TextBlock Grid.Row="22" Grid.Column="2" x:Name="ClusterSectorNamesProcessed"/>
 
         <!-- Save loading counters -->
         <TextBlock Grid.Row="0" Grid.Column="0" x:Name="LblElementsProcessed" Text="Elements processed:"/>

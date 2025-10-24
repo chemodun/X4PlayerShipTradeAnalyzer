@@ -185,6 +185,20 @@ public sealed class GameDataStats : INotifyPropertyChanged
     }
   }
 
+  int _shipTypesCount;
+  public int ShipTypesCount
+  {
+    get => _shipTypesCount;
+    set
+    {
+      if (_shipTypesCount != value)
+      {
+        _shipTypesCount = value;
+        OnPropertyChanged(nameof(ShipTypesCount));
+      }
+    }
+  }
+
   int _currentLanguageTextCount;
   public int CurrentLanguageTextCount
   {
@@ -277,9 +291,10 @@ public sealed class GameData
   private int _factionsProcessed;
   private int _storagesProcessed;
   private int _shipStoragesProcessed;
+  private int _shipTypesProcessed;
   private int _processedFiles;
   private int _clusterSectorNamesProcessed;
-  private long _dbSchemaVersion = 6;
+  private long _dbSchemaVersion = 7;
 
   public GameData()
   {
@@ -490,6 +505,11 @@ CREATE TABLE IF NOT EXISTS ship_storage (
     storage_macro STRING NOT NULL
 );
 CREATE INDEX idx_ship_storage_ship_macro  ON ship_storage(ship_macro);
+-- Table ship_type
+CREATE TABLE IF NOT EXISTS ship_type (
+    macro  STRING NOT NULL,
+    type   STRING NOT NULL
+);
 -- View lang
 CREATE VIEW lang AS
 SELECT t.page, t.id, t.text
@@ -663,7 +683,8 @@ ORDER BY full_name, time;
 
   private void UpdateDBSchema(long currentVersion)
   {
-    bool clearData = false;
+    bool clearSaveData = false;
+    bool clearGameData = false;
     // Placeholder for future schema updates
     if (currentVersion < _dbSchemaVersion)
     {
@@ -671,7 +692,8 @@ ORDER BY full_name, time;
       {
         if (currentVersion == 0)
         {
-          clearData = true;
+          clearSaveData = true;
+          clearGameData = true;
           ReOpenConnection();
           using (var deleteCmd = _conn.CreateCommand())
           {
@@ -831,7 +853,8 @@ ORDER BY full_name, time
         }
         if (currentVersion == 2)
         {
-          clearData = true;
+          clearSaveData = true;
+          clearGameData = true;
           ReOpenConnection();
           using (var deleteCmd = _conn.CreateCommand())
           {
@@ -1002,7 +1025,7 @@ ORDER BY full_name, time;
         }
         if (currentVersion == 3)
         {
-          clearData = true;
+          clearSaveData = true;
           ReOpenConnection();
           using (var deleteCmd = _conn.CreateCommand())
           {
@@ -1159,7 +1182,7 @@ ORDER BY full_name, time;
         }
         if (currentVersion == 4)
         {
-          clearData = true;
+          clearSaveData = true;
           ReOpenConnection();
           // using (var deleteCmd = _conn.CreateCommand())
           // {
@@ -1193,7 +1216,7 @@ CREATE INDEX idx_subordinate_assignment   ON subordinate(assignment);
         }
         if (currentVersion == 5)
         {
-          clearData = true;
+          clearSaveData = true;
           ReOpenConnection();
           using (var deleteCmd = _conn.CreateCommand())
           {
@@ -1331,15 +1354,49 @@ ORDER BY full_name, time;
           // Future updates here
           currentVersion = 6;
         }
+        if (currentVersion == 6)
+        {
+          clearSaveData = true;
+          clearGameData = true;
+          ReOpenConnection();
+          // using (var deleteCmd = _conn.CreateCommand())
+          // {
+          //   deleteCmd.CommandText = @"DROP VIEW IF EXISTS player_ships_transactions_log;";
+          //   deleteCmd.ExecuteNonQuery();
+          // }
+          // using (var vacuumCmd = _conn.CreateCommand())
+          // {
+          //   vacuumCmd.CommandText = "VACUUM;";
+          //   vacuumCmd.ExecuteNonQuery();
+          // }
+          using (var cmd = _conn.CreateCommand())
+          {
+            cmd.CommandText =
+              @"
+-- Table ship_type
+CREATE TABLE IF NOT EXISTS ship_type (
+    macro  STRING NOT NULL,
+    type   STRING NOT NULL
+);
+";
+            cmd.ExecuteNonQuery();
+          }
+          // Future updates here
+          currentVersion = 7;
+        }
       }
       catch (Exception ex)
       {
         LoggingService.Error($"Error updating DB schema from version {currentVersion} to {_dbSchemaVersion}.", ex);
       }
       SetDBSchemaVersion(_dbSchemaVersion);
-      if (clearData)
+      if (clearSaveData)
       {
         ClearTablesFromGameSave();
+      }
+      if (clearGameData)
+      {
+        // ClearTablesFromGameData();
       }
     }
   }
@@ -1400,7 +1457,7 @@ ORDER BY full_name, time;
       if (string.IsNullOrWhiteSpace(extensionRelPath))
       {
         progress?.Invoke(new ProgressUpdate { Status = "Parsing texts..." });
-        LoggingService.Debug($"Loading localisation texts for '{packageLabel}'.", area: LogArea);
+        LoggingService.Debug($"Loading localization texts for '{packageLabel}'.", area: LogArea);
         LoadTextsFromGameT(contentExtractor, progress);
       }
       progress?.Invoke(new ProgressUpdate { Status = "Parsing map defaults..." });
@@ -1459,6 +1516,10 @@ ORDER BY full_name, time;
     );
     insertShipStorage.Parameters.Add("@ship", System.Data.DbType.String);
     insertShipStorage.Parameters.Add("@storage", System.Data.DbType.String);
+
+    using var insertShipType = new SQLiteCommand("INSERT OR REPLACE INTO ship_type(macro, type) VALUES (@macro,@type)", _conn, txn);
+    insertShipType.Parameters.Add("@macro", System.Data.DbType.String);
+    insertShipType.Parameters.Add("@type", System.Data.DbType.String);
 
     long writes = 0;
     foreach (var entry in entries)
@@ -1538,7 +1599,31 @@ ORDER BY full_name, time;
                 int depth = xr.Depth;
                 while (xr.Read())
                 {
-                  if (xr.NodeType == XmlNodeType.Element && xr.Name == "connections")
+                  if (xr.NodeType == XmlNodeType.Element && xr.Name == "properties")
+                  {
+                    int pDepth = xr.Depth;
+                    while (xr.Read())
+                    {
+                      if (xr.NodeType == XmlNodeType.Element && xr.Name == "ship")
+                      {
+                        string typeAttr = xr.GetAttribute("type") ?? string.Empty;
+                        if (!string.IsNullOrWhiteSpace(typeAttr))
+                        {
+                          insertShipType.Parameters["@macro"].Value = shipMacro.ToLowerInvariant();
+                          insertShipType.Parameters["@type"].Value = typeAttr.ToLowerInvariant();
+                          insertShipType.ExecuteNonQuery();
+                          writes++;
+                          _shipTypesProcessed++;
+                          progress?.Invoke(new ProgressUpdate { ShipTypesProcessed = (int)Math.Min(int.MaxValue, _shipTypesProcessed) });
+                        }
+                      }
+                      else if (xr.NodeType == XmlNodeType.EndElement && xr.Name == "properties" && xr.Depth == pDepth)
+                      {
+                        break;
+                      }
+                    }
+                  }
+                  else if (xr.NodeType == XmlNodeType.Element && xr.Name == "connections")
                   {
                     int cDepth = xr.Depth;
                     while (xr.Read())
@@ -1626,6 +1711,7 @@ ORDER BY full_name, time;
       {
         StoragesProcessed = (int)Math.Min(int.MaxValue, _storagesProcessed),
         ShipStoragesProcessed = (int)Math.Min(int.MaxValue, _shipStoragesProcessed),
+        ShipTypesProcessed = (int)Math.Min(int.MaxValue, _shipTypesProcessed),
         Status = "Storages parsing complete.",
       }
     );
@@ -1660,246 +1746,6 @@ ORDER BY full_name, time;
       vacuumCmd.CommandText = "VACUUM;";
       vacuumCmd.ExecuteNonQuery();
     }
-  }
-
-  // Parse all storage macros: libraries/assets that define class="storage" and cargo capacities
-  private void LoadStorages(ContentExtractor contentExtractor, Action<ProgressUpdate>? progress = null)
-  {
-    ReOpenConnection();
-    // storage macros typically reside in assets/props/ or assets/components; search all macros xmls
-    var entries = contentExtractor.GetFilesByMask("assets/units/size_*/macros/*.xml");
-    if (entries.Count == 0)
-    {
-      LoggingService.Debug("No legacy storage macro files found.", area: LogArea);
-      return;
-    }
-
-    LoggingService.Debug($"Legacy storage scan over {entries.Count} macro files.", area: LogArea);
-
-    SQLiteTransaction txn = _conn.BeginTransaction();
-    using var cmd = new SQLiteCommand(
-      "INSERT OR REPLACE INTO storage(macro, capacity, container, solid, liquid, gas) VALUES (@macro,@capacity,@container,@solid,@liquid,@gas)",
-      _conn,
-      txn
-    );
-    cmd.Parameters.Add("@macro", System.Data.DbType.String);
-    cmd.Parameters.Add("@capacity", System.Data.DbType.Int64);
-    cmd.Parameters.Add("@container", System.Data.DbType.Boolean);
-    cmd.Parameters.Add("@solid", System.Data.DbType.Boolean);
-    cmd.Parameters.Add("@liquid", System.Data.DbType.Boolean);
-    cmd.Parameters.Add("@gas", System.Data.DbType.Boolean);
-
-    long stored = 0;
-    foreach (var entry in entries)
-    {
-      try
-      {
-        using var cs = ContentExtractor.OpenEntryStream(entry);
-        var settings = new XmlReaderSettings { IgnoreComments = true, IgnoreWhitespace = true };
-        using var xr = XmlReader.Create(cs, settings);
-
-        // find <macro class="storage" name="...">
-        while (xr.Read())
-        {
-          if (xr.NodeType == XmlNodeType.Element && xr.Name == "macro")
-          {
-            var cls = xr.GetAttribute("class") ?? string.Empty;
-            if (!string.Equals(cls, "storage", StringComparison.OrdinalIgnoreCase))
-              continue;
-            var macroName = xr.GetAttribute("name") ?? string.Empty;
-            if (string.IsNullOrWhiteSpace(macroName))
-              continue;
-
-            long capacity = 0;
-            bool hasTag(string t, string tags) =>
-              tags.Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
-                .Any(s => string.Equals(s, t, StringComparison.OrdinalIgnoreCase));
-
-            bool container = false,
-              solid = false,
-              liquid = false,
-              gas = false;
-            if (!xr.IsEmptyElement)
-            {
-              int depth = xr.Depth;
-              while (xr.Read())
-              {
-                if (xr.NodeType == XmlNodeType.Element && xr.Name == "component")
-                {
-                  // must be generic_storage per spec, but not strictly enforced
-                }
-                else if (xr.NodeType == XmlNodeType.Element && xr.Name == "properties")
-                {
-                  // dive into properties
-                  int pDepth = xr.Depth;
-                  while (xr.Read())
-                  {
-                    if (xr.NodeType == XmlNodeType.Element && xr.Name == "cargo")
-                    {
-                      var maxAttr = xr.GetAttribute("max") ?? "0";
-                      long.TryParse(maxAttr, NumberStyles.Any, CultureInfo.InvariantCulture, out capacity);
-                      var tagsAttr = xr.GetAttribute("tags") ?? string.Empty;
-                      container = hasTag("container", tagsAttr);
-                      solid = hasTag("solid", tagsAttr);
-                      liquid = hasTag("liquid", tagsAttr);
-                      gas = hasTag("gas", tagsAttr);
-                    }
-                    else if (xr.NodeType == XmlNodeType.EndElement && xr.Name == "properties" && xr.Depth == pDepth)
-                    {
-                      break;
-                    }
-                  }
-                }
-                else if (xr.NodeType == XmlNodeType.EndElement && xr.Name == "macro" && xr.Depth == depth)
-                {
-                  break;
-                }
-              }
-            }
-
-            // If no known tag present, store with zero capacity
-            if (!(container || solid || liquid || gas))
-            {
-              capacity = 0;
-            }
-
-            cmd.Parameters["@macro"].Value = macroName.ToLowerInvariant();
-            cmd.Parameters["@capacity"].Value = capacity;
-            cmd.Parameters["@container"].Value = container;
-            cmd.Parameters["@solid"].Value = solid;
-            cmd.Parameters["@liquid"].Value = liquid;
-            cmd.Parameters["@gas"].Value = gas;
-            cmd.ExecuteNonQuery();
-            stored++;
-            if (stored % _batchSize == 0)
-            {
-              txn.Commit();
-              txn = _conn.BeginTransaction();
-            }
-          }
-        }
-      }
-      catch (Exception ex)
-      {
-        LoggingService.Debug($"Skipping legacy storage macro '{entry.FilePath}' due to parse error.", ex, area: LogArea);
-      }
-      finally
-      {
-        _processedFiles++;
-        progress?.Invoke(new ProgressUpdate { ProcessedFiles = _processedFiles });
-      }
-    }
-    txn.Commit();
-    LoggingService.Debug($"Legacy storage scan stored {stored} rows.", area: LogArea);
-  }
-
-  // Parse ship macros of classes ship_s/m/l/xl and map to storage macros connected via connection="ShipConnection"
-  private void LoadShipStorages(ContentExtractor contentExtractor, Action<ProgressUpdate>? progress = null)
-  {
-    ReOpenConnection();
-    // Scan assets/units/size_?/macros/*.xml
-    var entries = new List<X4Unpack.CatEntry>();
-    entries.AddRange(contentExtractor.GetFilesByMask("assets/units/size_*/macros/*.xml"));
-    if (entries.Count == 0)
-    {
-      LoggingService.Debug("No ship macro files found while building legacy ship storage map.", area: LogArea);
-      return;
-    }
-
-    LoggingService.Debug($"Legacy ship storage scan over {entries.Count} macro files.", area: LogArea);
-
-    SQLiteTransaction txn = _conn.BeginTransaction();
-    using var cmd = new SQLiteCommand("INSERT OR IGNORE INTO ship_storage(ship_macro, storage_macro) VALUES (@ship,@storage)", _conn, txn);
-    cmd.Parameters.Add("@ship", System.Data.DbType.String);
-    cmd.Parameters.Add("@storage", System.Data.DbType.String);
-
-    long stored = 0;
-    foreach (var entry in entries)
-    {
-      try
-      {
-        using var cs = ContentExtractor.OpenEntryStream(entry);
-        var settings = new XmlReaderSettings { IgnoreComments = true, IgnoreWhitespace = true };
-        using var xr = XmlReader.Create(cs, settings);
-
-        while (xr.Read())
-        {
-          if (xr.NodeType == XmlNodeType.Element && xr.Name == "macro")
-          {
-            string cls = xr.GetAttribute("class") ?? string.Empty;
-            if (!cls.StartsWith("ship_", StringComparison.OrdinalIgnoreCase))
-              continue;
-            string shipMacro = xr.GetAttribute("name") ?? string.Empty;
-            if (string.IsNullOrWhiteSpace(shipMacro))
-              continue;
-
-            if (!xr.IsEmptyElement)
-            {
-              int depth = xr.Depth;
-              while (xr.Read())
-              {
-                if (xr.NodeType == XmlNodeType.Element && xr.Name == "connections")
-                {
-                  int cDepth = xr.Depth;
-                  while (xr.Read())
-                  {
-                    if (xr.NodeType == XmlNodeType.Element && xr.Name == "connection")
-                    {
-                      string? cref = xr.GetAttribute("ref");
-                      // look for child <macro ref="..." connection="ShipConnection" />
-                      if (!xr.IsEmptyElement)
-                      {
-                        int d2 = xr.Depth;
-                        while (xr.Read())
-                        {
-                          if (xr.NodeType == XmlNodeType.Element && xr.Name == "macro")
-                          {
-                            string conn = xr.GetAttribute("connection") ?? string.Empty;
-                            if (!string.Equals(conn, "ShipConnection", StringComparison.Ordinal))
-                              continue;
-                            string storageRef = xr.GetAttribute("ref") ?? string.Empty;
-                            if (!string.IsNullOrWhiteSpace(storageRef))
-                            {
-                              cmd.Parameters["@ship"].Value = shipMacro.ToLowerInvariant();
-                              cmd.Parameters["@storage"].Value = storageRef.ToLowerInvariant();
-                              cmd.ExecuteNonQuery();
-                              stored++;
-                            }
-                          }
-                          else if (xr.NodeType == XmlNodeType.EndElement && xr.Name == "connection" && xr.Depth == d2)
-                          {
-                            break;
-                          }
-                        }
-                      }
-                    }
-                    else if (xr.NodeType == XmlNodeType.EndElement && xr.Name == "connections" && xr.Depth == cDepth)
-                    {
-                      break;
-                    }
-                  }
-                }
-                else if (xr.NodeType == XmlNodeType.EndElement && xr.Name == "macro" && xr.Depth == depth)
-                {
-                  break;
-                }
-              }
-            }
-          }
-        }
-      }
-      catch (Exception ex)
-      {
-        LoggingService.Debug($"Skipping legacy ship macro '{entry.FilePath}' due to parse error.", ex, area: LogArea);
-      }
-      finally
-      {
-        _processedFiles++;
-        progress?.Invoke(new ProgressUpdate { ProcessedFiles = _processedFiles });
-      }
-    }
-    txn.Commit();
-    LoggingService.Debug($"Legacy ship storage scan stored {stored} rows.", area: LogArea);
   }
 
   private void ClearTableText()
@@ -2751,8 +2597,9 @@ ORDER BY full_name, time;
 
     var factoryNames = GetFactoryNamesDict();
     var factionsShortNames = GetFactionsShortNamesDict();
+    var shipTypes = GetShipTypesDict();
     LoggingService.Debug(
-      $"Loaded lookup dictionaries: factoryNames={factoryNames.Count}, factionsShortNames={factionsShortNames.Count}.",
+      $"Loaded lookup dictionaries: factoryNames={factoryNames.Count}, factionsShortNames={factionsShortNames.Count}, shipTypes={shipTypes.Count}.",
       area: LogArea
     );
 
@@ -2947,6 +2794,10 @@ ORDER BY full_name, time;
       else
       {
         macro = xr.GetAttribute("macro") ?? string.Empty;
+        if (skipShipByType(macro, shipTypes))
+        {
+          return 0;
+        }
         shipsProcessed++;
         if (shipsProcessed % 50 == 0)
         {
@@ -3622,6 +3473,10 @@ ORDER BY full_name, time;
           {
             // skip objects that were removed but replaced by another object
             GameComponent nextComp = GetComponentById(next);
+            if (nextComp.Type == "ship" && skipShipByType(nextComp.Macro, shipTypes))
+            {
+              continue;
+            }
             if (nextComp != null && nextComp.Id > 0)
             {
               insertComp.Parameters["@id"].Value = id;
@@ -3867,6 +3722,9 @@ ORDER BY full_name, time;
       Stats.StoragesCount = TableExists("storage") ? ExecuteScalarInt("SELECT COUNT(1) FROM storage") : 0;
       Stats.ShipStoragesCount = TableExists("ship_storage") ? ExecuteScalarInt("SELECT COUNT(1) FROM ship_storage") : 0;
 
+      // ship types count
+      Stats.ShipTypesCount = TableExists("ship_type") ? ExecuteScalarInt("SELECT COUNT(1) FROM ship_type") : 0;
+
       // languages present in text table
       if (TableExists("text"))
       {
@@ -4069,5 +3927,35 @@ ORDER BY full_name, time;
       }
     }
     return dict;
+  }
+
+  private Dictionary<string, string> GetShipTypesDict()
+  {
+    ReOpenConnection();
+    var dict = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+    using var cmd = _conn.CreateCommand();
+    cmd.CommandText = "SELECT macro, type FROM ship_type";
+    using var rdr = cmd.ExecuteReader();
+    while (rdr.Read())
+    {
+      string macro = rdr.GetString(0);
+      string type = rdr.GetString(1);
+      if (!dict.ContainsKey(macro))
+      {
+        dict[macro] = type;
+      }
+    }
+    return dict;
+  }
+
+  private static bool skipShipByType(string? macro, Dictionary<string, string> shipTypes)
+  {
+    if (macro != null && shipTypes.TryGetValue(macro, out var type))
+    {
+      return type.Contains("drone", StringComparison.OrdinalIgnoreCase)
+        || type.Equals("personalvehicle", StringComparison.OrdinalIgnoreCase)
+        || type.Equals("lasertower", StringComparison.OrdinalIgnoreCase);
+    }
+    return false;
   }
 }

@@ -1131,6 +1131,10 @@
               <TextBlock Text="Ship storages:" Foreground="{Binding ShipStoragesCount, Converter={StaticResource ZeroToRed}}"/>
               <TextBlock Text="{Binding ShipStoragesCount}" FontWeight="Bold" Foreground="{Binding ShipStoragesCount, Converter={StaticResource ZeroToRed}}"/>
             </StackPanel>
+            <StackPanel Orientation="Horizontal" Spacing="6">
+              <TextBlock Text="Ship types:" Foreground="{Binding ShipTypesCount, Converter={StaticResource ZeroToRed}}"/>
+              <TextBlock Text="{Binding ShipTypesCount}" FontWeight="Bold" Foreground="{Binding ShipTypesCount, Converter={StaticResource ZeroToRed}}"/>
+            </StackPanel>
           </StackPanel>
         </Border>
 
