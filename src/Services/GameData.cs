@@ -2847,7 +2847,7 @@ ORDER BY full_name, time;
     bool tradesProcessed = false;
     bool timeProcessed = false;
     bool detectNameViaProduction = false;
-    int gameTime = 0;
+    long gameTime = 0;
     string currentSector = string.Empty;
     Dictionary<string, string> factoryBaseNames = new();
     HashSet<int> processedPageIds = new();
@@ -3715,7 +3715,7 @@ ORDER BY full_name, time;
             {
               continue;
             }
-            int time = NormalizeTime(xr.GetAttribute("time") ?? string.Empty);
+            long time = NormalizeTime(xr.GetAttribute("time") ?? string.Empty);
             if (time <= 0)
             {
               continue;
@@ -3954,13 +3954,13 @@ ORDER BY full_name, time;
     }
   }
 
-  static int NormalizeTime(string raw)
+  static long NormalizeTime(string raw)
   {
     if (string.IsNullOrWhiteSpace(raw))
       return 0;
     if (!float.TryParse(raw, NumberStyles.Float, CultureInfo.InvariantCulture, out var f))
       return 0;
-    return (int)Math.Round(f * 1000); // ms ticks
+    return (long)Math.Round(f * 1000); // ms ticks
   }
 
   private (Dictionary<string, string>, HashSet<int>) GetProductionWareDict()
