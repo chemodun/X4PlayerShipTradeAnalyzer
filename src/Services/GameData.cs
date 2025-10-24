@@ -2540,6 +2540,7 @@ CREATE TABLE IF NOT EXISTS ship_type (
       vacuumCmd.CommandText = "VACUUM;";
       vacuumCmd.ExecuteNonQuery();
     }
+    RefreshStats();
   }
 
   private GameComponent GetComponentById(long id)

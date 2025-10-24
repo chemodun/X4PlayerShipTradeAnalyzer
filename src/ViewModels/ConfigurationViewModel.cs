@@ -469,7 +469,11 @@ public sealed class ConfigurationViewModel : INotifyPropertyChanged
       return;
     try
     {
+      LoggingService.Debug($"Reloading game data from: {GameFolderExePath}");
       gameData.LoadGameXmlFiles(progress);
+      LoggingService.Debug("Clearing game save tables...");
+      gameData.ClearTablesFromGameSave();
+      LoggingService.Debug("Refreshing game data statistics after save import...");
       TryUpdateStats(gameData);
     }
     catch

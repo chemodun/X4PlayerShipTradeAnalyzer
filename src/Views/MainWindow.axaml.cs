@@ -351,11 +351,15 @@ public partial class MainWindow : Window
     try
     {
       this.IsEnabled = false;
+      LoggingService.Debug("Starting reload of game data...");
       progress.ApplyMode(ProgressWindow.ProgressMode.GameData);
-      await Task.Run(() => vm?.Configuration?.ReloadGameData(GameData, u => progress.SetProgress(u)));
-      vm.Refresh();
+      LoggingService.Debug("Calling ReloadGameData...");
+      await Task.Run(() => vm.Configuration?.ReloadGameData(GameData, u => progress.SetProgress(u)));
+      LoggingService.Debug("Refreshing game data statistics after save import...");
       GameData.RefreshStats();
+      LoggingService.Debug("Updating tab enablement...");
       UpdateTabsEnabled();
+      LoggingService.Debug("Reload game data complete.");
     }
     finally
     {
@@ -379,11 +383,25 @@ public partial class MainWindow : Window
     try
     {
       this.IsEnabled = false;
+      LoggingService.Debug("Starting reload of save data...");
       progress.ApplyMode(ProgressWindow.ProgressMode.SaveData);
-      await Task.Run(() => vm?.Configuration?.ReloadSaveData(GameData, u => progress.SetProgress(u)));
-      vm?.Refresh();
+      LoggingService.Debug("Calling ReloadSaveData...");
+
+      await Task.Run(() =>
+      {
+        vm.Configuration?.ReloadSaveData(GameData, u => progress.SetProgress(u));
+      });
+
+      LoggingService.Debug("Refreshing view models after save import...");
+      await Task.Run(() => vm.Refresh(u => progress.SetProgress(u)));
+
+      LoggingService.Debug("Refreshing game data statistics after save import...");
       GameData.RefreshStats();
+
+      LoggingService.Debug("Updating tab enablement after save import...");
       UpdateTabsEnabled();
+
+      LoggingService.Debug("Reload save data complete.");
     }
     finally
     {

@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using Avalonia.Media;
+using Avalonia.Threading;
 using LiveChartsCore;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
@@ -157,6 +158,18 @@ public abstract class StatsShipsLoadBaseModel : INotifyPropertyChanged
   protected void Reload()
   {
     var entries = LoadEntries().ToList();
+    if (!Dispatcher.UIThread.CheckAccess())
+    {
+      var capturedEntries = entries;
+      Dispatcher.UIThread.Post(() => ApplyReload(capturedEntries));
+      return;
+    }
+
+    ApplyReload(entries);
+  }
+
+  private void ApplyReload(List<(long ShipId, string ShipName, int BucketIndex)> entries)
+  {
     // Aggregate per ship: total count and weighted average load using bucket midpoints
     var perShip = entries
       .GroupBy(e => (e.ShipId, e.ShipName))

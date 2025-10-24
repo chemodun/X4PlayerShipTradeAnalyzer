@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using Avalonia.Media;
+using Avalonia.Threading;
 using LiveChartsCore;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
@@ -157,6 +158,18 @@ public abstract class StatsWaresShipsBaseModel : INotifyPropertyChanged
   {
     var rows = LoadData();
 
+    if (!Dispatcher.UIThread.CheckAccess())
+    {
+      var capturedRows = rows;
+      Dispatcher.UIThread.Post(() => ApplyReload(capturedRows));
+      return;
+    }
+
+    ApplyReload(rows);
+  }
+
+  private void ApplyReload(List<(long ShipId, string ShipName, string WareId, string WareName, double Profit)> rows)
+  {
     // Group by ware
     var wareOrder = rows.GroupBy(r => (r.WareId, r.WareName))
       .Select(g => new
