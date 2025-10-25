@@ -1,5 +1,25 @@
 # Changelog
 
+## [1.4.4](https://github.com/chemodun/X4PlayerShipTradeAnalyzer/compare/v1.4.3...v1.4.4) (2025-10-25)
+
+
+### Bug Fixes
+
+* **DialogService:** update dialog colors for consistency ([8e6a8d6](https://github.com/chemodun/X4PlayerShipTradeAnalyzer/commit/8e6a8d61cbeeac7d75d13b179f178ab263e9940c))
+* **MainWindow:** pass theme colors to ProgressWindow ([8e6a8d6](https://github.com/chemodun/X4PlayerShipTradeAnalyzer/commit/8e6a8d61cbeeac7d75d13b179f178ab263e9940c))
+* **MainWindow:** remove binding converters for subordinate count display ([ce7dff7](https://github.com/chemodun/X4PlayerShipTradeAnalyzer/commit/ce7dff77ab6f06ae8152e83e0ee22bafbe08079e))
+* **MainWindow:** remove subordinate count check from stats validation ([33a3feb](https://github.com/chemodun/X4PlayerShipTradeAnalyzer/commit/33a3febb0401b6edbd2bd733d6b9713fcf3c899e))
+* **ProgressWindow:** bind theme colors and shadows ([8e6a8d6](https://github.com/chemodun/X4PlayerShipTradeAnalyzer/commit/8e6a8d61cbeeac7d75d13b179f178ab263e9940c))
+* **ProgressWindow:** refactor constructor overloads for clarity ([93b0ed6](https://github.com/chemodun/X4PlayerShipTradeAnalyzer/commit/93b0ed651c1a0315fe77434997d2d9cb9c00ab75))
+* **ProgressWindow:** update background and foreground colors for consistency ([78138cf](https://github.com/chemodun/X4PlayerShipTradeAnalyzer/commit/78138cf5ad0b4f576d20315329de332096e0af56))
+* **README:** update change log for version 1.4.4 ([3ce4686](https://github.com/chemodun/X4PlayerShipTradeAnalyzer/commit/3ce4686fb9a4dba83da929f4eedda1fb23b41f57))
+
+
+### Documentation
+
+* **bbcode:** Update bbcode files ([dfc0de0](https://github.com/chemodun/X4PlayerShipTradeAnalyzer/commit/dfc0de0963ada7969205c502aa0f0166470b6278))
+* **README:** update change log for version 1.4.4 ([9e742f6](https://github.com/chemodun/X4PlayerShipTradeAnalyzer/commit/9e742f66877d9fd61df49a2f01a8e080df95d8a8))
+
 ## [1.4.3](https://github.com/chemodun/X4PlayerShipTradeAnalyzer/compare/v1.4.2...v1.4.3) (2025-10-24)
 
 
