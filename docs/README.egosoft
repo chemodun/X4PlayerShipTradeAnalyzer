@@ -254,6 +254,13 @@ The app runs locally and reads only your X4 files. Nothing is uploaded. [b]Nothi
 [/list]
 [size=130][u]Change log[/u][/size]
 [list]
+[*] 1.4.4 (2025-10-??)
+[list]
+[*] Fixed:
+[list]
+[*] In some cases, subordinate count can be zero, so removed check for it from stats validation.
+[/list]
+[/list]
 [*] 1.4.3 (2025-10-25)
 [list]
 [*] Fixed:
