@@ -350,7 +350,11 @@ public partial class MainWindow : Window
   {
     if (DataContext is not MainViewModel vm)
       return;
-    var progress = new ProgressWindow { Title = "Loading game data...", CanResize = false };
+    var progress = new ProgressWindow(Foreground as Avalonia.Media.SolidColorBrush, Background as Avalonia.Media.SolidColorBrush)
+    {
+      Title = "Loading game data...",
+      CanResize = false,
+    };
     progress.SetMessage("Loading wares and base data... This may take a minute.");
     progress.WindowStartupLocation = WindowStartupLocation.CenterOwner;
     progress.Show(this);
@@ -382,7 +386,11 @@ public partial class MainWindow : Window
   {
     if (DataContext is not MainViewModel vm)
       return;
-    var progress = new ProgressWindow { Title = "Loading save data...", CanResize = false };
+    var progress = new ProgressWindow(Foreground as Avalonia.Media.SolidColorBrush, Background as Avalonia.Media.SolidColorBrush)
+    {
+      Title = "Loading save data...",
+      CanResize = false,
+    };
     progress.SetMessage("Importing savegame, please wait...");
     progress.WindowStartupLocation = WindowStartupLocation.CenterOwner;
     progress.Show(this);
@@ -421,7 +429,11 @@ public partial class MainWindow : Window
 
   private async void EnsureInitialDataAsync(MainViewModel vm)
   {
-    var progress = new ProgressWindow { Title = "Preparing data...", CanResize = false };
+    var progress = new ProgressWindow(Foreground as Avalonia.Media.SolidColorBrush, Background as Avalonia.Media.SolidColorBrush)
+    {
+      Title = "Preparing data...",
+      CanResize = false,
+    };
     progress.SetMessage("Preparing data for charts, please wait...");
     progress.ApplyMode(ProgressWindow.ProgressMode.OnStartup);
     progress.WindowStartupLocation = WindowStartupLocation.CenterOwner;

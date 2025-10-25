@@ -42,6 +42,9 @@ public static class DialogService
 
     var tcs = new TaskCompletionSource<DialogResult?>();
 
+    var foreground = owner.Foreground as SolidColorBrush ?? new SolidColorBrush(Colors.Black);
+    var background = owner.Background as SolidColorBrush ?? new SolidColorBrush(Colors.White);
+
     await Dispatcher.UIThread.InvokeAsync(() =>
     {
       var dialog = new Window
@@ -100,13 +103,15 @@ public static class DialogService
 
       var contentBorder = new Border
       {
-        Background = ResolveBrush("ThemeBackgroundBrush", Brushes.White),
-        BorderBrush = ResolveBrush("ThemeBorderLowBrush", new SolidColorBrush(Color.FromArgb(80, 0, 0, 0))),
+        Background = background,
+        BorderBrush = foreground,
         BorderThickness = new Thickness(1),
         CornerRadius = new CornerRadius(8),
         Padding = new Thickness(16),
         Margin = new Thickness(0),
-        BoxShadow = new BoxShadows(new BoxShadow { Color = Color.FromArgb(60, 0, 0, 0), Blur = 20 }),
+        BoxShadow = new BoxShadows(
+          new BoxShadow { Color = Color.FromArgb(100, foreground.Color.R, foreground.Color.G, foreground.Color.B), Blur = 20 }
+        ),
         Child = contentPanel,
       };
 

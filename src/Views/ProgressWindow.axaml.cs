@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using Avalonia.Threading;
+using Material.Styles.Assists;
 using X4PlayerShipTradeAnalyzer.Services;
 
 namespace X4PlayerShipTradeAnalyzer.Views;
@@ -19,9 +20,22 @@ public partial class ProgressWindow : Window
 
   private ProgressMode _mode = ProgressMode.Unknown;
 
-  public ProgressWindow()
+  public SolidColorBrush ThemeForeground { get; } = new SolidColorBrush(Colors.Black);
+  public SolidColorBrush ThemeBackground { get; } = new SolidColorBrush(Colors.White);
+
+  public BoxShadows ThemeShadow { get; } = new BoxShadows(new BoxShadow { Color = Color.FromArgb(100, 0, 0, 0), Blur = 20 });
+
+  public ProgressWindow(SolidColorBrush? foreground = null, SolidColorBrush? background = null)
   {
+    if (foreground != null)
+      ThemeForeground = foreground;
+    if (background != null)
+      ThemeBackground = background;
+    ThemeShadow = new BoxShadows(
+      new BoxShadow { Color = Color.FromArgb(60, ThemeForeground.Color.R, ThemeForeground.Color.G, ThemeForeground.Color.B), Blur = 20 }
+    );
     InitializeComponent();
+    DataContext = this;
     // Hide all counters until we detect the mode from the first update
     HideAllCounters();
   }
