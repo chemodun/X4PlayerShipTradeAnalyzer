@@ -183,6 +183,9 @@ The app runs locally and reads only your X4 files. Nothing is uploaded. **Nothin
 
 ## Change log
 
+- 1.4.4 (2025-10-??)
+  - Fixed:
+    - In some cases, subordinate count can be zero, so removed check for it from stats validation.
 - 1.4.3 (2025-10-25)
   - Fixed:
     - Time values after a long play.
