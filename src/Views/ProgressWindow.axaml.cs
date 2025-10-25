@@ -25,7 +25,10 @@ public partial class ProgressWindow : Window
 
   public BoxShadows ThemeShadow { get; } = new BoxShadows(new BoxShadow { Color = Color.FromArgb(100, 0, 0, 0), Blur = 20 });
 
-  public ProgressWindow(SolidColorBrush? foreground = null, SolidColorBrush? background = null)
+  public ProgressWindow()
+    : this(null, null) { }
+
+  public ProgressWindow(SolidColorBrush? foreground, SolidColorBrush? background)
   {
     if (foreground != null)
       ThemeForeground = foreground;
