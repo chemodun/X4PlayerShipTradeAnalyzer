@@ -1986,10 +1986,8 @@
                          Text="{Binding TradesCount}" />
             </StackPanel>
             <StackPanel Orientation="Horizontal" Spacing="6">
-              <TextBlock Foreground="{Binding SubordinateCount, Converter={StaticResource ZeroToRed}}" Text="Subordinate connections:" />
-              <TextBlock FontWeight="Bold"
-                         Foreground="{Binding SubordinateCount, Converter={StaticResource ZeroToRed}}"
-                         Text="{Binding SubordinateCount}" />
+              <TextBlock Text="Subordinate connections:" />
+              <TextBlock FontWeight="Bold" Text="{Binding SubordinateCount}" />
             </StackPanel>
           </StackPanel>
         </Border>
