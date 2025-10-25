@@ -4,6 +4,8 @@
         Title="Working..."
         Width="440"
         Padding="12"
+        Background="{DynamicResource ThemeBackgroundBrush}"
+        Foreground="{DynamicResource ThemeForegroundBrush}"
         SizeToContent="Height"
         SystemDecorations="BorderOnly"
         WindowStartupLocation="CenterOwner">
@@ -11,10 +13,10 @@
   <Border x:Name="brMainBorder"
           Margin="0"
           Padding="16"
-          Background="White"
+          Background="{DynamicResource ThemeBackgroundBrush}"
           BorderBrush="Gray"
           BorderThickness="1"
-          BoxShadow="0 0 20 #3C000000"
+          BoxShadow="0 0 20 #32000000"
           CornerRadius="8">
 
 
@@ -32,6 +34,7 @@
                  Grid.Row="0"
                  HorizontalAlignment="Center"
                  FontWeight="SemiBold"
+                 Foreground="{DynamicResource ThemeForegroundBrush}"
                  Text="Loading, please wait..."
                  TextWrapping="Wrap" />
 
