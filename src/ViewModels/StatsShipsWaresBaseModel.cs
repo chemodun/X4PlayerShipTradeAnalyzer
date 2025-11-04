@@ -53,7 +53,9 @@ public abstract class StatsShipsWaresBaseModel : INotifyPropertyChanged
   }
 
   // Expose stations as a property (binding requires property, not field)
-  public List<StationShort> Stations { get; } = StationShort.StationList;
+#pragma warning disable CA1822
+  public ObservableCollection<StationShort> Stations => StationShort.StationList;
+#pragma warning restore CA1822
   private StationShort? _selectedStation = StationShort.StationList.FirstOrDefault();
   public StationShort? SelectedStation
   {

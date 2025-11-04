@@ -40,29 +40,25 @@ public class ShipsDataTransactionsModel : ShipsDataBaseModel
 
   protected override void LoadData()
   {
-    SelectedShip = null;
-    ShipList.Clear();
-    allTransactions.Clear();
-    // Build ships map while reading transactions
     var ships = new Dictionary<long, ShipInfo>();
+    var transactions = new List<ShipTransaction>();
 
-    // Load transactions
-    IEnumerable<Transaction> q = MainViewModel.AllTransactions;
+    IEnumerable<Transaction> query = MainViewModel.AllTransactions;
 
     if (SelectedShipClass != "All")
-      q = q.Where(t => string.Equals(t.ShipClass, SelectedShipClass, StringComparison.OrdinalIgnoreCase));
+      query = query.Where(t => string.Equals(t.ShipClass, SelectedShipClass, StringComparison.OrdinalIgnoreCase));
 
     if (SelectedStation != null && SelectedStation.Id != 0)
     {
       HashSet<long> subordinateIds = Subordinate.GetSubordinateIdsForCommander(SelectedStation.Id);
-      q = q.Where(t => subordinateIds.Contains(t.ShipId));
+      query = query.Where(t => subordinateIds.Contains(t.ShipId));
     }
-    if (Transport != "All")
-      q = q.Where(t => t.Transport.Equals(Transport, StringComparison.InvariantCultureIgnoreCase));
 
-    foreach (var trans in q.OrderBy(t => t.ShipId).ThenBy(t => t.RawTime))
+    if (Transport != "All")
+      query = query.Where(t => t.Transport.Equals(Transport, StringComparison.InvariantCultureIgnoreCase));
+
+    foreach (var trans in query.OrderBy(t => t.ShipId).ThenBy(t => t.RawTime))
     {
-      // aggregate ships
       if (!ships.TryGetValue(trans.ShipId, out var info))
       {
         info = new ShipInfo
@@ -73,9 +69,10 @@ public class ShipsDataTransactionsModel : ShipsDataBaseModel
         };
         ships.Add(trans.ShipId, info);
       }
+
       info.EstimatedProfit = (info.EstimatedProfit ?? 0m) + trans.EstimatedProfit;
 
-      allTransactions.Add(
+      transactions.Add(
         new ShipTransaction
         {
           ShipId = trans.ShipId,
@@ -95,16 +92,28 @@ public class ShipsDataTransactionsModel : ShipsDataBaseModel
         }
       );
     }
-    // materialize ShipList sorted by name
-    foreach (var s in ships.Values)
-      ShipList.Add(s);
-    ResortShips();
-    if (!Dispatcher.UIThread.CheckAccess())
+
+    void ApplyResults()
     {
-      Dispatcher.UIThread.Post(ApplyShipFilter);
-      return;
+      SelectedShip = null;
+
+      ShipList.Clear();
+      foreach (var ship in SortShips(ships.Values))
+        ShipList.Add(ship);
+
+      allTransactions = transactions;
+
+      ApplyShipFilter();
     }
-    ApplyShipFilter();
+
+    if (Dispatcher.UIThread.CheckAccess())
+    {
+      ApplyResults();
+    }
+    else
+    {
+      Dispatcher.UIThread.Post(ApplyResults);
+    }
   }
 
   protected override void ApplyShipFilter()

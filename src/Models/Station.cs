@@ -1,4 +1,6 @@
-using System.ComponentModel;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using Avalonia.Threading;
 using X4PlayerShipTradeAnalyzer.Views;
 
 namespace X4PlayerShipTradeAnalyzer.Models;
@@ -8,25 +10,28 @@ public class StationShort
   public long Id { get; set; }
   public string? Name { get; set; }
   public string? Sector { get; set; }
-  public static List<StationShort> StationList = new(
-    [
-      new StationShort
+  public static ObservableCollection<StationShort> StationList { get; } =
+    new(
+      new[]
       {
-        Id = 0,
-        Name = "-- Any / None --",
-        Sector = "",
-      },
-    ]
-  );
+        new StationShort
+        {
+          Id = 0,
+          Name = "-- Any / None --",
+          Sector = string.Empty,
+        },
+      }
+    );
 
   public static void RefreshStationsWithTradeOrMiningSubordinates()
   {
-    StationList.RemoveRange(1, StationList.Count - 1);
     var conn = MainWindow.GameData.Connection;
-    if (conn == null)
-      return;
-    var sql =
-      @"
+    var newStations = new List<StationShort>();
+
+    if (conn != null)
+    {
+      var sql =
+        @"
 SELECT DISTINCT cp.id AS id,
   CASE
     WHEN cp.owner = 'player'
@@ -54,23 +59,42 @@ SELECT DISTINCT cp.id AS id,
   ORDER BY cp.name;
 ";
 
-    using var cmd = conn.CreateCommand();
-    cmd.CommandText = sql;
+      using var cmd = conn.CreateCommand();
+      cmd.CommandText = sql;
 
-    using var reader = cmd.ExecuteReader();
-    while (reader.Read())
+      using var reader = cmd.ExecuteReader();
+      while (reader.Read())
+      {
+        var id = Convert.ToInt64(reader["id"]);
+        var name = reader["name"].ToString() ?? string.Empty;
+        var sector = reader["sector"].ToString() ?? string.Empty;
+        newStations.Add(
+          new StationShort
+          {
+            Id = id,
+            Name = name,
+            Sector = sector,
+          }
+        );
+      }
+    }
+
+    void ApplyUpdate()
     {
-      var id = Convert.ToInt64(reader["id"]);
-      var name = reader["name"].ToString() ?? string.Empty;
-      var sector = reader["sector"].ToString() ?? string.Empty;
-      StationList.Add(
-        new StationShort
-        {
-          Id = id,
-          Name = name,
-          Sector = sector,
-        }
-      );
+      for (int i = StationList.Count - 1; i >= 1; i--)
+        StationList.RemoveAt(i);
+
+      foreach (var station in newStations)
+        StationList.Add(station);
+    }
+
+    if (Dispatcher.UIThread.CheckAccess())
+    {
+      ApplyUpdate();
+    }
+    else
+    {
+      Dispatcher.UIThread.Post(ApplyUpdate);
     }
   }
 }
