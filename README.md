@@ -183,6 +183,9 @@ The app runs locally and reads only your X4 files. Nothing is uploaded. **Nothin
 
 ## Change log
 
+- 1.4.5 (2025-11-04)
+  - Fixed:
+    - Issue with absence reaction on Station dropdown after loading tool.
 - 1.4.4 (2025-10-26)
   - Fixed:
     - In some cases, subordinate count can be zero, so removed check for it from stats validation.
@@ -260,3 +263,4 @@ The app runs locally and reads only your X4 files. Nothing is uploaded. **Nothin
 - Thanks to all members of the [X4 modding channel](https://discord.com/channels/337098290917146624/502057640877228042) on [Egosoft Discord](https://discord.com/invite/zhs8sRpd3m). And especially to `UniTrader` and `Forleyor`.
 - Thanks to [u/Breakfast-Excellent](https://www.reddit.com/user/Breakfast-Excellent/) for the report the trade loading issue and save file for testing.
 - Thanks to [u/ThaRippa](https://www.reddit.com/user/ThaRippa/) for the suggestion to the another report the trade loading issue and save file for testing.
+- Thanks to [Emerson d'Anite](https://forum.egosoft.com/memberlist.php?mode=viewprofile&u=202859) for the bug report related station dropdown.
