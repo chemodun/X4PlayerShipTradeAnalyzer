@@ -1,5 +1,24 @@
 # Changelog
 
+## [1.4.5](https://github.com/chemodun/X4PlayerShipTradeAnalyzer/compare/v1.4.4...v1.4.5) (2025-11-04)
+
+
+### Code Refactoring
+
+* **ShipsDataBaseModel:** update Stations property type ([c214204](https://github.com/chemodun/X4PlayerShipTradeAnalyzer/commit/c214204bf110dce32c8f1b6cf647b63ec5bc6539))
+* **ShipsDataTransactionsModel:** update transaction handling ([c214204](https://github.com/chemodun/X4PlayerShipTradeAnalyzer/commit/c214204bf110dce32c8f1b6cf647b63ec5bc6539))
+* **ShipsGraphsBaseModel:** update Stations property type ([c214204](https://github.com/chemodun/X4PlayerShipTradeAnalyzer/commit/c214204bf110dce32c8f1b6cf647b63ec5bc6539))
+* **Station:** change StationList to ObservableCollection ([c214204](https://github.com/chemodun/X4PlayerShipTradeAnalyzer/commit/c214204bf110dce32c8f1b6cf647b63ec5bc6539))
+* **StatsShipsLoadBaseModel:** update Stations property type ([c214204](https://github.com/chemodun/X4PlayerShipTradeAnalyzer/commit/c214204bf110dce32c8f1b6cf647b63ec5bc6539))
+* **StatsShipsWaresBaseModel:** update Stations property type ([c214204](https://github.com/chemodun/X4PlayerShipTradeAnalyzer/commit/c214204bf110dce32c8f1b6cf647b63ec5bc6539))
+* **StatsWaresShipsBaseModel:** update Stations property type ([c214204](https://github.com/chemodun/X4PlayerShipTradeAnalyzer/commit/c214204bf110dce32c8f1b6cf647b63ec5bc6539))
+
+
+### Documentation
+
+* **bbcode:** Update bbcode files ([abcafdd](https://github.com/chemodun/X4PlayerShipTradeAnalyzer/commit/abcafdd7b4f0f91f681981624ae026f5dd7c8463))
+* **README:** update change log for version 1.4.5 ([996d8d6](https://github.com/chemodun/X4PlayerShipTradeAnalyzer/commit/996d8d6c196a77409187e19d25d74ed170e5f3df))
+
 ## [1.4.4](https://github.com/chemodun/X4PlayerShipTradeAnalyzer/compare/v1.4.3...v1.4.4) (2025-10-25)
 
 
