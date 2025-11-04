@@ -257,6 +257,13 @@ The app runs locally and reads only your X4 files. Nothing is uploaded. [b]Nothi
 [/list]
 [size=3][u][b]Change log[/b][/u][/size]
 [list]
+[*] 1.4.5 (2025-11-04)
+[list]
+[*] Fixed:
+[list]
+[*] Issue with absence reaction on Station dropdown after loading tool.
+[/list]
+[/list]
 [*] 1.4.4 (2025-10-26)
 [list]
 [*] Fixed:
@@ -396,4 +403,5 @@ The app runs locally and reads only your X4 files. Nothing is uploaded. [b]Nothi
 [*] Thanks to all members of the [url=https://discord.com/channels/337098290917146624/502057640877228042]X4 modding channel[/url] on [url=https://discord.com/invite/zhs8sRpd3m]Egosoft Discord[/url]. And especially to [b]UniTrader[/b] and [b]Forleyor[/b].
 [*] Thanks to [url=https://www.reddit.com/user/Breakfast-Excellent/]u/Breakfast-Excellent[/url] for the report the trade loading issue and save file for testing.
 [*] Thanks to [url=https://www.reddit.com/user/ThaRippa/]u/ThaRippa[/url] for the suggestion to the another report the trade loading issue and save file for testing.
+[*] Thanks to [url=https://forum.egosoft.com/memberlist.php?mode=viewprofile&u=202859]Emerson d'Anite[/url] for the bug report related station dropdown.
 [/list]
