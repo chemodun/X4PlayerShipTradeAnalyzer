@@ -39,7 +39,7 @@
   <!-- Replace Markdown.Avalonia with MarkdownViewer.Core -->
   <PackageReference Include="MarkdownViewer.Core" Version="1.0.5" />
     <!-- Use SkiaSharp native assets versions compatible with Avalonia.Skia 11.3.8 -->
-    <PackageReference Include="SkiaSharp.NativeAssets.Linux" Version="2.88.9" />
+    <PackageReference Include="SkiaSharp.NativeAssets.Linux" Version="3.119.1" />
     <PackageReference Include="SkiaSharp.NativeAssets.Win32" Version="2.88.9" />
     <PackageReference Include="System.Data.SQLite.Core" Version="1.0.118" />
     <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" Version="2.1.7" />
